@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/tubiao.png</file>
+        <file>image/logo.png</file>
+        <file>image/skin.png</file>
+        <file>image/max.png</file>
+        <file>image/min.png</file>
+        <file>image/quit.png</file>
+        <file>image/play.png</file>
+        <file>image/playDown.png</file>
+        <file>image/playUp.png</file>
+        <file>image/shuffle.png</file>
+        <file>image/add.png</file>
+        <file>image/volumn.png</file>
+    </qresource>
+</RCC>

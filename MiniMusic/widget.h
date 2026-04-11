@@ -1,0 +1,45 @@
+#ifndef WIDGET_H
+#define WIDGET_H
+
+#include <QWidget>
+
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class Widget; }
+QT_END_NAMESPACE
+
+class Widget : public QWidget
+{
+    Q_OBJECT
+
+public:
+    Widget(QWidget *parent = nullptr);
+    ~Widget();
+
+    void initUi();
+
+    void settingBox();
+
+    void contralMusic();
+
+
+private slots:
+    //关闭窗口
+    void on_quit_clicked();
+    //窗口最小化
+    void on_min_clicked();
+    //窗口最大化
+    void on_max_clicked();
+
+protected:
+    //重写鼠标点击函数
+    void mousePressEvent(QMouseEvent *event);
+    //重写鼠标移动函数
+    void mouseMoveEvent(QMouseEvent *event);
+
+private:
+    Ui::Widget *ui;
+
+    QPoint dragPosition;
+};
+#endif // WIDGET_H
