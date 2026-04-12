@@ -1,8 +1,10 @@
 #include "widget.h"
 #include "ui_widget.h"
+#include"btform.h"
 #include<QMouseEvent>
 #include<QPushButton>
 #include<QGraphicsDropShadowEffect>
+#include<QDebug>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -12,12 +14,15 @@ Widget::Widget(QWidget *parent)
 
     //调用初始化方法，构造窗口
     initUi();
+
+    connectSignalAndSlots();
 }
 
 Widget::~Widget()
 {
     delete ui;
 }
+
 //给窗口控制按钮设置图片
 void Widget::settingBox()
 {
@@ -37,6 +42,7 @@ void Widget::settingBox()
     ui->quit->setIcon(QIcon(pixmapquit));
     ui->quit->setIconSize(QSize(20,20));
 }
+
 //播放控制区按钮图片
 void Widget::contralMusic()
 {
@@ -64,6 +70,19 @@ void Widget::contralMusic()
     ui->addLocal->setIcon(QIcon(pixmapAddLocal));
     ui->addLocal->setIconSize(QSize(20,20));
 }
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+//管理所有信号与信号槽的函数
+void Widget::connectSignalAndSlots()
+{
+    connect(ui->Rec,&BtForm::btClicked,this,&Widget::onBtClicked);
+    connect(ui->audio,&BtForm::btClicked,this,&Widget::onBtClicked);
+    connect(ui->music,&BtForm::btClicked,this,&Widget::onBtClicked);
+    connect(ui->like,&BtForm::btClicked,this,&Widget::onBtClicked);
+    connect(ui->local,&BtForm::btClicked,this,&Widget::onBtClicked);
+    connect(ui->recent,&BtForm::btClicked,this,&Widget::onBtClicked);
+}
+
 void Widget::initUi()
 {
     this->setWindowFlag(Qt::FramelessWindowHint);
@@ -81,14 +100,23 @@ void Widget::initUi()
     settingBox();
 
     contralMusic();
+
+    //给BtForm设置图标和文本信息
+    ui->Rec->setIconAndText(":/image/rec.png","推荐", 0);
+    ui->audio->setIconAndText(":/image/radio.png","电台", 1);
+    ui->music->setIconAndText(":/image/music.png","音乐馆", 2);
+    ui->like->setIconAndText(":/image/like.png","我喜欢", 3);
+    ui->local->setIconAndText(":/image/local.png","本地和下载", 4);
+    ui->recent->setIconAndText(":/image/recent.png","最近播放", 5);
 }
-
-
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 //关闭窗口按钮
 void Widget::on_quit_clicked()
 {
     close();
 }
+
 //窗口最小化
 void Widget::on_min_clicked()
 {
@@ -99,6 +127,23 @@ void Widget::on_max_clicked()
 {
     this->setWindowState(Qt::WindowMaximized);
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//响应btform发出的信号（信号处理函数）
+void Widget::onBtClicked(int pageId)
+{
+    //获取到所有btForm的按钮并清除点击后残留的颜色
+    QList<BtForm*> btFormList = this->findChildren<BtForm*>();
+    for(auto btForm : btFormList)
+    {
+        if(btForm->getPageId() != pageId)
+        {
+            btForm->clearBackground();
+        }
+    }
+    ui->stackedWidget->setCurrentIndex(pageId);
+}
+
 //鼠标点击
 void Widget::mousePressEvent(QMouseEvent *event)
 {

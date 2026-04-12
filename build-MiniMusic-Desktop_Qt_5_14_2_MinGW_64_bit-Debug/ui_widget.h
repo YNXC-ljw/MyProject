@@ -20,6 +20,7 @@
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include <btform.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -55,15 +56,15 @@ public:
     QWidget *onlineMusic;
     QVBoxLayout *verticalLayout_4;
     QLabel *onlineMusicText;
-    QWidget *Rec;
-    QWidget *audio;
-    QWidget *music;
+    BtForm *Rec;
+    BtForm *audio;
+    BtForm *music;
     QWidget *myMusic;
     QVBoxLayout *verticalLayout_5;
     QLabel *myMusicText;
-    QWidget *like;
-    QWidget *local;
-    QWidget *recent;
+    BtForm *like;
+    BtForm *local;
+    BtForm *recent;
     QSpacerItem *verticalSpacer;
     QWidget *bodyright;
     QVBoxLayout *verticalLayout_6;
@@ -283,19 +284,19 @@ public:
 
         verticalLayout_4->addWidget(onlineMusicText);
 
-        Rec = new QWidget(onlineMusic);
+        Rec = new BtForm(onlineMusic);
         Rec->setObjectName(QString::fromUtf8("Rec"));
         Rec->setStyleSheet(QString::fromUtf8(""));
 
         verticalLayout_4->addWidget(Rec);
 
-        audio = new QWidget(onlineMusic);
+        audio = new BtForm(onlineMusic);
         audio->setObjectName(QString::fromUtf8("audio"));
         audio->setStyleSheet(QString::fromUtf8(""));
 
         verticalLayout_4->addWidget(audio);
 
-        music = new QWidget(onlineMusic);
+        music = new BtForm(onlineMusic);
         music->setObjectName(QString::fromUtf8("music"));
         music->setStyleSheet(QString::fromUtf8(""));
 
@@ -314,19 +315,19 @@ public:
 
         verticalLayout_5->addWidget(myMusicText);
 
-        like = new QWidget(myMusic);
+        like = new BtForm(myMusic);
         like->setObjectName(QString::fromUtf8("like"));
         like->setStyleSheet(QString::fromUtf8(""));
 
         verticalLayout_5->addWidget(like);
 
-        local = new QWidget(myMusic);
+        local = new BtForm(myMusic);
         local->setObjectName(QString::fromUtf8("local"));
         local->setStyleSheet(QString::fromUtf8(""));
 
         verticalLayout_5->addWidget(local);
 
-        recent = new QWidget(myMusic);
+        recent = new BtForm(myMusic);
         recent->setObjectName(QString::fromUtf8("recent"));
         recent->setStyleSheet(QString::fromUtf8(""));
 
@@ -347,7 +348,7 @@ public:
 
         bodyright = new QWidget(body);
         bodyright->setObjectName(QString::fromUtf8("bodyright"));
-        bodyright->setStyleSheet(QString::fromUtf8("background-color:rgb(85, 85, 127);"));
+        bodyright->setStyleSheet(QString::fromUtf8("background-color:#CCFFFF;"));
         verticalLayout_6 = new QVBoxLayout(bodyright);
         verticalLayout_6->setSpacing(0);
         verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
@@ -406,14 +407,14 @@ public:
         controlBox->setObjectName(QString::fromUtf8("controlBox"));
         controlBox->setMinimumSize(QSize(0, 60));
         controlBox->setMaximumSize(QSize(16777215, 60));
-        controlBox->setStyleSheet(QString::fromUtf8("background-color:rgb(172, 255, 108);"));
+        controlBox->setStyleSheet(QString::fromUtf8(""));
         horizontalLayout_8 = new QHBoxLayout(controlBox);
         horizontalLayout_8->setSpacing(0);
         horizontalLayout_8->setObjectName(QString::fromUtf8("horizontalLayout_8"));
         horizontalLayout_8->setContentsMargins(0, 0, 0, 0);
         play1 = new QWidget(controlBox);
         play1->setObjectName(QString::fromUtf8("play1"));
-        play1->setStyleSheet(QString::fromUtf8("background-color:rgb(255, 207, 192);"));
+        play1->setStyleSheet(QString::fromUtf8(""));
         gridLayout = new QGridLayout(play1);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         musicCover = new QLabel(play1);
@@ -440,6 +441,10 @@ public:
 "	border: none;\n"
 "	background-repeat: no-repeat;\n"
 "	background-position: center center;\n"
+"}\n"
+"QPushButton:hover\n"
+"{\n"
+"	background-color: #33FF99;\n"
 "}"));
         horizontalLayout_9 = new QHBoxLayout(play2);
         horizontalLayout_9->setObjectName(QString::fromUtf8("horizontalLayout_9"));
@@ -490,7 +495,7 @@ public:
 
         play3 = new QWidget(controlBox);
         play3->setObjectName(QString::fromUtf8("play3"));
-        play3->setStyleSheet(QString::fromUtf8("background-color:rgb(255, 100, 53);"));
+        play3->setStyleSheet(QString::fromUtf8(""));
         currentTime = new QLabel(play3);
         currentTime->setObjectName(QString::fromUtf8("currentTime"));
         currentTime->setGeometry(QRect(120, 20, 45, 18));

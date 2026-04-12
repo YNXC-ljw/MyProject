@@ -12,5 +12,11 @@
         <file>image/shuffle.png</file>
         <file>image/add.png</file>
         <file>image/volumn.png</file>
+        <file>image/like.png</file>
+        <file>image/music.png</file>
+        <file>image/radio.png</file>
+        <file>image/rec.png</file>
+        <file>image/recent.png</file>
+        <file>image/local.png</file>
     </qresource>
 </RCC>

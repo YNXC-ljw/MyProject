@@ -17,12 +17,12 @@ public:
     ~Widget();
 
     void initUi();
-
+    //窗口按钮区设置图片
     void settingBox();
-
+    //播放控制区设置图片
     void contralMusic();
-
-
+    //管理所有信号与信号槽的函数
+    void connectSignalAndSlots();
 private slots:
     //关闭窗口
     void on_quit_clicked();
@@ -30,6 +30,8 @@ private slots:
     void on_min_clicked();
     //窗口最大化
     void on_max_clicked();
+
+    void onBtClicked(int pageId);
 
 protected:
     //重写鼠标点击函数
