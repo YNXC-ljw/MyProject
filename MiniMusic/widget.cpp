@@ -108,6 +108,10 @@ void Widget::initUi()
     ui->like->setIconAndText(":/image/like.png","我喜欢", 3);
     ui->local->setIconAndText(":/image/local.png","本地和下载", 4);
     ui->recent->setIconAndText(":/image/recent.png","最近播放", 5);
+
+    //让本地下载默认显示音符跳动
+    ui->local->showAnimal();
+    ui->stackedWidget->setCurrentIndex(4);
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////

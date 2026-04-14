@@ -21,6 +21,8 @@ public:
     int getPageId() const;
     void clearBackground();
 
+    void showAnimal();
+
 
 signals:
     void btClicked(int Id);

@@ -18,14 +18,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     btform.cpp \
     main.cpp \
+    recbox.cpp \
+    recboxitem.cpp \
     widget.cpp
 
 HEADERS += \
     btform.h \
+    recbox.h \
+    recboxitem.h \
     widget.h
 
 FORMS += \
     btform.ui \
+    recbox.ui \
+    recboxitem.ui \
     widget.ui
 
 # Default rules for deployment.

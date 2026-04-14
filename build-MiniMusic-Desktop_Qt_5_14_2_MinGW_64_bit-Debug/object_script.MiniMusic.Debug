@@ -1,0 +1,10 @@
+debug/btform.o
+debug/main.o
+debug/recbox.o
+debug/recboxitem.o
+debug/widget.o
+debug/qrc_resources.o
+debug/moc_btform.o
+debug/moc_recbox.o
+debug/moc_recboxitem.o
+debug/moc_widget.o

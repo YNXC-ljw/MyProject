@@ -8,6 +8,9 @@ BtForm::BtForm(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    //把音乐动画关闭，只留“本地音乐”显示
+    ui->lineBox->hide();
+
     //设置line1动画效果
     line1Animal = new QPropertyAnimation(ui->line1,"geometry",this);
     line1Animal->setDuration(1500);
@@ -72,6 +75,11 @@ int BtForm::getPageId() const
 void BtForm::clearBackground()
 {
     ui->btStyle->setStyleSheet("#btStyle:hover{ background-color: #66FFCC;}");
+}
+
+void BtForm::showAnimal()
+{
+    ui->lineBox->show();
 }
 
 void BtForm::mousePressEvent(QMouseEvent *event)
