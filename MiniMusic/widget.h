@@ -23,6 +23,8 @@ public:
     void contralMusic();
     //管理所有信号与信号槽的函数
     void connectSignalAndSlots();
+
+    QJsonArray randomPiction();
 private slots:
     //关闭窗口
     void on_quit_clicked();

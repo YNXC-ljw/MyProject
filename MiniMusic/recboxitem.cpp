@@ -16,16 +16,19 @@ RecBoxItem::~RecBoxItem()
 {
     delete ui;
 }
-
+//给推荐歌设置文本
 void RecBoxItem::setRecText(const QString &text)
 {
     ui->recBoxItemText->setText(text);
 }
-
+//给推荐歌设置图片
 void RecBoxItem::setRecImage(const QString &imagePath)
 {
-    QString style = "background-image:url("+imagePath+");";
-    ui->recBoxItemText->setStyleSheet(style);
+//    QString style = "background-image:url("+imagePath+");background-position:center center;";
+//    ui->recMusicImage->setStyleSheet(style);////无法控制图片大小，如果图片大于QLabel则只显示一部分内容
+    QPixmap pixmapskin(imagePath);
+    ui->recMusicImage->setPixmap(pixmapskin);
+    ui->recMusicImage->setScaledContents(true);//图片自适应QLabel大小
 }
 
 bool RecBoxItem::eventFilter(QObject *watched, QEvent *event)

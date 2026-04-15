@@ -1,0 +1,42 @@
+<RCC>
+    <qresource prefix="/">
+        <file>pages/001.jpg</file>
+        <file>pages/002.jpg</file>
+        <file>pages/003.jpg</file>
+        <file>pages/004.jpg</file>
+        <file>pages/005.jpg</file>
+        <file>pages/006.jpg</file>
+        <file>pages/007.jpg</file>
+        <file>pages/008.jpg</file>
+        <file>pages/009.jpg</file>
+        <file>pages/010.jpg</file>
+        <file>pages/011.jpg</file>
+        <file>pages/012.jpg</file>
+        <file>pages/013.jpg</file>
+        <file>pages/014.jpg</file>
+        <file>pages/015.jpg</file>
+        <file>pages/016.jpg</file>
+        <file>pages/017.jpg</file>
+        <file>pages/018.jpg</file>
+        <file>pages/019.jpg</file>
+        <file>pages/020.jpg</file>
+        <file>pages/021.jpg</file>
+        <file>pages/022.jpg</file>
+        <file>pages/023.jpg</file>
+        <file>pages/024.jpg</file>
+        <file>pages/025.jpg</file>
+        <file>pages/026.jpg</file>
+        <file>pages/027.jpg</file>
+        <file>pages/029.jpg</file>
+        <file>pages/030.jpg</file>
+        <file>pages/031.jpg</file>
+        <file>pages/032.jpg</file>
+        <file>pages/033.jpg</file>
+        <file>pages/034.jpg</file>
+        <file>pages/035.jpg</file>
+        <file>pages/036.jpg</file>
+        <file>pages/037.jpg</file>
+        <file>pages/038.jpg</file>
+        <file>pages/039.jpg</file>
+    </qresource>
+</RCC>

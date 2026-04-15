@@ -1,10 +1,15 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include"btform.h"
+
 #include<QMouseEvent>
 #include<QPushButton>
+
 #include<QGraphicsDropShadowEffect>
 #include<QDebug>
+
+#include<QJsonObject>
+#include<QJsonArray>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -82,6 +87,36 @@ void Widget::connectSignalAndSlots()
     connect(ui->local,&BtForm::btClicked,this,&Widget::onBtClicked);
     connect(ui->recent,&BtForm::btClicked,this,&Widget::onBtClicked);
 }
+//随机推荐图片
+QJsonArray Widget::randomPiction()
+{
+    QVector<QString> vecImageName;
+    vecImageName<< "001.jpg" << "002.jpg" << "003.jpg" << "004.jpg" << "005.jpg" << "006.jpg"
+                << "007.jpg" << "008.jpg" << "009.jpg" << "010.jpg" << "011.jpg" << "012.jpg"
+                << "013.jpg" << "014.jpg" << "015.jpg" << "016.jpg" << "017.jpg" << "018.jpg"
+                << "019.jpg" << "020.jpg" << "021.jpg" << "022.jpg" << "023.jpg" << "024.jpg"
+                << "025.jpg" << "026.jpg" << "027.jpg" << "028.jpg" << "029.jpg" << "030.jpg"
+                << "031.jpg" << "032.jpg" << "033.jpg" << "034.jpg" << "035.jpg" << "036.jpg"
+                << "037.jpg" << "038.jpg"<< "039.jpg";
+
+    std::random_shuffle(vecImageName.begin(),vecImageName.end());
+
+    //path = ":/image/pages/"+vecImageName[i];
+    //text = "推荐-001";
+
+    QJsonArray objArray;
+    for(int i = 0; i < vecImageName.size(); i++)
+    {
+        QJsonObject obj;
+        obj.insert("path",":/image/pages/"+vecImageName[i]);
+
+        QString strText = QString("推荐-%1").arg(i,3,10,QChar('0'));
+        obj.insert("text",strText);
+
+        objArray.append(obj);
+    }
+    return objArray;
+}
 
 void Widget::initUi()
 {
@@ -112,6 +147,9 @@ void Widget::initUi()
     //让本地下载默认显示音符跳动
     ui->local->showAnimal();
     ui->stackedWidget->setCurrentIndex(4);
+
+    ui->recMusicBox->initRecBoxUi(randomPiction(),1);
+    ui->supplyMusicBox->initRecBoxUi(randomPiction(),2);
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////

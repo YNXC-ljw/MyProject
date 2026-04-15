@@ -1,0 +1,10 @@
+release/btform.o
+release/main.o
+release/recbox.o
+release/recboxitem.o
+release/widget.o
+release/qrc_resources.o
+release/moc_btform.o
+release/moc_recbox.o
+release/moc_recboxitem.o
+release/moc_widget.o
