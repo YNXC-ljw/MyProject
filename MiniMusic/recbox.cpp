@@ -21,7 +21,8 @@ RecBox::~RecBox()
 {
     delete ui;
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
 void RecBox::initRecBoxUi(QJsonArray data, int row)
 {
     if(2 == row)
@@ -35,6 +36,9 @@ void RecBox::initRecBoxUi(QJsonArray data, int row)
     }
     //将传过来的data保存起来，在成员添加即可
     imageList = data;
+
+    currentIndex = 0;
+    count = imageList.size() / col;
     //在RecBox中添加RecBoxItem对象
     createRecBoxItem();
 }
@@ -49,9 +53,41 @@ void RecBox::createRecBoxItem()
         //给recBoxItem对象添加图片及文本
         QJsonObject obj = imageList[i].toObject();
         item->setRecText(obj.value("text").toString());
-
         item->setRecImage(obj.value("path").toString());
 
-        ui->recListUpHLayout->addWidget(item);
+        //今日为你推荐：row = 1, col = 4
+        //音乐补给站：row = 2, col = 8
+        if(2 == row && i >= col/2)
+        {
+            ui->recListDownVLayout->addWidget(item);
+        }
+        else
+        {
+            ui->recListUpHLayout->addWidget(item);
+        }
     }
+}
+
+void RecBox::on_btUp_clicked()
+{
+    //点击之后显示上一组的图片，如果已经是第0组了，点击后就显示最后一组
+    currentIndex--;
+    if(currentIndex < 0)
+    {
+        currentIndex = count - 1;
+    }
+
+    createRecBoxItem();
+}
+
+void RecBox::on_btDown_clicked()
+{
+    //点击之后显示下一组的图片，如果已经是最后一组了，点击后就显示第0组
+    currentIndex++;
+    if(currentIndex >= count)
+    {
+        currentIndex = 0;
+    }
+
+    createRecBoxItem();
 }

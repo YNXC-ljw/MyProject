@@ -598,7 +598,7 @@ public:
         myMusicText->setText(QCoreApplication::translate("Widget", "\346\210\221\347\232\204\351\237\263\344\271\220", nullptr));
         recText->setText(QCoreApplication::translate("Widget", "\346\216\250\350\215\220", nullptr));
         recMusicText->setText(QCoreApplication::translate("Widget", "\344\273\212\346\227\245\344\270\272\344\275\240\346\216\250\350\215\220", nullptr));
-        supplyMusicText->setText(QCoreApplication::translate("Widget", "\344\275\240\347\232\204\351\237\263\344\271\220\350\241\245\347\273\231", nullptr));
+        supplyMusicText->setText(QCoreApplication::translate("Widget", "\344\275\240\347\232\204\351\237\263\344\271\220\350\241\245\347\273\231\347\253\231", nullptr));
         label_2->setText(QCoreApplication::translate("Widget", "page2", nullptr));
         label_3->setText(QCoreApplication::translate("Widget", "page3", nullptr));
         label_4->setText(QCoreApplication::translate("Widget", "page4", nullptr));

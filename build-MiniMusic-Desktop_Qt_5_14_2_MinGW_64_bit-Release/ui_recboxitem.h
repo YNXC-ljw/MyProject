@@ -51,6 +51,8 @@ public:
         recMusicBtn->setStyleSheet(QString::fromUtf8("#recMusicBtn\n"
 "{\n"
 "	border:none;\n"
+"\n"
+"	background-color: transparent;\n"
 "}"));
 
         verticalLayout->addWidget(musicImageBox);

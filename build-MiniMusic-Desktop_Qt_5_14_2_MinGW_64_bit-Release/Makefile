@@ -223,6 +223,7 @@ Makefile: ../MiniMusic/MiniMusic.pro ../../../../APP/qt/qt/5.14.2/mingw73_64/mks
 		../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/qt_config.prf \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/win32-g++/qmake.conf \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/exclusive_builds.prf \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/toolchain.prf \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/default_pre.prf \
@@ -251,7 +252,6 @@ Makefile: ../MiniMusic/MiniMusic.pro ../../../../APP/qt/qt/5.14.2/mingw73_64/mks
 		../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Gui.prl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Core.prl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/lib/qtmain.prl \
-		.qmake.stash \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/build_pass.prf \
 		../MiniMusic/resources.qrc
 	$(QMAKE) -o Makefile ..\MiniMusic\MiniMusic.pro -spec win32-g++ "CONFIG+=qtquickcompiler"
@@ -408,6 +408,7 @@ Makefile: ../MiniMusic/MiniMusic.pro ../../../../APP/qt/qt/5.14.2/mingw73_64/mks
 ../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/qt_config.prf:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/win32-g++/qmake.conf:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/exclusive_builds.prf:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/toolchain.prf:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/default_pre.prf:
@@ -436,7 +437,6 @@ Makefile: ../MiniMusic/MiniMusic.pro ../../../../APP/qt/qt/5.14.2/mingw73_64/mks
 ../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Gui.prl:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Core.prl:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/lib/qtmain.prl:
-.qmake.stash:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/build_pass.prf:
 ../MiniMusic/resources.qrc:
 qmake: FORCE

@@ -19,6 +19,11 @@ public:
     void initRecBoxUi(QJsonArray data,int row);
 
 
+private slots:
+    void on_btUp_clicked();
+
+    void on_btDown_clicked();
+
 private:
     void createRecBoxItem();
 private:
@@ -27,6 +32,9 @@ private:
     int col;
 
     QJsonArray imageList;
+
+    int currentIndex;//标记当前显示的是第几组
+    int count;       //标记推荐页有几组
 };
 
 #endif // RECBOX_H
