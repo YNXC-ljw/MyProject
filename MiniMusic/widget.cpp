@@ -1,15 +1,16 @@
 #include "widget.h"
 #include "ui_widget.h"
-#include"btform.h"
+#include "btform.h"
+#include "commonpage.h"
 
-#include<QMouseEvent>
-#include<QPushButton>
+#include <QMouseEvent>
+#include <QPushButton>
 
-#include<QGraphicsDropShadowEffect>
-#include<QDebug>
+#include <QGraphicsDropShadowEffect>
+#include <QDebug>
 
-#include<QJsonObject>
-#include<QJsonArray>
+#include <QJsonObject>
+#include <QJsonArray>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -99,7 +100,7 @@ QJsonArray Widget::randomPiction()
                 << "031.jpg" << "032.jpg" << "033.jpg" << "034.jpg" << "035.jpg" << "036.jpg"
                 << "037.jpg" << "038.jpg"<< "039.jpg";
 
-    std::random_shuffle(vecImageName.begin(),vecImageName.end());
+    std::random_shuffle(vecImageName.begin(),vecImageName.end());//若没有设置随机数种子，那么每次的种子都是一样的，运行n次都是一样的结果
 
     //path = ":/image/pages/"+vecImageName[i];
     //text = "推荐-001";
@@ -148,8 +149,15 @@ void Widget::initUi()
     ui->local->showAnimal();
     ui->stackedWidget->setCurrentIndex(4);
 
+    //初始化推荐页面
+    srand(time(NULL));
     ui->recMusicBox->initRecBoxUi(randomPiction(),1);
     ui->supplyMusicBox->initRecBoxUi(randomPiction(),2);
+
+    //初始化page页面
+    ui->likePage->setCommonPageUi("我喜欢",":/image/ilike.jpg");
+    ui->localPage->setCommonPageUi("本地音乐",":/image/local.jpg");
+    ui->recentPage->setCommonPageUi("最近播放",":/image/recent.jpg");
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////

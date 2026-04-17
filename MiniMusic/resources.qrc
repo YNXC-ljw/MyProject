@@ -57,5 +57,8 @@
         <file>image/pages/037.jpg</file>
         <file>image/pages/038.jpg</file>
         <file>image/pages/039.jpg</file>
+        <file>image/local.jpg</file>
+        <file>image/recent.jpg</file>
+        <file>image/ilike.jpg</file>
     </qresource>
 </RCC>

@@ -46,7 +46,22 @@ void RecBox::initRecBoxUi(QJsonArray data, int row)
 //在recbox中构造并添加recBoxItem对象
 void RecBox::createRecBoxItem()
 {
-    for(int i = 0;i < col; i++)
+    //为了避免重复构造item，导致推荐框图片大于4，要删除原先已经存在的推荐图再构造
+    QList<RecBoxItem*> recUpList = ui->recListUp->findChildren<RecBoxItem*>();
+    for(auto e : recUpList)
+    {
+        ui->recListUpHLayout->removeWidget(e);
+        delete e;
+    }
+    QList<RecBoxItem*> recDownList = ui->recListDown->findChildren<RecBoxItem*>();
+    for(auto e : recDownList)
+    {
+        ui->recListDownVLayout->removeWidget(e);
+        delete e;
+    }
+
+    int index = 0;
+    for(int i = currentIndex * col;i < col + col * currentIndex; i++)
     {
         RecBoxItem* item = new RecBoxItem();
 
@@ -57,7 +72,7 @@ void RecBox::createRecBoxItem()
 
         //今日为你推荐：row = 1, col = 4
         //音乐补给站：row = 2, col = 8
-        if(2 == row && i >= col/2)
+        if(2 == row && index >= col/2)
         {
             ui->recListDownVLayout->addWidget(item);
         }
@@ -65,6 +80,7 @@ void RecBox::createRecBoxItem()
         {
             ui->recListUpHLayout->addWidget(item);
         }
+        index++;
     }
 }
 

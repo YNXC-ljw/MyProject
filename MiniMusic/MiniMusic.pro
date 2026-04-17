@@ -17,19 +17,28 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     btform.cpp \
+    commonpage.cpp \
+    listitem.cpp \
     main.cpp \
+    musicslider.cpp \
     recbox.cpp \
     recboxitem.cpp \
     widget.cpp
 
 HEADERS += \
     btform.h \
+    commonpage.h \
+    listitem.h \
+    musicslider.h \
     recbox.h \
     recboxitem.h \
     widget.h
 
 FORMS += \
     btform.ui \
+    commonpage.ui \
+    listitem.ui \
+    musicslider.ui \
     recbox.ui \
     recboxitem.ui \
     widget.ui
