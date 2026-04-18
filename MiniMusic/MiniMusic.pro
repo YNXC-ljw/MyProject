@@ -23,6 +23,7 @@ SOURCES += \
     musicslider.cpp \
     recbox.cpp \
     recboxitem.cpp \
+    volumetool.cpp \
     widget.cpp
 
 HEADERS += \
@@ -32,6 +33,7 @@ HEADERS += \
     musicslider.h \
     recbox.h \
     recboxitem.h \
+    volumetool.h \
     widget.h
 
 FORMS += \
@@ -41,6 +43,7 @@ FORMS += \
     musicslider.ui \
     recbox.ui \
     recboxitem.ui \
+    volumetool.ui \
     widget.ui
 
 # Default rules for deployment.

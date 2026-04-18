@@ -21,8 +21,9 @@
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
-#include <commonpage.h>
+#include <musicslider.h>
 #include "btform.h"
+#include "commonpage.h"
 #include "recbox.h"
 
 QT_BEGIN_NAMESPACE
@@ -87,7 +88,7 @@ public:
     CommonPage *likePage;
     CommonPage *localPage;
     CommonPage *recentPage;
-    QWidget *progressBar;
+    MusicSlider *progressBar;
     QWidget *controlBox;
     QHBoxLayout *horizontalLayout_8;
     QWidget *play1;
@@ -353,7 +354,7 @@ public:
 
         bodyright = new QWidget(body);
         bodyright->setObjectName(QString::fromUtf8("bodyright"));
-        bodyright->setStyleSheet(QString::fromUtf8("background-color:#CCFFFF;"));
+        bodyright->setStyleSheet(QString::fromUtf8(""));
         verticalLayout_6 = new QVBoxLayout(bodyright);
         verticalLayout_6->setSpacing(0);
         verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
@@ -436,11 +437,11 @@ public:
 
         verticalLayout_6->addWidget(stackedWidget);
 
-        progressBar = new QWidget(bodyright);
+        progressBar = new MusicSlider(bodyright);
         progressBar->setObjectName(QString::fromUtf8("progressBar"));
         progressBar->setMinimumSize(QSize(0, 30));
         progressBar->setMaximumSize(QSize(16777215, 30));
-        progressBar->setStyleSheet(QString::fromUtf8("background-color:rgb(200, 255, 166);"));
+        progressBar->setStyleSheet(QString::fromUtf8(""));
 
         verticalLayout_6->addWidget(progressBar);
 
@@ -448,7 +449,7 @@ public:
         controlBox->setObjectName(QString::fromUtf8("controlBox"));
         controlBox->setMinimumSize(QSize(0, 60));
         controlBox->setMaximumSize(QSize(16777215, 60));
-        controlBox->setStyleSheet(QString::fromUtf8(""));
+        controlBox->setStyleSheet(QString::fromUtf8("background-color:#CCFFFF;"));
         horizontalLayout_8 = new QHBoxLayout(controlBox);
         horizontalLayout_8->setSpacing(0);
         horizontalLayout_8->setObjectName(QString::fromUtf8("horizontalLayout_8"));

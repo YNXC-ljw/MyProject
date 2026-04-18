@@ -500,7 +500,7 @@
        <item>
         <widget class="QWidget" name="bodyright" native="true">
          <property name="styleSheet">
-          <string notr="true">background-color:#CCFFFF;</string>
+          <string notr="true"/>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <property name="spacing">
@@ -664,7 +664,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="progressBar" native="true">
+           <widget class="MusicSlider" name="progressBar" native="true">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -678,7 +678,7 @@
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">background-color:rgb(200, 255, 166);</string>
+             <string notr="true"/>
             </property>
            </widget>
           </item>
@@ -697,7 +697,7 @@
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">background-color:#CCFFFF;</string>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_8">
              <property name="spacing">
@@ -1000,7 +1000,13 @@ QPushButton:hover
   <customwidget>
    <class>CommonPage</class>
    <extends>QWidget</extends>
-   <header location="global">commonpage.h</header>
+   <header>commonpage.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MusicSlider</class>
+   <extends>QWidget</extends>
+   <header location="global">musicslider.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -60,5 +60,6 @@
         <file>image/local.jpg</file>
         <file>image/recent.jpg</file>
         <file>image/ilike.jpg</file>
+        <file>image/volume.png</file>
     </qresource>
 </RCC>

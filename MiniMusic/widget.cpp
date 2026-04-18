@@ -22,6 +22,9 @@ Widget::Widget(QWidget *parent)
     initUi();
 
     connectSignalAndSlots();
+
+
+//    ui->progressBar->setStyleSheet("background-color:white;");
 }
 
 Widget::~Widget()
@@ -158,6 +161,8 @@ void Widget::initUi()
     ui->likePage->setCommonPageUi("我喜欢",":/image/ilike.jpg");
     ui->localPage->setCommonPageUi("本地音乐",":/image/local.jpg");
     ui->recentPage->setCommonPageUi("最近播放",":/image/recent.jpg");
+
+    volumeTool = new VolumeTool(this);
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -217,4 +222,19 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
         return;
     }
     QWidget::mouseMoveEvent(event);
+}
+
+void Widget::on_volume_clicked()
+{
+    // 1. 获取ui->volume控件的左上角坐标，并转换为全局坐标
+    QPoint point = ui->volume->mapToGlobal(QPoint(0,0));
+
+    // 2. 计算volumeTool窗口所需要移动到的左上角的坐标
+    QPoint volumeLeftTop = point - QPoint(volumeTool->width() / 2,volumeTool->height());
+
+    // 3. 将volumeTool移动到坐标位置
+    volumeTool->move(volumeLeftTop);
+
+    // 4. 显示窗口
+    volumeTool->show();
 }

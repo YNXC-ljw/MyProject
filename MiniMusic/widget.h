@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include "volumetool.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -35,6 +36,10 @@ private slots:
 
     void onBtClicked(int pageId);
 
+
+
+    void on_volume_clicked();
+
 protected:
     //重写鼠标点击函数
     void mousePressEvent(QMouseEvent *event);
@@ -45,5 +50,7 @@ private:
     Ui::Widget *ui;
 
     QPoint dragPosition;
+
+    VolumeTool* volumeTool;
 };
 #endif // WIDGET_H

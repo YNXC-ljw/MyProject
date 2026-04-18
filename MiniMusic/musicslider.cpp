@@ -6,6 +6,8 @@ MusicSlider::MusicSlider(QWidget *parent) :
     ui(new Ui::MusicSlider)
 {
     ui->setupUi(this);
+//    setStyleSheet("background-color: yellow");
+    setAutoFillBackground(true);
 }
 
 MusicSlider::~MusicSlider()
