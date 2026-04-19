@@ -12,6 +12,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <QFileDialog>
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -232,9 +234,44 @@ void Widget::on_volume_clicked()
     // 2. 计算volumeTool窗口所需要移动到的左上角的坐标
     QPoint volumeLeftTop = point - QPoint(volumeTool->width() / 2,volumeTool->height());
 
+    volumeLeftTop.setX(volumeLeftTop.x() + 15);
+    volumeLeftTop.setY(volumeLeftTop.y() + 30);
     // 3. 将volumeTool移动到坐标位置
     volumeTool->move(volumeLeftTop);
 
     // 4. 显示窗口
     volumeTool->show();
+}
+
+void Widget::on_addLocal_clicked()
+{
+    QFileDialog fileDialog(this);
+
+    //添加本地音源
+    fileDialog.setWindowTitle("添加本地音乐");
+
+    //设置文件对话框打开的默认路径
+    QDir dir(QDir::currentPath());
+    dir.cdUp();
+    QString projectPath = dir.path();
+    projectPath += "/MiniMusic";
+    fileDialog.setDirectory(projectPath);
+
+    //设置一次可以选择多个文件
+    fileDialog.setFileMode(QFileDialog::ExistingFiles);
+//    fileDialog.exec();
+
+    //通过MIME类型来过滤文件
+    QStringList mimeTypeFilters;
+    mimeTypeFilters << "application/octet-stream";
+    fileDialog.setMimeTypeFilters(mimeTypeFilters);
+
+    if(fileDialog.exec() == QDialog::Accepted)//当打开对话框并选择了文件时
+    {
+        //获取选中的文件
+        QList<QUrl> fileUrls = fileDialog.selectedUrls();//fileUrls中存放的是被选中的所有文件的路径
+
+        //将所有音乐添加到音乐列表中进行管理
+        musicList.addMusicsByUrl(fileUrls);
+    }
 }

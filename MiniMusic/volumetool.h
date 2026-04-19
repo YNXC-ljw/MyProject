@@ -2,6 +2,7 @@
 #define VOLUMETOOL_H
 
 #include <QWidget>
+#include <QPaintEvent>
 
 namespace Ui {
 class VolumeTool;
@@ -14,6 +15,8 @@ class VolumeTool : public QWidget
 public:
     explicit VolumeTool(QWidget *parent = nullptr);
     ~VolumeTool();
+
+    void paintEvent(QPaintEvent *event);
 
 private:
     Ui::VolumeTool *ui;

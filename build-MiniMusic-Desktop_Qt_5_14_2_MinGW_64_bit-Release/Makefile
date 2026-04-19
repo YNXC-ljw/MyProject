@@ -248,8 +248,10 @@ Makefile: ../MiniMusic/MiniMusic.pro ../../../../APP/qt/qt/5.14.2/mingw73_64/mks
 		../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/yacc.prf \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/lex.prf \
 		../MiniMusic/MiniMusic.pro \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Multimedia.prl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Widgets.prl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Gui.prl \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Network.prl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Core.prl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/lib/qtmain.prl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/build_pass.prf \
@@ -433,8 +435,10 @@ Makefile: ../MiniMusic/MiniMusic.pro ../../../../APP/qt/qt/5.14.2/mingw73_64/mks
 ../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/yacc.prf:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/lex.prf:
 ../MiniMusic/MiniMusic.pro:
+../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Multimedia.prl:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Widgets.prl:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Gui.prl:
+../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Network.prl:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/lib/Qt5Core.prl:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/lib/qtmain.prl:
 ../../../../APP/qt/qt/5.14.2/mingw73_64/mkspecs/features/build_pass.prf:

@@ -2,6 +2,8 @@ release/btform.o
 release/commonpage.o
 release/listitem.o
 release/main.o
+release/music.o
+release/musiclist.o
 release/musicslider.o
 release/recbox.o
 release/recboxitem.o

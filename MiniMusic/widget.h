@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "volumetool.h"
+#include "musiclist.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -40,6 +41,8 @@ private slots:
 
     void on_volume_clicked();
 
+    void on_addLocal_clicked();
+
 protected:
     //重写鼠标点击函数
     void mousePressEvent(QMouseEvent *event);
@@ -52,5 +55,7 @@ private:
     QPoint dragPosition;
 
     VolumeTool* volumeTool;
+
+    MusicList musicList;
 };
 #endif // WIDGET_H
