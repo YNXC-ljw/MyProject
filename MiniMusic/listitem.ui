@@ -64,6 +64,12 @@
           <height>25</height>
          </size>
         </property>
+        <property name="styleSheet">
+         <string notr="true">#likeBtn
+{
+	border: none;
+}</string>
+        </property>
         <property name="text">
          <string/>
         </property>

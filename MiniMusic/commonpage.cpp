@@ -2,6 +2,8 @@
 #include "ui_commonpage.h"
 #include "listitem.h"
 
+#include <QDebug>
+
 CommonPage::CommonPage(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CommonPage)
@@ -14,15 +16,67 @@ CommonPage::~CommonPage()
     delete ui;
 }
 
+void CommonPage::setMusicListType(PageType pageType)
+{
+    this->pageType = pageType;
+}
+
 void CommonPage::setCommonPageUi(const QString& text,const QString& imagePath)
 {
     ui->pageTitle->setText(text);
     ui->musicImageLabel->setPixmap(QPixmap(imagePath));
     ui->musicImageLabel->setScaledContents(true);
 
-    //测试代码：
-    ListItem* listItem = new ListItem(this);
-    QListWidgetItem* item = new QListWidgetItem(ui->pageMusicList);
-    item->setSizeHint(QSize(listItem->width(),listItem->height()));
-    ui->pageMusicList->setItemWidget(item,listItem);
+
 }
+
+void CommonPage::addMusicToMusicPage(MusicList &musicList)
+{
+    for(auto music : musicList)//直接使用范围for遍历不可取，因为自定义类MusicList未支持迭代器
+    {
+        switch(pageType)
+        {
+            case LIKE_PAGE:
+                if(music.getIsLike())
+                {
+                    musicOfPage.push_back(music.getMusicId());
+                }
+                break;
+            case LOCAL_PAGE:
+                musicOfPage.push_back(music.getMusicId());
+                break;
+            case HISTORY_PAGE:
+                if(music.getIsHistory())
+                {
+                    musicOfPage.push_back(music.getMusicId());
+                }
+                break;
+            default:
+                qDebug()<<"暂未支持";
+        }
+    }
+}
+//将歌曲信息上传到对应的page页面
+void CommonPage::reFrush(MusicList& musicList)
+{
+    addMusicToMusicPage(musicList);
+    for(auto musicId : musicOfPage)//有了id就该获取到此id对应的所有数据
+    {
+        auto it = musicList.findMusicById(musicId);//通过id查找对应的文件
+        if(it == musicList.end())
+            continue;
+
+        //将Music中的歌曲名称、作者、专辑名称更新到界面中
+        ListItem* listItem = new ListItem(this);
+
+        listItem->setMusicName(it->getMusicName());
+        listItem->setMusicSinger(it->getMusicSinger());
+        listItem->setMusicAlbum(it->getMusicAlbum());
+
+        QListWidgetItem* item = new QListWidgetItem(ui->pageMusicList);
+        item->setSizeHint(QSize(listItem->width(),listItem->height()));
+        ui->pageMusicList->setItemWidget(item,listItem);
+    }
+}
+
+

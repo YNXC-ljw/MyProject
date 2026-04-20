@@ -18,6 +18,10 @@ public:
     //QWidget不支持hover，要想达到该效果必须重写函数进行拦截
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
+
+    void setMusicName(const QString& musicName);
+    void setMusicSinger(const QString& musicSinger);
+    void setMusicAlbum(const QString& musicAlbum);
 private:
     Ui::ListItem *ui;
 };

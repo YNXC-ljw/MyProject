@@ -24,3 +24,17 @@ void ListItem::leaveEvent(QEvent *event)
     (void)event;
     setStyleSheet("");
 }
+void ListItem::setMusicName(const QString &musicName)
+{
+    ui->musicNameLabel->setText(musicName);
+}
+
+void ListItem::setMusicSinger(const QString &musicSinger)
+{
+    ui->musicSingerLabel->setText(musicSinger);
+}
+
+void ListItem::setMusicAlbum(const QString &musicAlbum)
+{
+    ui->musicAlbumLabel->setText(musicAlbum);
+}

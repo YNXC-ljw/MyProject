@@ -160,8 +160,13 @@ void Widget::initUi()
     ui->supplyMusicBox->initRecBoxUi(randomPiction(),2);
 
     //初始化page页面
+    ui->likePage->setMusicListType(PageType::LIKE_PAGE);
     ui->likePage->setCommonPageUi("我喜欢",":/image/ilike.jpg");
+
+    ui->localPage->setMusicListType(PageType::LOCAL_PAGE);
     ui->localPage->setCommonPageUi("本地音乐",":/image/local.jpg");
+
+    ui->recentPage->setMusicListType(PageType::HISTORY_PAGE);
     ui->recentPage->setCommonPageUi("最近播放",":/image/recent.jpg");
 
     volumeTool = new VolumeTool(this);
@@ -272,6 +277,11 @@ void Widget::on_addLocal_clicked()
         QList<QUrl> fileUrls = fileDialog.selectedUrls();//fileUrls中存放的是被选中的所有文件的路径
 
         //将所有音乐添加到音乐列表中进行管理
-        musicList.addMusicsByUrl(fileUrls);
+        musicList.addMusicsByUrl(fileUrls);//存放的是已经被解析过的music
+
+        //要将文件中的音乐上传到本地，那默认的commonPage页面就应该是"本地下载"页面
+        ui->stackedWidget->setCurrentIndex(4);
+
+        ui->localPage->reFrush(musicList);
     }
 }

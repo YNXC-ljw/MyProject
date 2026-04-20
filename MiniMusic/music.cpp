@@ -1,6 +1,9 @@
 #include "music.h"
 #include <QUuid>
 #include <QMediaPlayer>
+#include <QCoreApplication>
+#include <QDebug>
+
 Music::Music()
     :isLike(false)
     ,isHistory(false)
@@ -96,14 +99,54 @@ void Music::parseMediaMetaMusic()
 
     while(!player.isMetaDataAvailable())
     {
-        ;
+        QCoreApplication::processEvents();
     }
+    //到此说明已经加载完成，可以获取到有效的元数据
     if(player.isMetaDataAvailable())
     {
         musicName = player.metaData("Title").toString();
         musicSinger = player.metaData("Auther").toString();
         musicAlbum = player.metaData("AlbumTitle").toString();
         duration = player.metaData("Duration").toLongLong();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        //如果上述方法遇到格式不对或者盗版音乐，获取不到歌曲信息
+        //那就通过获取文件名的方式自己获取并打印对应的信息
+        QString filename = musicUrl.fileName();
+
+        //"马也_Crabbit+-+海屿你.mp3"
+        //"海屿你.mp3"
+        int index = filename.indexOf("-");
+        if(musicName.isEmpty())
+        {
+            if(index != -1)
+            {
+                musicName = filename.mid(index+1,filename.indexOf("."));
+            }
+            else
+            {
+                musicName = "未知音乐";
+            }
+        }
+        //如果获取到的musicSinger为" "，就自己处理
+        if(musicSinger.isEmpty())
+        {
+            if(index != -1)
+            {
+                musicSinger = filename.mid(0, index);
+            }
+            else
+            {
+                musicSinger = "位置歌手";
+            }
+        }
+        if(musicAlbum.isEmpty())
+        {
+            musicAlbum = "未知专辑";
+        }
+        qDebug() << filename;
+        qDebug() << musicName << ":" << musicSinger << ":" << musicAlbum << ":" << duration;
     }
+
 
 }
