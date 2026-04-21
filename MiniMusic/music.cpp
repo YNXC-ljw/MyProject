@@ -121,7 +121,7 @@ void Music::parseMediaMetaMusic()
         {
             if(index != -1)
             {
-                musicName = filename.mid(index+1,filename.indexOf("."));
+                musicName = filename.mid(index+1,filename.indexOf(".") - index - 1).trimmed();
             }
             else
             {

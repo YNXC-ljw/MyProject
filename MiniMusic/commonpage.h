@@ -30,6 +30,8 @@ public:
 
     void reFrush(MusicList& musicList);
 
+signals:
+    void updateLikeMusic(bool isLike,const QString& musicId);
 
 private:
     Ui::CommonPage *ui;

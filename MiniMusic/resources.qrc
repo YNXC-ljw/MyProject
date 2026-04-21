@@ -61,5 +61,7 @@
         <file>image/recent.jpg</file>
         <file>image/ilike.jpg</file>
         <file>image/volume.png</file>
+        <file>image/love.png</file>
+        <file>image/unlove.png</file>
     </qresource>
 </RCC>

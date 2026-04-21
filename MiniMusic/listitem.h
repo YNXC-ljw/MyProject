@@ -22,8 +22,16 @@ public:
     void setMusicName(const QString& musicName);
     void setMusicSinger(const QString& musicSinger);
     void setMusicAlbum(const QString& musicAlbum);
+
+    void setLikeMusic(bool isLike);
+    void onLikeBtnClicked();
+
+signals:
+    void setIsLike(bool isLike);
 private:
     Ui::ListItem *ui;
+
+    bool isLike;
 };
 
 #endif // LISTITEM_H

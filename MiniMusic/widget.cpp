@@ -92,6 +92,12 @@ void Widget::connectSignalAndSlots()
     connect(ui->like,&BtForm::btClicked,this,&Widget::onBtClicked);
     connect(ui->local,&BtForm::btClicked,this,&Widget::onBtClicked);
     connect(ui->recent,&BtForm::btClicked,this,&Widget::onBtClicked);
+
+    //响应commonPage发出的处理信号
+    connect(ui->likePage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
+    connect(ui->localPage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
+    connect(ui->recentPage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
+
 }
 //随机推荐图片
 QJsonArray Widget::randomPiction()
@@ -206,6 +212,21 @@ void Widget::onBtClicked(int pageId)
     ui->stackedWidget->setCurrentIndex(pageId);
 }
 
+void Widget::updateLikeMusicAndPage(bool isLike, const QString &musicId)
+{
+    // 1. 修改状态
+    auto it = musicList.findMusicById(musicId);
+    if(it != musicList.end())
+    {
+        it->setIsLike(isLike);
+    }
+
+    // 2. 更新page页面的歌曲信息
+    ui->likePage->reFrush(musicList);
+    ui->localPage->reFrush(musicList);
+    ui->recentPage->reFrush(musicList);
+}
+
 //鼠标点击
 void Widget::mousePressEvent(QMouseEvent *event)
 {
@@ -231,6 +252,9 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
     QWidget::mouseMoveEvent(event);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+//音量调节按钮
 void Widget::on_volume_clicked()
 {
     // 1. 获取ui->volume控件的左上角坐标，并转换为全局坐标
@@ -248,6 +272,7 @@ void Widget::on_volume_clicked()
     volumeTool->show();
 }
 
+//添加本地音乐按钮
 void Widget::on_addLocal_clicked()
 {
     QFileDialog fileDialog(this);
@@ -259,7 +284,7 @@ void Widget::on_addLocal_clicked()
     QDir dir(QDir::currentPath());
     dir.cdUp();
     QString projectPath = dir.path();
-    projectPath += "/MiniMusic";
+    projectPath += "/MiniMusic/music";
     fileDialog.setDirectory(projectPath);
 
     //设置一次可以选择多个文件

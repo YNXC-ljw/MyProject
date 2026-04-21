@@ -36,7 +36,7 @@ private slots:
     void on_max_clicked();
 
     void onBtClicked(int pageId);
-
+    void updateLikeMusicAndPage(bool isLike,const QString& musicId);
 
 
     void on_volume_clicked();

@@ -9,6 +9,8 @@ CommonPage::CommonPage(QWidget *parent) :
     ui(new Ui::CommonPage)
 {
     ui->setupUi(this);
+
+    ui->pageMusicList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 CommonPage::~CommonPage()
@@ -72,11 +74,22 @@ void CommonPage::reFrush(MusicList& musicList)
         listItem->setMusicName(it->getMusicName());
         listItem->setMusicSinger(it->getMusicSinger());
         listItem->setMusicAlbum(it->getMusicAlbum());
+        listItem->setLikeMusic(it->getIsLike());
 
         QListWidgetItem* item = new QListWidgetItem(ui->pageMusicList);
         item->setSizeHint(QSize(listItem->width(),listItem->height()));
         ui->pageMusicList->setItemWidget(item,listItem);
+
+        //将传递过来的信号进行拦截，自己处理
+        connect(listItem,&ListItem::setIsLike,this,[=](bool isLike){
+            //更新歌曲状态
+            //通知widget更新likePage、localPage、recentPage中的歌曲信息
+            emit updateLikeMusic(isLike,it->getMusicId());
+        });
     }
+    //触发窗口重绘事件:paintEvent
+    //update();     //不会立马处理paintEvent，而是将它放到消息处理队列中
+    repaint();      //立马处理paintEvent
 }
 
 
