@@ -1,5 +1,6 @@
 #include "listitem.h"
 #include "ui_listitem.h"
+#include <QDebug>
 
 ListItem::ListItem(QWidget *parent) :
     QWidget(parent),
@@ -13,6 +14,7 @@ ListItem::ListItem(QWidget *parent) :
 
 ListItem::~ListItem()
 {
+    //qDebug() << "ListItemBox被销毁";
     delete ui;
 }
 

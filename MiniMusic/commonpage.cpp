@@ -34,6 +34,9 @@ void CommonPage::setCommonPageUi(const QString& text,const QString& imagePath)
 
 void CommonPage::addMusicToMusicPage(MusicList &musicList)
 {
+    //每调用一次该函数都会重复添加原先已经存在过的歌曲，所以要新增歌曲就要把原先已经存在的清除掉
+    musicOfPage.clear();
+
     for(auto music : musicList)//直接使用范围for遍历不可取，因为自定义类MusicList未支持迭代器
     {
         switch(pageType)
@@ -61,6 +64,10 @@ void CommonPage::addMusicToMusicPage(MusicList &musicList)
 //将歌曲信息上传到对应的page页面
 void CommonPage::reFrush(MusicList& musicList)
 {
+    //将QWidgetList之前添加的内容全部清空
+    ui->pageMusicList->clear();
+
+    //添加新的歌曲
     addMusicToMusicPage(musicList);
     for(auto musicId : musicOfPage)//有了id就该获取到此id对应的所有数据
     {

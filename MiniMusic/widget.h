@@ -2,6 +2,8 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QMediaPlayer>
+
 #include "volumetool.h"
 #include "musiclist.h"
 
@@ -43,6 +45,9 @@ private slots:
 
     void on_addLocal_clicked();
 
+    //播放控制区的槽函数
+    void onPlayMiusic();
+
 protected:
     //重写鼠标点击函数
     void mousePressEvent(QMouseEvent *event);
@@ -57,5 +62,7 @@ private:
     VolumeTool* volumeTool;
 
     MusicList musicList;
+
+    QMediaPlayer* player;
 };
 #endif // WIDGET_H

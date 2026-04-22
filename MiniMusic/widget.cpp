@@ -98,6 +98,8 @@ void Widget::connectSignalAndSlots()
     connect(ui->localPage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
     connect(ui->recentPage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
 
+    //播放控制区
+    connect(ui->play,&QPushButton::clicked,this,&Widget::onPlayMiusic);
 }
 //随机推荐图片
 QJsonArray Widget::randomPiction()
@@ -176,6 +178,9 @@ void Widget::initUi()
     ui->recentPage->setCommonPageUi("最近播放",":/image/recent.jpg");
 
     volumeTool = new VolumeTool(this);
+
+    //初始化播放类
+    player = new QMediaPlayer(this);
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -193,7 +198,7 @@ void Widget::on_min_clicked()
 //窗口最大化
 void Widget::on_max_clicked()
 {
-    this->setWindowState(Qt::WindowMaximized);
+    this->setWindowState(Qt::WindowFullScreen);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -309,4 +314,16 @@ void Widget::on_addLocal_clicked()
 
         ui->localPage->reFrush(musicList);
     }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////
+//播放控制区
+
+//播放歌曲按钮
+void Widget::onPlayMiusic()
+{
+    // 1. 设置媒体播放源
+    player->setMedia(musicList.begin()->getMusicUrl());
+
+    // 2. 播放
+    player->play();
 }
