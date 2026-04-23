@@ -2,6 +2,7 @@
 #define COMMONPAGE_H
 
 #include <QWidget>
+#include <QMediaPlaylist>
 #include "musiclist.h"
 
 namespace Ui {
@@ -29,6 +30,9 @@ public:
     void addMusicToMusicPage(MusicList& musicList);
 
     void reFrush(MusicList& musicList);
+
+    // 将歌曲添加到播放列表中
+    void addMusicToPlayList(MusicList& musicList,QMediaPlaylist* playList);
 
 signals:
     void updateLikeMusic(bool isLike,const QString& musicId);

@@ -161,6 +161,9 @@ release/qrc_resources.cpp: ../MiniMusic/resources.qrc \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/bin/rcc.exe \
 		../MiniMusic/image/min.png \
 		../MiniMusic/image/rec.png \
+		../MiniMusic/image/single.png \
+		../MiniMusic/image/play_2.png \
+		../MiniMusic/image/random.png \
 		../MiniMusic/image/radio.png \
 		../MiniMusic/image/shuffle.png \
 		../MiniMusic/image/quit.png \
@@ -176,6 +179,7 @@ release/qrc_resources.cpp: ../MiniMusic/resources.qrc \
 		../MiniMusic/image/volume.png \
 		../MiniMusic/image/max.png \
 		../MiniMusic/image/recent.jpg \
+		../MiniMusic/image/loop.png \
 		../MiniMusic/image/playDown.png \
 		../MiniMusic/image/volumn.png \
 		../MiniMusic/image/recent.png \
@@ -452,9 +456,26 @@ release/moc_commonpage.cpp: ../MiniMusic/commonpage.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qfiledevice.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvector2d.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/QMediaPlaylist \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaplaylist.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediacontent.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaresource.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qnetworkrequest.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qtnetworkglobal.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qtnetwork-config.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QSharedDataPointer \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QString \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QUrl \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVariant \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qtmultimediaglobal.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qtmultimedia-config.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaobject.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmultimedia.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediabindableinterface.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaenumdebug.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qmetaobject.h \
 		../MiniMusic/musiclist.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVector \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QUrl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QList \
 		../MiniMusic/music.h \
 		release/moc_predefs.h \
@@ -1115,11 +1136,32 @@ release/moc_widget.cpp: ../MiniMusic/widget.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qfiledevice.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvector2d.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/QMediaPlayer \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaplayer.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaobject.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qtmultimediaglobal.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qtmultimedia-config.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmultimedia.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediacontent.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaresource.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qnetworkrequest.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qtnetworkglobal.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qtnetwork-config.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QSharedDataPointer \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QString \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QUrl \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVariant \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaenumdebug.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qmetaobject.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qaudio.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qnetworkconfiguration.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/QMediaPlaylist \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaplaylist.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediabindableinterface.h \
 		../MiniMusic/volumetool.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/QPaintEvent \
 		../MiniMusic/musiclist.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVector \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QUrl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QList \
 		../MiniMusic/music.h \
 		release/moc_predefs.h \
@@ -1487,9 +1529,26 @@ ui_widget.h: ../MiniMusic/widget.ui \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qfiledevice.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvector2d.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/QMediaPlaylist \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaplaylist.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediacontent.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaresource.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qnetworkrequest.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qtnetworkglobal.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qtnetwork-config.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QSharedDataPointer \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QString \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QUrl \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVariant \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qtmultimediaglobal.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qtmultimedia-config.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaobject.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmultimedia.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediabindableinterface.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaenumdebug.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qmetaobject.h \
 		../MiniMusic/musiclist.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVector \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QUrl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QList \
 		../MiniMusic/music.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QWidget \
@@ -1721,6 +1780,22 @@ release/btform.o: ../MiniMusic/btform.cpp ../MiniMusic/btform.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qeasingcurve.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qabstractanimation.h \
 		ui_btform.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVariant \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QApplication \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QHBoxLayout \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QLabel \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlabel.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qframe.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/QMouseEvent
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\btform.o ..\MiniMusic\btform.cpp
 
@@ -1829,12 +1904,68 @@ release/commonpage.o: ../MiniMusic/commonpage.cpp ../MiniMusic/commonpage.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qfiledevice.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvector2d.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/QMediaPlaylist \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaplaylist.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediacontent.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaresource.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qnetworkrequest.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qtnetworkglobal.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qtnetwork-config.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QSharedDataPointer \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QString \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QUrl \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVariant \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qtmultimediaglobal.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qtmultimedia-config.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaobject.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmultimedia.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediabindableinterface.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaenumdebug.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qmetaobject.h \
 		../MiniMusic/musiclist.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVector \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QUrl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QList \
 		../MiniMusic/music.h \
 		ui_commonpage.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QApplication \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QHBoxLayout \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QLabel \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlabel.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qframe.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QListWidget \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlistwidget.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlistview.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractitemview.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractscrollarea.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qabstractitemmodel.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qitemselectionmodel.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractitemdelegate.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qstyleoption.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractspinbox.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvalidator.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qregularexpression.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qicon.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qslider.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractslider.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qstyle.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qtabbar.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qtabwidget.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qrubberband.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QSpacerItem \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QVBoxLayout \
 		../MiniMusic/listitem.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\commonpage.o ..\MiniMusic\commonpage.cpp
@@ -1945,6 +2076,27 @@ release/listitem.o: ../MiniMusic/listitem.cpp ../MiniMusic/listitem.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvector2d.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
 		ui_listitem.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVariant \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QApplication \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QHBoxLayout \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QLabel \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlabel.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qframe.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qicon.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QSpacerItem \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\listitem.o ..\MiniMusic\listitem.cpp
 
@@ -2053,11 +2205,32 @@ release/main.o: ../MiniMusic/main.cpp ../MiniMusic/widget.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qfiledevice.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvector2d.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/QMediaPlayer \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaplayer.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaobject.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qtmultimediaglobal.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qtmultimedia-config.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmultimedia.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediacontent.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaresource.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qnetworkrequest.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qtnetworkglobal.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qtnetwork-config.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QSharedDataPointer \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QString \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QUrl \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVariant \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaenumdebug.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qmetaobject.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qaudio.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qnetworkconfiguration.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/QMediaPlaylist \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaplaylist.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediabindableinterface.h \
 		../MiniMusic/volumetool.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/QPaintEvent \
 		../MiniMusic/musiclist.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVector \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QUrl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QList \
 		../MiniMusic/music.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QApplication \
@@ -2347,7 +2520,17 @@ release/musicslider.o: ../MiniMusic/musicslider.cpp ../MiniMusic/musicslider.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qfiledevice.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvector2d.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
-		ui_musicslider.h
+		ui_musicslider.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVariant \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QApplication \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QFrame \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qframe.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\musicslider.o ..\MiniMusic\musicslider.cpp
 
 release/recbox.o: ../MiniMusic/recbox.cpp ../MiniMusic/recbox.h \
@@ -2459,6 +2642,24 @@ release/recbox.o: ../MiniMusic/recbox.cpp ../MiniMusic/recbox.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qjsonarray.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qjsonvalue.h \
 		ui_recbox.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVariant \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QApplication \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QHBoxLayout \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qicon.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QVBoxLayout \
 		../MiniMusic/recboxitem.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QJsonObject \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qjsonobject.h
@@ -2570,6 +2771,26 @@ release/recboxitem.o: ../MiniMusic/recboxitem.cpp ../MiniMusic/recboxitem.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvector2d.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
 		ui_recboxitem.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVariant \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QApplication \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QLabel \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlabel.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qframe.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qicon.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QVBoxLayout \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QDebug \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QPropertyAnimation \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qpropertyanimation.h \
@@ -2685,6 +2906,22 @@ release/volumetool.o: ../MiniMusic/volumetool.cpp ../MiniMusic/volumetool.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/QPaintEvent \
 		ui_volumetool.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVariant \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QApplication \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QFrame \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qframe.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QLabel \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlabel.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qicon.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QGraphicsDropShadowEffect \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qgraphicseffect.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/QPainter \
@@ -2798,14 +3035,69 @@ release/widget.o: ../MiniMusic/widget.cpp ../MiniMusic/widget.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qfiledevice.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvector2d.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/QMediaPlayer \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaplayer.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaobject.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qtmultimediaglobal.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qtmultimedia-config.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmultimedia.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediacontent.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaresource.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qnetworkrequest.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qtnetworkglobal.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qtnetwork-config.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QSharedDataPointer \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QString \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QUrl \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVariant \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaenumdebug.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qmetaobject.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qaudio.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork/qnetworkconfiguration.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/QMediaPlaylist \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediaplaylist.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia/qmediabindableinterface.h \
 		../MiniMusic/volumetool.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/QPaintEvent \
 		../MiniMusic/musiclist.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVector \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QUrl \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QList \
 		../MiniMusic/music.h \
 		ui_widget.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QApplication \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QGridLayout \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QHBoxLayout \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QLabel \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlabel.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qframe.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QLineEdit \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qlineedit.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtextcursor.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtextformat.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qpen.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtextoption.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qicon.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QScrollArea \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qscrollarea.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractscrollarea.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QSpacerItem \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QStackedWidget \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qstackedwidget.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QVBoxLayout \
+		../MiniMusic/musicslider.h \
 		../MiniMusic/btform.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QPropertyAnimation \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qpropertyanimation.h \
@@ -2813,19 +3105,16 @@ release/widget.o: ../MiniMusic/widget.cpp ../MiniMusic/widget.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qeasingcurve.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qabstractanimation.h \
 		../MiniMusic/commonpage.h \
+		../MiniMusic/recbox.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QJsonArray \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qjsonarray.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qjsonvalue.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/QMouseEvent \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qicon.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QGraphicsDropShadowEffect \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qgraphicseffect.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QDebug \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QJsonObject \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qjsonobject.h \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qjsonvalue.h \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QJsonArray \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qjsonarray.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QFileDialog \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qfiledialog.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qdir.h \

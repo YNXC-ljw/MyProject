@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QMediaPlayer>
+#include <QMediaPlaylist>
 
 #include "volumetool.h"
 #include "musiclist.h"
@@ -21,6 +22,7 @@ public:
     ~Widget();
 
     void initUi();
+    void playerInit();
     //窗口按钮区设置图片
     void settingBox();
     //播放控制区设置图片
@@ -44,9 +46,18 @@ private slots:
     void on_volume_clicked();
 
     void on_addLocal_clicked();
-
+////////////////////////////////////////////////////////////////////////////
     //播放控制区的槽函数
     void onPlayMiusic();
+
+    //上一首
+    void onPlayUpClicked();
+
+    //下一首
+    void onPlayDownClicked();
+
+    //播放模式
+    void onPlayModelClicked();
 
 protected:
     //重写鼠标点击函数
@@ -64,5 +75,6 @@ private:
     MusicList musicList;
 
     QMediaPlayer* player;
+    QMediaPlaylist* playerList;
 };
 #endif // WIDGET_H

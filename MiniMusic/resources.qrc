@@ -63,5 +63,9 @@
         <file>image/volume.png</file>
         <file>image/love.png</file>
         <file>image/unlove.png</file>
+        <file>image/play_2.png</file>
+        <file>image/loop.png</file>
+        <file>image/random.png</file>
+        <file>image/single.png</file>
     </qresource>
 </RCC>

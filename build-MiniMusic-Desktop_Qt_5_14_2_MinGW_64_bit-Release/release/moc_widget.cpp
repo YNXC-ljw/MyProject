@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Widget_t {
-    QByteArrayData data[13];
-    char stringdata0[162];
+    QByteArrayData data[16];
+    char stringdata0[215];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -44,14 +44,18 @@ QT_MOC_LITERAL(8, 96, 6), // "isLike"
 QT_MOC_LITERAL(9, 103, 7), // "musicId"
 QT_MOC_LITERAL(10, 111, 17), // "on_volume_clicked"
 QT_MOC_LITERAL(11, 129, 19), // "on_addLocal_clicked"
-QT_MOC_LITERAL(12, 149, 12) // "onPlayMiusic"
+QT_MOC_LITERAL(12, 149, 12), // "onPlayMiusic"
+QT_MOC_LITERAL(13, 162, 15), // "onPlayUpClicked"
+QT_MOC_LITERAL(14, 178, 17), // "onPlayDownClicked"
+QT_MOC_LITERAL(15, 196, 18) // "onPlayModelClicked"
 
     },
     "Widget\0on_quit_clicked\0\0on_min_clicked\0"
     "on_max_clicked\0onBtClicked\0pageId\0"
     "updateLikeMusicAndPage\0isLike\0musicId\0"
     "on_volume_clicked\0on_addLocal_clicked\0"
-    "onPlayMiusic"
+    "onPlayMiusic\0onPlayUpClicked\0"
+    "onPlayDownClicked\0onPlayModelClicked"
 };
 #undef QT_MOC_LITERAL
 
@@ -61,7 +65,7 @@ static const uint qt_meta_data_Widget[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+      11,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -69,14 +73,17 @@ static const uint qt_meta_data_Widget[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   54,    2, 0x08 /* Private */,
-       3,    0,   55,    2, 0x08 /* Private */,
-       4,    0,   56,    2, 0x08 /* Private */,
-       5,    1,   57,    2, 0x08 /* Private */,
-       7,    2,   60,    2, 0x08 /* Private */,
-      10,    0,   65,    2, 0x08 /* Private */,
-      11,    0,   66,    2, 0x08 /* Private */,
-      12,    0,   67,    2, 0x08 /* Private */,
+       1,    0,   69,    2, 0x08 /* Private */,
+       3,    0,   70,    2, 0x08 /* Private */,
+       4,    0,   71,    2, 0x08 /* Private */,
+       5,    1,   72,    2, 0x08 /* Private */,
+       7,    2,   75,    2, 0x08 /* Private */,
+      10,    0,   80,    2, 0x08 /* Private */,
+      11,    0,   81,    2, 0x08 /* Private */,
+      12,    0,   82,    2, 0x08 /* Private */,
+      13,    0,   83,    2, 0x08 /* Private */,
+      14,    0,   84,    2, 0x08 /* Private */,
+      15,    0,   85,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -84,6 +91,9 @@ static const uint qt_meta_data_Widget[] = {
     QMetaType::Void,
     QMetaType::Void, QMetaType::Int,    6,
     QMetaType::Void, QMetaType::Bool, QMetaType::QString,    8,    9,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -105,6 +115,9 @@ void Widget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
         case 5: _t->on_volume_clicked(); break;
         case 6: _t->on_addLocal_clicked(); break;
         case 7: _t->onPlayMiusic(); break;
+        case 8: _t->onPlayUpClicked(); break;
+        case 9: _t->onPlayDownClicked(); break;
+        case 10: _t->onPlayModelClicked(); break;
         default: ;
         }
     }
@@ -139,13 +152,13 @@ int Widget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 11)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 11;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 11)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 8;
+        _id -= 11;
     }
     return _id;
 }

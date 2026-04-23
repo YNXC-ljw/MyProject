@@ -23,6 +23,8 @@ Widget::Widget(QWidget *parent)
     //调用初始化方法，构造窗口
     initUi();
 
+    playerInit();
+
     connectSignalAndSlots();
 
 
@@ -57,9 +59,9 @@ void Widget::settingBox()
 //播放控制区按钮图片
 void Widget::contralMusic()
 {
-    QPixmap pixmapShuffle(":/image/shuffle.png");
+    QPixmap pixmapShuffle(":/image/random.png");
     ui->playModel->setIcon(QIcon(pixmapShuffle));
-    ui->playModel->setIconSize(QSize(20,20));
+    ui->playModel->setIconSize(QSize(15,15));
 
     QPixmap pixmapUp(":/image/playUp.png");
     ui->playUp->setIcon(QIcon(pixmapUp));
@@ -98,8 +100,11 @@ void Widget::connectSignalAndSlots()
     connect(ui->localPage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
     connect(ui->recentPage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
 
-    //播放控制区
+    //播放控制区信号处理
     connect(ui->play,&QPushButton::clicked,this,&Widget::onPlayMiusic);
+    connect(ui->playUp,&QPushButton::clicked,this,&Widget::onPlayUpClicked);
+    connect(ui->playDown,&QPushButton::clicked,this,&Widget::onPlayDownClicked);
+    connect(ui->playModel,&QPushButton::clicked,this,&Widget::onPlayModelClicked);
 }
 //随机推荐图片
 QJsonArray Widget::randomPiction()
@@ -179,8 +184,23 @@ void Widget::initUi()
 
     volumeTool = new VolumeTool(this);
 
-    //初始化播放类
+
+}
+
+void Widget::playerInit()
+{
+    // 1. 初始化播放相关类对象
     player = new QMediaPlayer(this);
+    playerList = new QMediaPlaylist(this);
+
+    // 2. 设置默认播放模式
+    playerList->setPlaybackMode(QMediaPlaylist::Random);
+
+    // 3. 将播放列表设置到播放媒体对象中
+    player->setPlaylist(playerList);
+
+    // 4. 设置默认音量
+    player->setVolume(20);
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -313,17 +333,77 @@ void Widget::on_addLocal_clicked()
         ui->stackedWidget->setCurrentIndex(4);
 
         ui->localPage->reFrush(musicList);
+
+        ui->localPage->addMusicToPlayList(musicList,playerList);
     }
 }
+//////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 //播放控制区
 
 //播放歌曲按钮
 void Widget::onPlayMiusic()
 {
-    // 1. 设置媒体播放源
-    player->setMedia(musicList.begin()->getMusicUrl());
+    if(QMediaPlayer::PlayingState == player->state())//播放状态，应该暂停
+    {
+        player->pause();
+        ui->play->setIcon(QIcon(":/image/play.png"));
+    }
+    else if(QMediaPlayer::PausedState == player->state())//暂停状态
+    {
+        player->play();
+        ui->play->setIcon(QIcon(":/image/play_2.png"));
+    }
+    else if(QMediaPlayer::StoppedState == player->state())//停止状态，直接启动即可
+    {
+        player->play();
+        ui->play->setIcon(QIcon(":/image/play_2.png"));
+    }
+    else
+    {
+        qDebug() << player->errorString();
+    }
+}
 
-    // 2. 播放
-    player->play();
+void Widget::onPlayUpClicked()
+{
+    playerList->previous();
+}
+
+void Widget::onPlayDownClicked()
+{
+    playerList->next();
+}
+
+void Widget::onPlayModelClicked()
+{
+    //顺序播放--->随机播放--->单曲循环
+    if(playerList->playbackMode() == QMediaPlaylist::Loop)//顺序播放
+    {
+        playerList->setPlaybackMode(QMediaPlaylist::Random);
+        QIcon icon(":/image/random.png");
+        QIcon fixedIcon = QIcon(icon.pixmap(15, 15)); // 强制转为 15x15 像素
+        ui->playModel->setIcon(fixedIcon);
+        ui->playModel->setToolTip("随机播放");
+    }
+    else if (playerList->playbackMode() == QMediaPlaylist::Random) //随机播放
+    {
+        playerList->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
+        QIcon icon(":/image/single.png");
+        QIcon fixedIcon = QIcon(icon.pixmap(18, 18));
+        ui->playModel->setIcon(fixedIcon);
+        ui->playModel->setToolTip("单曲循环");
+    }
+    else if(playerList->playbackMode() == QMediaPlaylist::CurrentItemInLoop)//单曲循环
+    {
+        playerList->setPlaybackMode(QMediaPlaylist::Loop);
+        QIcon icon(":/image/loop.png");
+        QIcon fixedIcon = QIcon(icon.pixmap(16, 16));
+        ui->playModel->setIcon(fixedIcon);
+        ui->playModel->setToolTip("顺序播放");
+    }
+    else
+    {
+        qDebug() << "暂不支持";
+    }
 }

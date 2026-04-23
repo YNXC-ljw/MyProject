@@ -99,4 +99,31 @@ void CommonPage::reFrush(MusicList& musicList)
     repaint();      //立马处理paintEvent
 }
 
+void CommonPage::addMusicToPlayList(MusicList &musicList, QMediaPlaylist *playList)
+{
+    for(auto music : musicList)
+    {
+        switch(pageType)
+        {
+        case LIKE_PAGE:
+            if(music.getIsLike())
+            {
+                playList->addMedia(music.getMusicUrl());
+            }
+            break;
+        case LOCAL_PAGE:
+            playList->addMedia(music.getMusicUrl());
+            break;
+        case HISTORY_PAGE:
+            if(music.getIsHistory())
+            {
+                playList->addMedia(music.getMusicUrl());
+            }
+            break;
+        default:
+            qDebug() << "未支持页面";
+        }
+    }
+}
+
 
