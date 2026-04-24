@@ -7,6 +7,7 @@
 
 #include "volumetool.h"
 #include "musiclist.h"
+#include "commonpage.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -49,15 +50,25 @@ private slots:
 ////////////////////////////////////////////////////////////////////////////
     //播放控制区的槽函数
     void onPlayMiusic();
-
     //上一首
     void onPlayUpClicked();
-
     //下一首
     void onPlayDownClicked();
-
     //播放模式
     void onPlayModelClicked();
+    //静音
+    void setPlayerMuted(bool isMuted);
+
+    //播放所有按钮槽函数
+    void onPlayAll(PageType pageType);
+    void playAllMusicOfCommonPage(CommonPage *page,int index);
+
+    void onCurrentIndexChanged(int);
+
+    //双击播放槽函数
+    void playMusicByIndex(CommonPage* page,int index);
+
+
 
 protected:
     //重写鼠标点击函数
@@ -72,9 +83,11 @@ private:
 
     VolumeTool* volumeTool;
 
-    MusicList musicList;
+    MusicList musicList;    //组织歌曲文件
 
-    QMediaPlayer* player;
-    QMediaPlaylist* playerList;
+    QMediaPlayer* player;   //专门用于播放控制
+    QMediaPlaylist* playerList; //专门用来管理播放源，包含播放设置
+
+    CommonPage* currentPage; //记录当前播放歌曲的页面
 };
 #endif // WIDGET_H

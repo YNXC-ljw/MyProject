@@ -105,6 +105,22 @@ void Widget::connectSignalAndSlots()
     connect(ui->playUp,&QPushButton::clicked,this,&Widget::onPlayUpClicked);
     connect(ui->playDown,&QPushButton::clicked,this,&Widget::onPlayDownClicked);
     connect(ui->playModel,&QPushButton::clicked,this,&Widget::onPlayModelClicked);
+
+    //播放所有按钮信号处理(likePage、localPage、recentPage都有playAll按钮)
+    connect(ui->likePage,&CommonPage::playAll,this,&Widget::onPlayAll);
+    connect(ui->localPage,&CommonPage::playAll,this,&Widget::onPlayAll);
+    connect(ui->recentPage,&CommonPage::playAll,this,&Widget::onPlayAll);
+
+    //处理likePage、localPage、recentPage三个页面双击歌曲
+    connect(ui->likePage,&CommonPage::playMusicByIndex,this,&Widget::playMusicByIndex);
+    connect(ui->localPage,&CommonPage::playMusicByIndex,this,&Widget::playMusicByIndex);
+    connect(ui->recentPage,&CommonPage::playMusicByIndex,this,&Widget::playMusicByIndex);
+
+    //当playlist中播放源发生变化时
+    connect(playerList,&QMediaPlaylist::currentIndexChanged,this,&Widget::onCurrentIndexChanged);
+
+    //静音信号处理
+    connect(volumeTool,&VolumeTool::setMusicMuted,this,&Widget::setPlayerMuted);
 }
 //随机推荐图片
 QJsonArray Widget::randomPiction()
@@ -136,6 +152,9 @@ QJsonArray Widget::randomPiction()
     }
     return objArray;
 }
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//初始化模块
 
 void Widget::initUi()
 {
@@ -165,7 +184,10 @@ void Widget::initUi()
 
     //让本地下载默认显示音符跳动
     ui->local->showAnimal();
+
+    //将localPage设置为默认页面
     ui->stackedWidget->setCurrentIndex(4);
+    currentPage = ui->localPage;
 
     //初始化推荐页面
     srand(time(NULL));
@@ -204,6 +226,7 @@ void Widget::playerInit()
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
+//窗口按钮模块
 //关闭窗口按钮
 void Widget::on_quit_clicked()
 {
@@ -406,4 +429,66 @@ void Widget::onPlayModelClicked()
     {
         qDebug() << "暂不支持";
     }
+}
+
+void Widget::setPlayerMuted(bool isMuted)
+{
+    player->setMuted(isMuted);
+}
+
+//播放全部歌曲，默认从第0首开始播放
+void Widget::onPlayAll(PageType pageType)
+{
+
+    CommonPage* page = ui->localPage;
+    switch(pageType)
+    {
+    case PageType::LIKE_PAGE:
+        page = ui->likePage;
+        break;
+    case PageType::LOCAL_PAGE:
+        page = ui->localPage;
+        break;
+    case PageType::HISTORY_PAGE:
+        page = ui->recentPage;
+        break;
+    default:
+        qDebug() << "暂未支持";
+    }
+    //page中记录的就是要播放的页面
+    playAllMusicOfCommonPage(page,0);
+}
+
+void Widget::playAllMusicOfCommonPage(CommonPage *page, int index)
+{
+    currentPage = page;
+    //清空之前playlist中的歌曲
+    playerList->clear();
+    //添加要播放的歌曲
+    page->addMusicToPlayList(musicList,playerList);
+    //从第首开始播放
+    playerList->setCurrentIndex(index);
+    //播放
+    player->play();
+}
+
+void Widget::onCurrentIndexChanged(int index)
+{
+    // 由于commonPage中的歌曲和正在播放的歌曲先后次序是相同的
+    // 所以知道playlist中的index，就可以到commonPage中获取该歌曲
+    QString musicId = currentPage->getMusicIdByIndex(index);
+
+    //通过索引拿到歌曲，修改歌曲的History属性
+    auto it = musicList.findMusicById(musicId);
+    if(it != musicList.end())
+    {
+        it->setIsHistory(true);
+    }
+
+    ui->recentPage->reFrush(musicList);
+}
+
+void Widget::playMusicByIndex(CommonPage *page, int index)
+{
+    playAllMusicOfCommonPage(page,index);
 }

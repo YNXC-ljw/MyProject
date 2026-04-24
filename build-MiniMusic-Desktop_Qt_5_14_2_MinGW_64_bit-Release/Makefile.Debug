@@ -168,6 +168,7 @@ debug/qrc_resources.cpp: ../MiniMusic/resources.qrc \
 		../MiniMusic/image/shuffle.png \
 		../MiniMusic/image/quit.png \
 		../MiniMusic/image/play.png \
+		../MiniMusic/image/silence.png \
 		../MiniMusic/image/love.png \
 		../MiniMusic/image/ilike.jpg \
 		../MiniMusic/image/like.png \
@@ -1164,6 +1165,7 @@ debug/moc_widget.cpp: ../MiniMusic/widget.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVector \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QList \
 		../MiniMusic/music.h \
+		../MiniMusic/commonpage.h \
 		debug/moc_predefs.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/bin/moc.exe
 	D:\APP\qt\qt\5.14.2\mingw73_64\bin\moc.exe $(DEFINES) --include D:/astudy/Git/my-project/build-MiniMusic-Desktop_Qt_5_14_2_MinGW_64_bit-Release/debug/moc_predefs.h -ID:/APP/qt/qt/5.14.2/mingw73_64/mkspecs/win32-g++ -ID:/astudy/Git/my-project/MiniMusic -ID:/APP/qt/qt/5.14.2/mingw73_64/include -ID:/APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia -ID:/APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets -ID:/APP/qt/qt/5.14.2/mingw73_64/include/QtGui -ID:/APP/qt/qt/5.14.2/mingw73_64/include/QtANGLE -ID:/APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork -ID:/APP/qt/qt/5.14.2/mingw73_64/include/QtCore -I. -ID:/APP/qt/qt/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++ -ID:/APP/qt/qt/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32 -ID:/APP/qt/qt/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward -ID:/APP/qt/qt/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include -ID:/APP/qt/qt/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed -ID:/APP/qt/qt/Tools/mingw730_64/x86_64-w64-mingw32/include ..\MiniMusic\widget.h -o debug\moc_widget.cpp
@@ -2233,6 +2235,7 @@ debug/main.o: ../MiniMusic/main.cpp ../MiniMusic/widget.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVector \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QList \
 		../MiniMusic/music.h \
+		../MiniMusic/commonpage.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QApplication \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
@@ -3063,6 +3066,7 @@ debug/widget.o: ../MiniMusic/widget.cpp ../MiniMusic/widget.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QVector \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QList \
 		../MiniMusic/music.h \
+		../MiniMusic/commonpage.h \
 		ui_widget.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/QApplication \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
@@ -3104,7 +3108,6 @@ debug/widget.o: ../MiniMusic/widget.cpp ../MiniMusic/widget.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qvariantanimation.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qeasingcurve.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qabstractanimation.h \
-		../MiniMusic/commonpage.h \
 		../MiniMusic/recbox.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/QJsonArray \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qjsonarray.h \

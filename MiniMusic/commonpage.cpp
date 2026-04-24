@@ -11,6 +11,15 @@ CommonPage::CommonPage(QWidget *parent) :
     ui->setupUi(this);
 
     ui->pageMusicList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    connect(ui->playAllButton,&QPushButton::clicked,this,[=](){
+       //点击播放所有按钮之后，通知Widget播放当前pageType页面所有被标记歌曲
+        emit playAll(pageType);
+    });
+
+    connect(ui->pageMusicList,&QListWidget::doubleClicked,this,[=](const QModelIndex& index){
+        emit playMusicByIndex(this,index.row());
+    });
 }
 
 CommonPage::~CommonPage()
@@ -91,6 +100,7 @@ void CommonPage::reFrush(MusicList& musicList)
         connect(listItem,&ListItem::setIsLike,this,[=](bool isLike){
             //更新歌曲状态
             //通知widget更新likePage、localPage、recentPage中的歌曲信息
+            it->setIsLike(isLike);
             emit updateLikeMusic(isLike,it->getMusicId());
         });
     }
@@ -124,6 +134,16 @@ void CommonPage::addMusicToPlayList(MusicList &musicList, QMediaPlaylist *playLi
             qDebug() << "未支持页面";
         }
     }
+}
+
+QString CommonPage::getMusicIdByIndex(int index)
+{
+    if(index >= musicOfPage.size())
+    {
+        qDebug() << "没有此歌曲";
+        return " ";
+    }
+    return musicOfPage[index];
 }
 
 

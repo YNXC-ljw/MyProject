@@ -18,8 +18,15 @@ public:
 
     void paintEvent(QPaintEvent *event);
 
+    void onSilenceBtnClicked();
+    void eventfilter(QObject* watched,QEvent* event);
+signals:
+    void setMusicMuted(bool);
+
 private:
     Ui::VolumeTool *ui;
+    bool isMuted;
+    int volumeRatio;//标记音量大小
 };
 
 #endif // VOLUMETOOL_H

@@ -46,6 +46,7 @@ void ListItem::setMusicAlbum(const QString &musicAlbum)
 
 void ListItem::setLikeMusic(bool isLike)
 {
+    this->isLike = isLike;
     if(isLike)
     {
         ui->likeBtn->setIcon(QIcon(":/image/love.png"));

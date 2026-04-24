@@ -7,6 +7,8 @@
 VolumeTool::VolumeTool(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::VolumeTool)
+  ,isMuted(false)
+  ,volumeRatio(20)
 {
     ui->setupUi(this);
 
@@ -31,6 +33,8 @@ VolumeTool::VolumeTool(QWidget *parent) :
 
     //移动按钮位置
     ui->sliderBtn->move(ui->sliderBtn->x(),ui->outLine->y() - ui->sliderBtn->height()/2);
+
+    connect(ui->silenceBtn,&QPushButton::clicked,this,&VolumeTool::onSilenceBtnClicked);
 }
 
 VolumeTool::~VolumeTool()
@@ -61,4 +65,29 @@ void VolumeTool::paintEvent(QPaintEvent *event)
     polygon.append(c);
     painter.drawPolygon(polygon);
 
+}
+
+void VolumeTool::onSilenceBtnClicked()
+{
+    isMuted = !isMuted;
+    //给按钮设置图标
+    if(isMuted)
+    {
+        ui->silenceBtn->setIcon(QIcon(":/image/silence.png"));
+    }
+    else
+    {
+        ui->silenceBtn->setIcon(QIcon(":/image/volume.png"));
+    }
+
+    //给Widget发送信号设置静音
+    emit setMusicMuted(isMuted);
+}
+
+void VolumeTool::eventfilter(QObject *watched, QEvent *event)
+{
+    if(ui->volumeBox == watched)//事件发生在volumeBox控件上
+    {
+
+    }
 }

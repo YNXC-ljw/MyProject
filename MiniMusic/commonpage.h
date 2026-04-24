@@ -34,8 +34,12 @@ public:
     // 将歌曲添加到播放列表中
     void addMusicToPlayList(MusicList& musicList,QMediaPlaylist* playList);
 
+    QString getMusicIdByIndex(int index);
+
 signals:
     void updateLikeMusic(bool isLike,const QString& musicId);
+    void playAll(PageType);
+    void playMusicByIndex(CommonPage*,int);
 
 private:
     Ui::CommonPage *ui;
