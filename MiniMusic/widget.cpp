@@ -116,11 +116,13 @@ void Widget::connectSignalAndSlots()
     connect(ui->localPage,&CommonPage::playMusicByIndex,this,&Widget::playMusicByIndex);
     connect(ui->recentPage,&CommonPage::playMusicByIndex,this,&Widget::playMusicByIndex);
 
-    //当playlist中播放源发生变化时
-    connect(playerList,&QMediaPlaylist::currentIndexChanged,this,&Widget::onCurrentIndexChanged);
-
     //静音信号处理
     connect(volumeTool,&VolumeTool::setMusicMuted,this,&Widget::setPlayerMuted);
+    //设置音量信号处理
+    connect(volumeTool,&VolumeTool::setMusicVolume,this,&Widget::setPlayerVolume);
+
+    //musicSLider::setMusicSliderPosition
+    connect(ui->progressBar,&MusicSlider::setMusicSliderPosition,this,&Widget::onMusicSliderChanged);
 }
 //随机推荐图片
 QJsonArray Widget::randomPiction()
@@ -223,6 +225,14 @@ void Widget::playerInit()
 
     // 4. 设置默认音量
     player->setVolume(20);
+
+
+    //关联QMediaPlayer::Duration信号
+    connect(player,&QMediaPlayer::durationChanged,this,&Widget::onDurationChanged);
+    //关联QMediaPlayer::Position信号
+    connect(player,&QMediaPlayer::positionChanged,this,&Widget::onPositionChanged);
+    //当playlist中播放源发生变化时
+    connect(playerList,&QMediaPlaylist::currentIndexChanged,this,&Widget::onCurrentIndexChanged);
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -436,6 +446,11 @@ void Widget::setPlayerMuted(bool isMuted)
     player->setMuted(isMuted);
 }
 
+void Widget::setPlayerVolume(int volume)
+{
+    player->setVolume(volume);
+}
+
 //播放全部歌曲，默认从第0首开始播放
 void Widget::onPlayAll(PageType pageType)
 {
@@ -487,7 +502,38 @@ void Widget::onCurrentIndexChanged(int index)
 
     ui->recentPage->reFrush(musicList);
 }
+//更新歌曲总时间
+void Widget::onDurationChanged(qint64 duration)
+{
+    // 将整形总时间转换为min:sec
+    // duration/1000/60;
+    // duration/1000%60;
+    totalTime = duration;
 
+    ui->totalTime->setText(QString("%1:%2").arg(duration/1000/60,2,10,QChar('0'))
+                                           .arg(duration/1000%60,2,10,QChar('0')));
+}
+
+void Widget::onPositionChanged(qint64 position)
+{
+    //更新实时播放时间
+    ui->currentTime->setText(QString("%1:%2").arg(position/1000/60,2,10,QChar('0'))
+                                             .arg(position/1000%60,2,10,QChar('0')));
+
+    //同步进度条位置
+    ui->progressBar->setStep(position/(float)totalTime);
+}
+
+void Widget::onMusicSliderChanged(float ratio)
+{
+    //根据总宽度与比率的乘积，修改播放时间
+    qint64 duration = totalTime * ratio;
+    ui->currentTime->setText(QString("%1:%2").arg(duration/1000/60,2,10,QChar('0'))
+                                             .arg(duration/1000%60,2,10,QChar('0')));
+    //修改事件也要更新媒体元播放的位置
+    player->setPosition(duration);
+}
+//通过索引播放歌曲（双击播放）
 void Widget::playMusicByIndex(CommonPage *page, int index)
 {
     playAllMusicOfCommonPage(page,index);

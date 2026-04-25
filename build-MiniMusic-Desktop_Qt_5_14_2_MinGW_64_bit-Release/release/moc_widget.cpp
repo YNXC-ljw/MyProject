@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Widget_t {
-    QByteArrayData data[27];
-    char stringdata0[353];
+    QByteArrayData data[35];
+    char stringdata0[457];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -50,15 +50,23 @@ QT_MOC_LITERAL(14, 178, 17), // "onPlayDownClicked"
 QT_MOC_LITERAL(15, 196, 18), // "onPlayModelClicked"
 QT_MOC_LITERAL(16, 215, 14), // "setPlayerMuted"
 QT_MOC_LITERAL(17, 230, 7), // "isMuted"
-QT_MOC_LITERAL(18, 238, 9), // "onPlayAll"
-QT_MOC_LITERAL(19, 248, 8), // "PageType"
-QT_MOC_LITERAL(20, 257, 8), // "pageType"
-QT_MOC_LITERAL(21, 266, 24), // "playAllMusicOfCommonPage"
-QT_MOC_LITERAL(22, 291, 11), // "CommonPage*"
-QT_MOC_LITERAL(23, 303, 4), // "page"
-QT_MOC_LITERAL(24, 308, 5), // "index"
-QT_MOC_LITERAL(25, 314, 21), // "onCurrentIndexChanged"
-QT_MOC_LITERAL(26, 336, 16) // "playMusicByIndex"
+QT_MOC_LITERAL(18, 238, 15), // "setPlayerVolume"
+QT_MOC_LITERAL(19, 254, 6), // "volume"
+QT_MOC_LITERAL(20, 261, 9), // "onPlayAll"
+QT_MOC_LITERAL(21, 271, 8), // "PageType"
+QT_MOC_LITERAL(22, 280, 8), // "pageType"
+QT_MOC_LITERAL(23, 289, 24), // "playAllMusicOfCommonPage"
+QT_MOC_LITERAL(24, 314, 11), // "CommonPage*"
+QT_MOC_LITERAL(25, 326, 4), // "page"
+QT_MOC_LITERAL(26, 331, 5), // "index"
+QT_MOC_LITERAL(27, 337, 21), // "onCurrentIndexChanged"
+QT_MOC_LITERAL(28, 359, 17), // "onDurationChanged"
+QT_MOC_LITERAL(29, 377, 8), // "duration"
+QT_MOC_LITERAL(30, 386, 17), // "onPositionChanged"
+QT_MOC_LITERAL(31, 404, 8), // "position"
+QT_MOC_LITERAL(32, 413, 20), // "onMusicSliderChanged"
+QT_MOC_LITERAL(33, 434, 5), // "ratio"
+QT_MOC_LITERAL(34, 440, 16) // "playMusicByIndex"
 
     },
     "Widget\0on_quit_clicked\0\0on_min_clicked\0"
@@ -67,9 +75,12 @@ QT_MOC_LITERAL(26, 336, 16) // "playMusicByIndex"
     "on_volume_clicked\0on_addLocal_clicked\0"
     "onPlayMiusic\0onPlayUpClicked\0"
     "onPlayDownClicked\0onPlayModelClicked\0"
-    "setPlayerMuted\0isMuted\0onPlayAll\0"
-    "PageType\0pageType\0playAllMusicOfCommonPage\0"
-    "CommonPage*\0page\0index\0onCurrentIndexChanged\0"
+    "setPlayerMuted\0isMuted\0setPlayerVolume\0"
+    "volume\0onPlayAll\0PageType\0pageType\0"
+    "playAllMusicOfCommonPage\0CommonPage*\0"
+    "page\0index\0onCurrentIndexChanged\0"
+    "onDurationChanged\0duration\0onPositionChanged\0"
+    "position\0onMusicSliderChanged\0ratio\0"
     "playMusicByIndex"
 };
 #undef QT_MOC_LITERAL
@@ -80,7 +91,7 @@ static const uint qt_meta_data_Widget[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      16,   14, // methods
+      20,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -88,22 +99,26 @@ static const uint qt_meta_data_Widget[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   94,    2, 0x08 /* Private */,
-       3,    0,   95,    2, 0x08 /* Private */,
-       4,    0,   96,    2, 0x08 /* Private */,
-       5,    1,   97,    2, 0x08 /* Private */,
-       7,    2,  100,    2, 0x08 /* Private */,
-      10,    0,  105,    2, 0x08 /* Private */,
-      11,    0,  106,    2, 0x08 /* Private */,
-      12,    0,  107,    2, 0x08 /* Private */,
-      13,    0,  108,    2, 0x08 /* Private */,
-      14,    0,  109,    2, 0x08 /* Private */,
-      15,    0,  110,    2, 0x08 /* Private */,
-      16,    1,  111,    2, 0x08 /* Private */,
-      18,    1,  114,    2, 0x08 /* Private */,
-      21,    2,  117,    2, 0x08 /* Private */,
-      25,    1,  122,    2, 0x08 /* Private */,
-      26,    2,  125,    2, 0x08 /* Private */,
+       1,    0,  114,    2, 0x08 /* Private */,
+       3,    0,  115,    2, 0x08 /* Private */,
+       4,    0,  116,    2, 0x08 /* Private */,
+       5,    1,  117,    2, 0x08 /* Private */,
+       7,    2,  120,    2, 0x08 /* Private */,
+      10,    0,  125,    2, 0x08 /* Private */,
+      11,    0,  126,    2, 0x08 /* Private */,
+      12,    0,  127,    2, 0x08 /* Private */,
+      13,    0,  128,    2, 0x08 /* Private */,
+      14,    0,  129,    2, 0x08 /* Private */,
+      15,    0,  130,    2, 0x08 /* Private */,
+      16,    1,  131,    2, 0x08 /* Private */,
+      18,    1,  134,    2, 0x08 /* Private */,
+      20,    1,  137,    2, 0x08 /* Private */,
+      23,    2,  140,    2, 0x08 /* Private */,
+      27,    1,  145,    2, 0x08 /* Private */,
+      28,    1,  148,    2, 0x08 /* Private */,
+      30,    1,  151,    2, 0x08 /* Private */,
+      32,    1,  154,    2, 0x08 /* Private */,
+      34,    2,  157,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -118,10 +133,14 @@ static const uint qt_meta_data_Widget[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, QMetaType::Bool,   17,
-    QMetaType::Void, 0x80000000 | 19,   20,
-    QMetaType::Void, 0x80000000 | 22, QMetaType::Int,   23,   24,
+    QMetaType::Void, QMetaType::Int,   19,
+    QMetaType::Void, 0x80000000 | 21,   22,
+    QMetaType::Void, 0x80000000 | 24, QMetaType::Int,   25,   26,
     QMetaType::Void, QMetaType::Int,    2,
-    QMetaType::Void, 0x80000000 | 22, QMetaType::Int,   23,   24,
+    QMetaType::Void, QMetaType::LongLong,   29,
+    QMetaType::Void, QMetaType::LongLong,   31,
+    QMetaType::Void, QMetaType::Float,   33,
+    QMetaType::Void, 0x80000000 | 24, QMetaType::Int,   25,   26,
 
        0        // eod
 };
@@ -144,23 +163,27 @@ void Widget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
         case 9: _t->onPlayDownClicked(); break;
         case 10: _t->onPlayModelClicked(); break;
         case 11: _t->setPlayerMuted((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 12: _t->onPlayAll((*reinterpret_cast< PageType(*)>(_a[1]))); break;
-        case 13: _t->playAllMusicOfCommonPage((*reinterpret_cast< CommonPage*(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 14: _t->onCurrentIndexChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 15: _t->playMusicByIndex((*reinterpret_cast< CommonPage*(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 12: _t->setPlayerVolume((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 13: _t->onPlayAll((*reinterpret_cast< PageType(*)>(_a[1]))); break;
+        case 14: _t->playAllMusicOfCommonPage((*reinterpret_cast< CommonPage*(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 15: _t->onCurrentIndexChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 16: _t->onDurationChanged((*reinterpret_cast< qint64(*)>(_a[1]))); break;
+        case 17: _t->onPositionChanged((*reinterpret_cast< qint64(*)>(_a[1]))); break;
+        case 18: _t->onMusicSliderChanged((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 19: _t->playMusicByIndex((*reinterpret_cast< CommonPage*(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
         switch (_id) {
         default: *reinterpret_cast<int*>(_a[0]) = -1; break;
-        case 13:
+        case 14:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<int*>(_a[0]) = -1; break;
             case 0:
                 *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< CommonPage* >(); break;
             }
             break;
-        case 15:
+        case 19:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<int*>(_a[0]) = -1; break;
             case 0:
@@ -200,13 +223,13 @@ int Widget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 16)
+        if (_id < 20)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 16;
+        _id -= 20;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 16)
+        if (_id < 20)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 16;
+        _id -= 20;
     }
     return _id;
 }

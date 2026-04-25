@@ -600,9 +600,9 @@ public:
         playDown->setText(QString());
         volume->setText(QString());
         addLocal->setText(QString());
-        currentTime->setText(QCoreApplication::translate("Widget", "01:15", nullptr));
+        currentTime->setText(QCoreApplication::translate("Widget", "00:00", nullptr));
         line->setText(QCoreApplication::translate("Widget", "/", nullptr));
-        totalTime->setText(QCoreApplication::translate("Widget", "04:15", nullptr));
+        totalTime->setText(QCoreApplication::translate("Widget", "00:00", nullptr));
         lrcWord->setText(QCoreApplication::translate("Widget", "\350\257\215", nullptr));
         labelNULL->setText(QString());
     } // retranslateUi

@@ -50,20 +50,23 @@ private slots:
 ////////////////////////////////////////////////////////////////////////////
     //播放控制区的槽函数
     void onPlayMiusic();
-    //上一首
-    void onPlayUpClicked();
-    //下一首
-    void onPlayDownClicked();
-    //播放模式
-    void onPlayModelClicked();
-    //静音
-    void setPlayerMuted(bool isMuted);
+    void onPlayUpClicked();//上一首
+    void onPlayDownClicked();//下一首
+    void onPlayModelClicked();//播放模式
+    void setPlayerMuted(bool isMuted);//静音
+///////////////////////////////////////////////////////////////////////////
+    //volumeTool类中setMusicVolume信号对应的槽函数
+    void setPlayerVolume(int volume);
 
     //播放所有按钮槽函数
     void onPlayAll(PageType pageType);
     void playAllMusicOfCommonPage(CommonPage *page,int index);
-
-    void onCurrentIndexChanged(int);
+//////////////////////////////////////////////////////////////////////////////
+    //QMeidaPlayer中stateChanged信号对应槽函数
+    void onCurrentIndexChanged(int);//播放媒体切换
+    void onDurationChanged(qint64 duration);
+    void onPositionChanged(qint64 position);//播放进度发生改变
+    void onMusicSliderChanged(float ratio);//进度条发生改变时修改音乐播放时间
 
     //双击播放槽函数
     void playMusicByIndex(CommonPage* page,int index);
@@ -89,5 +92,6 @@ private:
     QMediaPlaylist* playerList; //专门用来管理播放源，包含播放设置
 
     CommonPage* currentPage; //记录当前播放歌曲的页面
+    qint64 totalTime;       //记录媒体元的总时间
 };
 #endif // WIDGET_H

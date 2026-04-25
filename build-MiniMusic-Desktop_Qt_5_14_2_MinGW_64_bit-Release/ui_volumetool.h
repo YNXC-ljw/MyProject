@@ -64,6 +64,7 @@ public:
         volumeRatio->setAlignment(Qt::AlignCenter);
         volumeBox = new QWidget(volumeWidget);
         volumeBox->setObjectName(QString::fromUtf8("volumeBox"));
+        volumeBox->setEnabled(true);
         volumeBox->setGeometry(QRect(0, 0, 80, 225));
         volumeBox->setStyleSheet(QString::fromUtf8(""));
         inLine = new QFrame(volumeBox);

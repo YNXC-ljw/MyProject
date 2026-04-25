@@ -1,8 +1,9 @@
 #include "volumetool.h"
 #include "ui_volumetool.h"
 
-#include<QGraphicsDropShadowEffect>
+#include <QGraphicsDropShadowEffect>
 #include <QPainter>
+#include <QDebug>
 
 VolumeTool::VolumeTool(QWidget *parent) :
     QWidget(parent),
@@ -35,6 +36,8 @@ VolumeTool::VolumeTool(QWidget *parent) :
     ui->sliderBtn->move(ui->sliderBtn->x(),ui->outLine->y() - ui->sliderBtn->height()/2);
 
     connect(ui->silenceBtn,&QPushButton::clicked,this,&VolumeTool::onSilenceBtnClicked);
+    //安装事件拦截器
+    ui->volumeBox->installEventFilter(this);
 }
 
 VolumeTool::~VolumeTool()
@@ -84,10 +87,49 @@ void VolumeTool::onSilenceBtnClicked()
     emit setMusicMuted(isMuted);
 }
 
-void VolumeTool::eventfilter(QObject *watched, QEvent *event)
+bool VolumeTool::eventFilter(QObject *watched, QEvent *event)
 {
     if(ui->volumeBox == watched)//事件发生在volumeBox控件上
     {
-
+        //鼠标按下
+        if(event->type() == QEvent::MouseButtonPress)
+        {
+            calcVolume();
+        }
+        //鼠标释放
+        else if(event->type() == QEvent::MouseButtonRelease)
+        {
+            emit setMusicVolume(volumeRatio);
+        }
+        //鼠标移动
+        else if(event->type() == QEvent::MouseMove)
+        {
+            calcVolume();
+            emit setMusicVolume(volumeRatio);
+        }
+        return true;
     }
+    return QObject::eventFilter(watched,event);
+}
+
+void VolumeTool::calcVolume()
+{
+    //获取鼠标点击时的y坐标
+    int height = ui->volumeBox->mapFromGlobal(QCursor().pos()).y();
+
+    //验证height的合法性(超过高度就按最高计算，低于最低就按最低计算)
+    height = height < 25 ? 25 : height;
+    height = height > 205 ? 205 :height;
+
+    //更新outline
+    ui->outLine->setGeometry(ui->outLine->x(),height,ui->outLine->width(),205 - height);
+
+    //更新sliderBtn位置
+    ui->sliderBtn->move(ui->sliderBtn->x(),ui->outLine->y() - ui->sliderBtn->height()/2);
+
+    //计算音量大小
+    volumeRatio = (int)(ui->outLine->height()/(float)180*100);
+    //更新QLabel
+    ui->volumeRatio->setText(QString::number(volumeRatio)+"%");
+
 }

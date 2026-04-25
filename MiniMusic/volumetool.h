@@ -19,9 +19,12 @@ public:
     void paintEvent(QPaintEvent *event);
 
     void onSilenceBtnClicked();
-    void eventfilter(QObject* watched,QEvent* event);
+
+    bool eventFilter(QObject* watched,QEvent* event);
+    void calcVolume();
 signals:
-    void setMusicMuted(bool);
+    void setMusicMuted(bool);           //设置是否静音
+    void setMusicVolume(int volume);    //设置音量大小
 
 private:
     Ui::VolumeTool *ui;

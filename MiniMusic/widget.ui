@@ -891,7 +891,7 @@ QPushButton:hover
                  </rect>
                 </property>
                 <property name="text">
-                 <string>01:15</string>
+                 <string>00:00</string>
                 </property>
                </widget>
                <widget class="QLabel" name="line">
@@ -917,7 +917,7 @@ QPushButton:hover
                  </rect>
                 </property>
                 <property name="text">
-                 <string>04:15</string>
+                 <string>00:00</string>
                 </property>
                </widget>
                <widget class="QPushButton" name="lrcWord">
