@@ -67,6 +67,7 @@ private slots:
     void onDurationChanged(qint64 duration);
     void onPositionChanged(qint64 position);//播放进度发生改变
     void onMusicSliderChanged(float ratio);//进度条发生改变时修改音乐播放时间
+    void onMetaDataAvailableChanged(bool available);//元数据发生改变时
 
     //双击播放槽函数
     void playMusicByIndex(CommonPage* page,int index);
@@ -90,6 +91,8 @@ private:
 
     QMediaPlayer* player;   //专门用于播放控制
     QMediaPlaylist* playerList; //专门用来管理播放源，包含播放设置
+
+    int currentIndex;       //记录当前播放元在列表中的索引
 
     CommonPage* currentPage; //记录当前播放歌曲的页面
     qint64 totalTime;       //记录媒体元的总时间

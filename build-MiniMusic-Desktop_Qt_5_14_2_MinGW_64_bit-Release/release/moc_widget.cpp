@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Widget_t {
-    QByteArrayData data[35];
-    char stringdata0[457];
+    QByteArrayData data[37];
+    char stringdata0[494];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -66,7 +66,9 @@ QT_MOC_LITERAL(30, 386, 17), // "onPositionChanged"
 QT_MOC_LITERAL(31, 404, 8), // "position"
 QT_MOC_LITERAL(32, 413, 20), // "onMusicSliderChanged"
 QT_MOC_LITERAL(33, 434, 5), // "ratio"
-QT_MOC_LITERAL(34, 440, 16) // "playMusicByIndex"
+QT_MOC_LITERAL(34, 440, 26), // "onMetaDataAvailableChanged"
+QT_MOC_LITERAL(35, 467, 9), // "available"
+QT_MOC_LITERAL(36, 477, 16) // "playMusicByIndex"
 
     },
     "Widget\0on_quit_clicked\0\0on_min_clicked\0"
@@ -81,6 +83,7 @@ QT_MOC_LITERAL(34, 440, 16) // "playMusicByIndex"
     "page\0index\0onCurrentIndexChanged\0"
     "onDurationChanged\0duration\0onPositionChanged\0"
     "position\0onMusicSliderChanged\0ratio\0"
+    "onMetaDataAvailableChanged\0available\0"
     "playMusicByIndex"
 };
 #undef QT_MOC_LITERAL
@@ -91,7 +94,7 @@ static const uint qt_meta_data_Widget[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      20,   14, // methods
+      21,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -99,26 +102,27 @@ static const uint qt_meta_data_Widget[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  114,    2, 0x08 /* Private */,
-       3,    0,  115,    2, 0x08 /* Private */,
-       4,    0,  116,    2, 0x08 /* Private */,
-       5,    1,  117,    2, 0x08 /* Private */,
-       7,    2,  120,    2, 0x08 /* Private */,
-      10,    0,  125,    2, 0x08 /* Private */,
-      11,    0,  126,    2, 0x08 /* Private */,
-      12,    0,  127,    2, 0x08 /* Private */,
-      13,    0,  128,    2, 0x08 /* Private */,
-      14,    0,  129,    2, 0x08 /* Private */,
-      15,    0,  130,    2, 0x08 /* Private */,
-      16,    1,  131,    2, 0x08 /* Private */,
-      18,    1,  134,    2, 0x08 /* Private */,
-      20,    1,  137,    2, 0x08 /* Private */,
-      23,    2,  140,    2, 0x08 /* Private */,
-      27,    1,  145,    2, 0x08 /* Private */,
-      28,    1,  148,    2, 0x08 /* Private */,
-      30,    1,  151,    2, 0x08 /* Private */,
-      32,    1,  154,    2, 0x08 /* Private */,
-      34,    2,  157,    2, 0x08 /* Private */,
+       1,    0,  119,    2, 0x08 /* Private */,
+       3,    0,  120,    2, 0x08 /* Private */,
+       4,    0,  121,    2, 0x08 /* Private */,
+       5,    1,  122,    2, 0x08 /* Private */,
+       7,    2,  125,    2, 0x08 /* Private */,
+      10,    0,  130,    2, 0x08 /* Private */,
+      11,    0,  131,    2, 0x08 /* Private */,
+      12,    0,  132,    2, 0x08 /* Private */,
+      13,    0,  133,    2, 0x08 /* Private */,
+      14,    0,  134,    2, 0x08 /* Private */,
+      15,    0,  135,    2, 0x08 /* Private */,
+      16,    1,  136,    2, 0x08 /* Private */,
+      18,    1,  139,    2, 0x08 /* Private */,
+      20,    1,  142,    2, 0x08 /* Private */,
+      23,    2,  145,    2, 0x08 /* Private */,
+      27,    1,  150,    2, 0x08 /* Private */,
+      28,    1,  153,    2, 0x08 /* Private */,
+      30,    1,  156,    2, 0x08 /* Private */,
+      32,    1,  159,    2, 0x08 /* Private */,
+      34,    1,  162,    2, 0x08 /* Private */,
+      36,    2,  165,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -140,6 +144,7 @@ static const uint qt_meta_data_Widget[] = {
     QMetaType::Void, QMetaType::LongLong,   29,
     QMetaType::Void, QMetaType::LongLong,   31,
     QMetaType::Void, QMetaType::Float,   33,
+    QMetaType::Void, QMetaType::Bool,   35,
     QMetaType::Void, 0x80000000 | 24, QMetaType::Int,   25,   26,
 
        0        // eod
@@ -170,7 +175,8 @@ void Widget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
         case 16: _t->onDurationChanged((*reinterpret_cast< qint64(*)>(_a[1]))); break;
         case 17: _t->onPositionChanged((*reinterpret_cast< qint64(*)>(_a[1]))); break;
         case 18: _t->onMusicSliderChanged((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 19: _t->playMusicByIndex((*reinterpret_cast< CommonPage*(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 19: _t->onMetaDataAvailableChanged((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 20: _t->playMusicByIndex((*reinterpret_cast< CommonPage*(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
@@ -183,7 +189,7 @@ void Widget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
                 *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< CommonPage* >(); break;
             }
             break;
-        case 19:
+        case 20:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<int*>(_a[0]) = -1; break;
             case 0:
@@ -223,13 +229,13 @@ int Widget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 20)
+        if (_id < 21)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 20;
+        _id -= 21;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 20)
+        if (_id < 21)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 20;
+        _id -= 21;
     }
     return _id;
 }

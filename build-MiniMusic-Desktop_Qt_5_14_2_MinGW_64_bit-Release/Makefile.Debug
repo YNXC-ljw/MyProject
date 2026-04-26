@@ -697,6 +697,7 @@ debug/moc_musicslider.cpp: ../MiniMusic/musicslider.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qfiledevice.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvector2d.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/QMouseEvent \
 		debug/moc_predefs.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/bin/moc.exe
 	D:\APP\qt\qt\5.14.2\mingw73_64\bin\moc.exe $(DEFINES) --include D:/astudy/Git/my-project/build-MiniMusic-Desktop_Qt_5_14_2_MinGW_64_bit-Release/debug/moc_predefs.h -ID:/APP/qt/qt/5.14.2/mingw73_64/mkspecs/win32-g++ -ID:/astudy/Git/my-project/MiniMusic -ID:/APP/qt/qt/5.14.2/mingw73_64/include -ID:/APP/qt/qt/5.14.2/mingw73_64/include/QtMultimedia -ID:/APP/qt/qt/5.14.2/mingw73_64/include/QtWidgets -ID:/APP/qt/qt/5.14.2/mingw73_64/include/QtGui -ID:/APP/qt/qt/5.14.2/mingw73_64/include/QtANGLE -ID:/APP/qt/qt/5.14.2/mingw73_64/include/QtNetwork -ID:/APP/qt/qt/5.14.2/mingw73_64/include/QtCore -I. -ID:/APP/qt/qt/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++ -ID:/APP/qt/qt/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32 -ID:/APP/qt/qt/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward -ID:/APP/qt/qt/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include -ID:/APP/qt/qt/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed -ID:/APP/qt/qt/Tools/mingw730_64/x86_64-w64-mingw32/include ..\MiniMusic\musicslider.h -o debug\moc_musicslider.cpp
@@ -1656,7 +1657,8 @@ ui_widget.h: ../MiniMusic/widget.ui \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qfile.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qfiledevice.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvector2d.h \
-		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/QMouseEvent
 	D:\APP\qt\qt\5.14.2\mingw73_64\bin\uic.exe ..\MiniMusic\widget.ui -o ui_widget.h
 
 compiler_yacc_decl_make_all:
@@ -2447,6 +2449,7 @@ debug/musicslider.o: ../MiniMusic/musicslider.cpp ../MiniMusic/musicslider.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtCore/qfiledevice.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qvector2d.h \
 		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/qtouchdevice.h \
+		../../../../APP/qt/qt/5.14.2/mingw73_64/include/QtGui/QMouseEvent \
 		ui_musicslider.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\musicslider.o ..\MiniMusic\musicslider.cpp
 

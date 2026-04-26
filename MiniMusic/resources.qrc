@@ -68,5 +68,6 @@
         <file>image/random.png</file>
         <file>image/single.png</file>
         <file>image/silence.png</file>
+        <file>image/bg.png</file>
     </qresource>
 </RCC>

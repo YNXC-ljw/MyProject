@@ -34,6 +34,7 @@ public:
     // 将歌曲添加到播放列表中
     void addMusicToPlayList(MusicList& musicList,QMediaPlaylist* playList);
 
+    void setMusicImage(QPixmap pixmap);
     QString getMusicIdByIndex(int index);
 
 signals:

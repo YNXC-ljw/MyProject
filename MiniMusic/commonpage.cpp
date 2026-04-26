@@ -136,6 +136,12 @@ void CommonPage::addMusicToPlayList(MusicList &musicList, QMediaPlaylist *playLi
     }
 }
 
+void CommonPage::setMusicImage(QPixmap pixmap)
+{
+    ui->musicImageLabel->setPixmap(pixmap);
+    ui->musicImageLabel->setScaledContents(true);
+}
+
 QString CommonPage::getMusicIdByIndex(int index)
 {
     if(index >= musicOfPage.size())

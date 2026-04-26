@@ -26,7 +26,7 @@ public:
     {
         if (MusicSlider->objectName().isEmpty())
             MusicSlider->setObjectName(QString::fromUtf8("MusicSlider"));
-        MusicSlider->resize(800, 20);
+        MusicSlider->resize(800, 25);
         MusicSlider->setStyleSheet(QString::fromUtf8(""));
         inLine = new QFrame(MusicSlider);
         inLine->setObjectName(QString::fromUtf8("inLine"));

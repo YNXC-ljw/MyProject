@@ -225,14 +225,23 @@ void Widget::playerInit()
 
     // 4. 设置默认音量
     player->setVolume(20);
-
+//////////////////////////////////////////////
+    //关联QMediaPlayer的信号
 
     //关联QMediaPlayer::Duration信号
     connect(player,&QMediaPlayer::durationChanged,this,&Widget::onDurationChanged);
+
     //关联QMediaPlayer::Position信号
     connect(player,&QMediaPlayer::positionChanged,this,&Widget::onPositionChanged);
+
+    //关联播放元数据改变时的信号
+    connect(player,&QMediaPlayer::metaDataAvailableChanged,this,&Widget::onMetaDataAvailableChanged);
+
     //当playlist中播放源发生变化时
     connect(playerList,&QMediaPlaylist::currentIndexChanged,this,&Widget::onCurrentIndexChanged);
+
+    //当播放模式发生改变时
+    connect(playerList,&QMediaPlaylist::playbackModeChanged,this,&Widget::onPlayModelClicked);
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -489,6 +498,7 @@ void Widget::playAllMusicOfCommonPage(CommonPage *page, int index)
 
 void Widget::onCurrentIndexChanged(int index)
 {
+    currentIndex = index;
     // 由于commonPage中的歌曲和正在播放的歌曲先后次序是相同的
     // 所以知道playlist中的index，就可以到commonPage中获取该歌曲
     QString musicId = currentPage->getMusicIdByIndex(index);
@@ -532,6 +542,42 @@ void Widget::onMusicSliderChanged(float ratio)
                                              .arg(duration/1000%60,2,10,QChar('0')));
     //修改事件也要更新媒体元播放的位置
     player->setPosition(duration);
+}
+
+void Widget::onMetaDataAvailableChanged(bool available)
+{
+    (void)available;
+    //歌曲名称、歌手直接在music对象中获取
+    //需要知道媒体源在播放列表中的索引
+    QString musicId = currentPage->getMusicIdByIndex(currentIndex);
+    auto it = musicList.findMusicById(musicId);
+
+    QString musicName = "未知歌曲";
+    QString musicSinger = "未知歌手";
+    if(it != musicList.end())
+    {
+        musicName = it->getMusicName();
+        musicSinger = it->getMusicSinger();
+    }
+    ui->musicName->setText(musicName);
+    ui->musicSinger->setText(musicSinger);
+
+    //通过媒体源获取封面图加载到播放控制区
+    QVariant coverImage = player->metaData("ThumbnailImage");
+    if(coverImage.isValid())
+    {
+        QImage image = coverImage.value<QImage>();
+        ui->musicCover->setPixmap(QPixmap::fromImage(image));
+        currentPage->setMusicImage(QPixmap::fromImage(image));
+    }
+    else
+    {
+        qDebug() << "歌曲无封面图";
+        QString path = ":/image/pages/030.jpg";
+        ui->musicCover->setPixmap(path);
+        currentPage->setMusicImage(path);
+    }
+    ui->musicCover->setScaledContents(true);//图像自动填满容器
 }
 //通过索引播放歌曲（双击播放）
 void Widget::playMusicByIndex(CommonPage *page, int index)
