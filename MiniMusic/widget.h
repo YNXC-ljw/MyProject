@@ -4,10 +4,12 @@
 #include <QWidget>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
+#include <QPropertyAnimation>
 
 #include "volumetool.h"
 #include "musiclist.h"
 #include "commonpage.h"
+#include "lrcpage.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -54,6 +56,7 @@ private slots:
     void onPlayDownClicked();//下一首
     void onPlayModelClicked();//播放模式
     void setPlayerMuted(bool isMuted);//静音
+    void onLrcWordClicked();    //歌词显示
 ///////////////////////////////////////////////////////////////////////////
     //volumeTool类中setMusicVolume信号对应的槽函数
     void setPlayerVolume(int volume);
@@ -86,6 +89,8 @@ private:
     QPoint dragPosition;
 
     VolumeTool* volumeTool;
+    LrcPage *lrcPage;
+    QPropertyAnimation* lrcPageAnimation;
 
     MusicList musicList;    //组织歌曲文件
 

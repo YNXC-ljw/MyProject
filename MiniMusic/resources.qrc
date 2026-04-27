@@ -69,5 +69,6 @@
         <file>image/single.png</file>
         <file>image/silence.png</file>
         <file>image/bg.png</file>
+        <file>image/xiala.png</file>
     </qresource>
 </RCC>

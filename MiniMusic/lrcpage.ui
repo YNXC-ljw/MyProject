@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1020</width>
+    <width>1027</width>
     <height>680</height>
    </rect>
   </property>
@@ -35,6 +35,10 @@
       <string notr="true">#bgStyle
 {
 	border-image:url(&quot;:/image/bg.png&quot;);
+}
+*
+{
+	color : #33ffff;
 }</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -100,6 +104,12 @@
              <height>50</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true">#hideBtn
+{
+	border: none;
+}</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -161,6 +171,21 @@
          <string notr="true"/>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <spacer name="verticalSpacer_2">
            <property name="orientation">
@@ -273,6 +298,12 @@
             <font>
              <pointsize>25</pointsize>
             </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">#lineCenter
+{
+	color : #00ff99;
+}</string>
            </property>
            <property name="text">
             <string>TextLabel</string>

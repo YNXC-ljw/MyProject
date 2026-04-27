@@ -2,7 +2,7 @@
 #define LRCPAGE_H
 
 #include <QWidget>
-
+#include <QPropertyAnimation>
 namespace Ui {
 class LrcPage;
 }
@@ -17,6 +17,8 @@ public:
 
 private:
     Ui::LrcPage *ui;
+
+    QPropertyAnimation* animation;
 };
 
 #endif // LRCPAGE_H

@@ -120,6 +120,8 @@ void Widget::connectSignalAndSlots()
     connect(volumeTool,&VolumeTool::setMusicMuted,this,&Widget::setPlayerMuted);
     //设置音量信号处理
     connect(volumeTool,&VolumeTool::setMusicVolume,this,&Widget::setPlayerVolume);
+    //显示歌词
+    connect(ui->lrcWord,&QPushButton::clicked,this,&Widget::onLrcWordClicked);
 
     //musicSLider::setMusicSliderPosition
     connect(ui->progressBar,&MusicSlider::setMusicSliderPosition,this,&Widget::onMusicSliderChanged);
@@ -169,7 +171,7 @@ void Widget::initUi()
     QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);
     shadowEffect->setOffset(0,0);
     shadowEffect->setColor("#000000");
-    shadowEffect->setBlurRadius(15);
+    shadowEffect->setBlurRadius(10);
     this->setGraphicsEffect(shadowEffect);
 
     settingBox();
@@ -208,7 +210,16 @@ void Widget::initUi()
 
     volumeTool = new VolumeTool(this);
 
+    //实例化LrcWord对象
+    lrcPage = new LrcPage(this);
+    lrcPage->setGeometry(10,10,lrcPage->width(),lrcPage->height());
+    lrcPage->hide();
 
+    //初始化上移对象
+    lrcPageAnimation = new QPropertyAnimation(lrcPage,"geometry",this);
+    lrcPageAnimation->setDuration(400);
+    lrcPageAnimation->setStartValue(QRect(10,10+lrcPage->height(),lrcPage->width(),lrcPage->height()));
+    lrcPageAnimation->setEndValue(QRect(10,10,lrcPage->width(),lrcPage->height()));
 }
 
 void Widget::playerInit()
@@ -453,6 +464,13 @@ void Widget::onPlayModelClicked()
 void Widget::setPlayerMuted(bool isMuted)
 {
     player->setMuted(isMuted);
+}
+
+void Widget::onLrcWordClicked()
+{
+    lrcPage->show();
+
+    lrcPageAnimation->start();
 }
 
 void Widget::setPlayerVolume(int volume)
