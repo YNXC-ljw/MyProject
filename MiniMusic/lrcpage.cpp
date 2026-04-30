@@ -2,6 +2,8 @@
 #include "ui_lrcpage.h"
 
 #include <QPushButton>
+#include <QFile>
+#include <QDebug>
 
 LrcPage::LrcPage(QWidget *parent) :
     QWidget(parent),
@@ -35,4 +37,86 @@ LrcPage::LrcPage(QWidget *parent) :
 LrcPage::~LrcPage()
 {
     delete ui;
+}
+
+bool LrcPage::parseLrcFile(const QString &lrcPath)
+{
+    // 1. 打开文件
+    QFile file(lrcPath);
+    if(file.open(QIODevice::ReadOnly))
+    {
+        qDebug() << "打开lrc文件:" << lrcPath << "失败";
+        return false;
+    }
+    //一次性解析一行歌词
+    while(!file.atEnd())
+    {
+        QString lrcLineWord = file.readLine(1024);
+
+        // 1. 先解析出时间和 歌词的字符串文本--->按照]分割
+        int start = 0, end = 0;
+        end = lrcLineWord.indexOf(']', start);
+        QString lrcTime = lrcLineWord.mid(start, end-start+1);
+        QString lrcWord = lrcLineWord.mid(end+1);
+
+        // 2. 在时间中解析出分:秒.毫秒
+        // [0:17.94]  [0:33.600.00]
+        // 解析分
+        qint64 lineTime = 0;
+        start = 1;
+        end = lrcTime.indexOf(':', start);
+        lineTime += lrcTime.mid(start, end - start).toInt()*60*1000;  // 解析分并将其转化为毫秒
+
+        // 解析秒
+        start = end+1;
+        end = lrcTime.indexOf('.', start);
+        lineTime += lrcTime.mid(start, end - start).toInt()*1000;     // 解析秒并将其转换为毫秒
+
+        // 解析毫秒
+        start = end+1;
+        end = lrcTime.indexOf('.', start);
+        lineTime += lrcTime.mid(start, end - start).toInt();          // 解析毫秒
+
+        // 3. 将该行给次保存
+        lrcWordLines.push_back(LrcWordLine(lineTime, lrcWord));
+    }
+    for(auto e : lrcWordLines)
+    {
+        qDebug() << e.lrcTime << ":" << e.lrcText;
+    }
+    return true;
+}
+
+void LrcPage::showLrcWordLine(qint64 time)
+{
+    // 1. 根据当前所唱歌曲的时间来获取歌词在QVector的索引
+    int index = getLrcWordLineIndex(time);
+    // 2. 更新前三行、当前行和后三行到界面
+
+}
+
+int LrcPage::getLrcWordLineIndex(qint64 time)
+{
+    // 将time和QVector中保存的LrcWordLine中的time进行对比
+    // 当前歌曲没有lrc歌词文件
+    if(lrcWordLines.isEmpty()){
+        return -1;
+    }
+
+    if(time <= lrcWordLines[0].lrcTime){
+        return 0;
+    }
+
+    for(int i = 1; i < lrcWordLines.size(); ++i)
+    {
+        if(time >= lrcWordLines[i-1].lrcTime && time < lrcWordLines[i].lrcTime)
+        {
+            // 第i-1行还没有播放完
+            return i-1;
+        }
+    }
+
+    // 最后一行唱完之后，歌曲结束了，但是还有收尾音乐
+    // 让歌词界面显示最后一行歌词
+    return lrcWordLines.size()-1;
 }

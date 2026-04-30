@@ -84,6 +84,17 @@ QString Music::getMusicId() const
     return musicId;
 }
 
+QString Music::getLrcFilePath() const
+{
+    QString lrcPath = musicUrl.toLocalFile();
+    lrcPath.replace(".mp3",".lrc");
+    lrcPath.replace(".wav",".lrc");
+    lrcPath.replace(".mpga",".lrc");
+    lrcPath.replace(".flac",".lrc");
+
+    return lrcPath;
+}
+
 void Music::parseMediaMetaMusic()
 {
     // 1. 创建媒体播放对象

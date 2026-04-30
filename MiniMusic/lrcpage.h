@@ -3,6 +3,19 @@
 
 #include <QWidget>
 #include <QPropertyAnimation>
+
+
+struct LrcWordLine
+{
+    LrcWordLine(qint64 lrcTime,QString lrcText)
+    {
+        this->lrcTime = lrcTime;
+        this->lrcText = lrcText;
+    }
+    qint64 lrcTime;
+    QString lrcText;
+};
+
 namespace Ui {
 class LrcPage;
 }
@@ -15,10 +28,17 @@ public:
     explicit LrcPage(QWidget *parent = nullptr);
     ~LrcPage();
 
+    bool parseLrcFile(const QString& lrcPath);
+
+    void showLrcWordLine(qint64 time);
+    int getLrcWordLineIndex(qint64 time);
+
 private:
     Ui::LrcPage *ui;
 
     QPropertyAnimation* animation;
+
+    QVector<LrcWordLine> lrcWordLines;
 };
 
 #endif // LRCPAGE_H

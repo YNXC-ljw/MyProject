@@ -550,6 +550,9 @@ void Widget::onPositionChanged(qint64 position)
 
     //同步进度条位置
     ui->progressBar->setStep(position/(float)totalTime);
+
+    //在歌词界面同步歌词
+    lrcPage->showLrcWordLine(position);
 }
 
 void Widget::onMusicSliderChanged(float ratio)
@@ -596,6 +599,16 @@ void Widget::onMetaDataAvailableChanged(bool available)
         currentPage->setMusicImage(path);
     }
     ui->musicCover->setScaledContents(true);//图像自动填满容器
+
+    //解析歌曲的LRC歌词
+    if(it != musicList.end())
+    {
+        //获取lrc文件路径
+        QString lrcPath = it->getLrcFilePath();
+
+        //解析歌词文件
+        lrcPage->parseLrcFile(lrcPath);
+    }
 }
 //通过索引播放歌曲（双击播放）
 void Widget::playMusicByIndex(CommonPage *page, int index)
