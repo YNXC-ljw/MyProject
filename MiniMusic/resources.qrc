@@ -70,5 +70,6 @@
         <file>image/silence.png</file>
         <file>image/bg.png</file>
         <file>image/xiala.png</file>
+        <file>image/logotubiao.png</file>
     </qresource>
 </RCC>

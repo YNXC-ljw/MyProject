@@ -19,6 +19,9 @@ public:
 
     Iterator begin();
     Iterator end();
+
+    void writeToDB();
+    void readFromDB();
 private:
     QVector<Music> musicList;
 };

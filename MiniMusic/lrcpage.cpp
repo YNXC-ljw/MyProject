@@ -92,6 +92,7 @@ void LrcPage::showLrcWordLine(qint64 time)
     // 1. 根据当前所唱歌曲的时间来获取歌词在QVector的索引
     int index = getLrcWordLineIndex(time);
     // 2. 更新前三行、当前行和后三行到界面
+    (void)index;
 
 }
 

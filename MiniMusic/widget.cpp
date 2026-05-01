@@ -13,6 +13,10 @@
 #include <QJsonArray>
 
 #include <QFileDialog>
+#include <QSqlDatabase>
+#include <QMessageBox>
+#include <QSqlQuery>
+#include<QSqlError>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -24,6 +28,10 @@ Widget::Widget(QWidget *parent)
     initUi();
 
     playerInit();
+
+    initSqlite();
+
+    initMusicList();
 
     connectSignalAndSlots();
 
@@ -167,6 +175,9 @@ void Widget::initUi()
     //给窗口背景设置透明
     this->setAttribute(Qt::WA_TranslucentBackground);
 
+    //设置任务栏图标
+    this->setWindowIcon(QIcon(":/image/logotubiao.png"));
+
     //给窗口设置阴影效果
     QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);
     shadowEffect->setOffset(0,0);
@@ -199,13 +210,8 @@ void Widget::initUi()
     ui->supplyMusicBox->initRecBoxUi(randomPiction(),2);
 
     //初始化page页面
-    ui->likePage->setMusicListType(PageType::LIKE_PAGE);
     ui->likePage->setCommonPageUi("我喜欢",":/image/ilike.jpg");
-
-    ui->localPage->setMusicListType(PageType::LOCAL_PAGE);
     ui->localPage->setCommonPageUi("本地音乐",":/image/local.jpg");
-
-    ui->recentPage->setMusicListType(PageType::HISTORY_PAGE);
     ui->recentPage->setCommonPageUi("最近播放",":/image/recent.jpg");
 
     volumeTool = new VolumeTool(this);
@@ -236,7 +242,7 @@ void Widget::playerInit()
 
     // 4. 设置默认音量
     player->setVolume(20);
-//////////////////////////////////////////////
+//////////////////////////////////////////////////
     //关联QMediaPlayer的信号
 
     //关联QMediaPlayer::Duration信号
@@ -254,12 +260,80 @@ void Widget::playerInit()
     //当播放模式发生改变时
     connect(playerList,&QMediaPlaylist::playbackModeChanged,this,&Widget::onPlayModelClicked);
 }
+
+void Widget::initSqlite()
+{
+    // 1. 进行数据库驱动加载
+    sqlite = QSqlDatabase::addDatabase("QSQLITE");
+
+    // 2. 设置数据库名称
+    sqlite.setDatabaseName("MiniMusic.db");
+
+    // 3. 打开
+    if(!sqlite.open())
+    {
+        QMessageBox::critical(this,"MiniMusic","数据库打开失败");
+        return;
+    }
+    qDebug() << "MiniMusic数据库连接成功";
+
+    // 4. 创建表
+    QString sql = "CREATE TABLE IF NOT EXISTS MusicInfo(\
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,\
+                  musicId varchar(50) UNIQUE,\
+                  musicName varchar(50),\
+                  musicSinger varchar(50), \
+                  albumName varchar(50),\
+                  musicUrl varchar(256),\
+                  duration BIGINT,\
+                  isLike INTEGER,\
+                  isHistory INTEGER)";
+
+    QSqlQuery query;
+    if(!query.exec(sql))
+    {
+        QMessageBox::critical(this,"MiniMusic","初始化错误!!!");
+        return;
+    }
+
+    qDebug() << "MusicInfo表创建成功!!!";
+}
+
+//将数据库中的歌曲初始化到界面
+void Widget::initMusicList()
+{
+    musicList.readFromDB();
+
+    ui->likePage->setMusicListType(PageType::LIKE_PAGE);
+    ui->likePage->reFrush(musicList);
+
+    ui->localPage->setMusicListType(PageType::LOCAL_PAGE);
+    ui->localPage->reFrush(musicList);
+
+    ui->recentPage->setMusicListType(PageType::HISTORY_PAGE);
+    ui->recentPage->reFrush(musicList);
+}
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 //窗口按钮模块
 //关闭窗口按钮
 void Widget::on_quit_clicked()
 {
+    // 关闭窗口前将music信息导入数据库
+    musicList.writeToDB();
+
+//    QSqlQuery query;
+//    // 执行删除语句
+//    if (query.exec("DELETE FROM MusicInfo")) {
+//        qDebug() << "成功清空 MusicInfo 表中的所有数据";
+//    } else
+//    {
+//        qDebug() << "清空数据失败:" << query.lastError().text();
+//    }
+
+    // 断开与SQLite的连接
+    sqlite.close();
+
     close();
 }
 
@@ -272,6 +346,12 @@ void Widget::on_min_clicked()
 void Widget::on_max_clicked()
 {
     this->setWindowState(Qt::WindowFullScreen);
+}
+//换肤
+void Widget::on_skin_clicked()
+{
+    //更换背景颜色 或者 更换背景图片
+    QMessageBox::information(this,"温馨提示","换肤功能暂未支持，敬请期待...");
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -615,3 +695,5 @@ void Widget::playMusicByIndex(CommonPage *page, int index)
 {
     playAllMusicOfCommonPage(page,index);
 }
+
+

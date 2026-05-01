@@ -1,6 +1,7 @@
 #include "musiclist.h"
 #include <QMimeDatabase>
 #include <QDebug>
+#include <QSqlQuery>
 MusicList::MusicList()
 {
 
@@ -48,3 +49,46 @@ Iterator MusicList::end()
 {
     return musicList.end();
 }
+
+void MusicList::writeToDB()
+{
+    for(auto music : musicList)
+    {
+        // 将一个个music对象的所有属性写入到数据库中
+        music.insertMusicToDB();
+    }
+}
+
+void MusicList::readFromDB()
+{
+    QSqlQuery query;
+    query.prepare("select musicId,musicName,musicSinger,albumName,musicUrl\
+                 ,duration,isLike,isHistory from MusicInfo");
+    if(!query.exec())
+    {
+        qDebug() << "数据库查询失败";
+        return;
+    }
+
+    while(query.next())
+    {
+         Music music;
+         music.setMusicId(query.value(0).toString());
+         music.setMusicName(query.value(1).toString());
+         music.setMusicSinger(query.value(2).toString());
+         music.setMusicAlbum(query.value(3).toString());
+         music.setMusicUrl(query.value(4).toString());
+         music.setDuration(query.value(5).toLongLong());
+         music.setIsLike(query.value(6).toBool());
+         music.setIsHistory(query.value(7).toBool());
+         musicList.push_back(music);
+
+    }
+}
+
+
+
+
+
+
+

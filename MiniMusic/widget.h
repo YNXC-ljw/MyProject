@@ -5,6 +5,7 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QPropertyAnimation>
+#include <QSqlDatabase>
 
 #include "volumetool.h"
 #include "musiclist.h"
@@ -26,6 +27,8 @@ public:
 
     void initUi();
     void playerInit();
+    void initSqlite();
+    void initMusicList();
     //窗口按钮区设置图片
     void settingBox();
     //播放控制区设置图片
@@ -77,6 +80,8 @@ private slots:
 
 
 
+    void on_skin_clicked();
+
 protected:
     //重写鼠标点击函数
     void mousePressEvent(QMouseEvent *event);
@@ -101,5 +106,7 @@ private:
 
     CommonPage* currentPage; //记录当前播放歌曲的页面
     qint64 totalTime;       //记录媒体元的总时间
+
+    QSqlDatabase sqlite;
 };
 #endif // WIDGET_H

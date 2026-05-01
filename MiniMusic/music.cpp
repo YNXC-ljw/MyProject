@@ -3,6 +3,8 @@
 #include <QMediaPlayer>
 #include <QCoreApplication>
 #include <QDebug>
+#include <QSqlQuery>
+#include <QSqlError>
 
 Music::Music()
     :isLike(false)
@@ -20,6 +22,11 @@ Music::Music(QUrl url)
     //歌曲名称、作者、专辑......
     musicId = QUuid::createUuid().toString();
     parseMediaMetaMusic();
+}
+
+void Music::setMusicId(const QString& musicId)
+{
+    this->musicId = musicId;
 }
 void Music::setMusicName(const QString& musicName)
 {
@@ -93,6 +100,68 @@ QString Music::getLrcFilePath() const
     lrcPath.replace(".flac",".lrc");
 
     return lrcPath;
+}
+
+void Music::insertMusicToDB()
+{
+    // 1. 检查music对象是否存在于数据库中
+    QSqlQuery query;
+    //query.prepare("select * from MusicInfo where musicId = ?");
+    //query.prepare("select id from MusicInfo where musicId = ?");
+    query.prepare("select exists (select 1 from MusicInfo where musicId = ?)");//select exists:存在返回true，否则false
+    query.addBindValue(musicId);
+
+    if(!query.exec())
+    {
+        qDebug() << "查询失败:" << query.lastError().text();
+        return;
+    }
+
+    if(query.next())
+    {
+        bool isExists = query.value(0).toBool();
+
+        if(isExists)
+        {
+            //歌曲存在
+            // 2. 存在：不需要插入；此时只需要将isLike和isHistory属性更新即可
+            query.prepare("UPDATE MusicInfo SET isLike = ?, isHistory = ? WHERE musicId = ?");
+            query.addBindValue(isLike ? 1 : 0);
+            query.addBindValue(isHistory ? 1 : 0);
+            query.addBindValue(musicId);
+            if (!query.exec())
+            {
+                qDebug() << "更新失败：" << query.lastError().text();
+            }
+
+            qDebug() << "更新music信息：" << musicName << " " << musicId;
+        }
+        else
+        {
+            // 3. 不存在：直接将music对象属性插入数据库
+            query.prepare("INSERT INTO MusicInfo(musicId, musicName, musicSinger, albumName\
+                                                  , musicUrl, duration, isLike, isHistory) \
+                          VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+            query.addBindValue(musicId);
+            query.addBindValue(musicName);
+            query.addBindValue(musicSinger);
+            query.addBindValue(musicAlbum);
+            query.addBindValue(musicUrl.toLocalFile());
+            query.addBindValue(duration);
+            query.addBindValue(isLike ? 1 : 0);
+            query.addBindValue(isHistory ? 1 : 0);
+
+            if (!query.exec())
+            {
+                qDebug() << "插入失败：" << query.lastError().text();
+                return;
+            }
+
+            qDebug() << "插入music信息：" << musicName << " " << musicId;
+        }
+
+    }
+
 }
 
 void Music::parseMediaMetaMusic()
