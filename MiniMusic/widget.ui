@@ -533,6 +533,22 @@
                 <height>500</height>
                </rect>
               </property>
+              <property name="styleSheet">
+               <string notr="true">QScrollBar:vertical
+{
+	border: none;
+	width: 10px;
+	background-color: #ccffcc;
+	margin: 0px 0px 0px 0px;
+}
+QScrollBar::handle:vertical
+{
+    width:10px;
+    background-color:#E3E3E3;
+    border-radius:5px;
+    min-height: 20px;
+}</string>
+              </property>
               <property name="widgetResizable">
                <bool>true</bool>
               </property>
@@ -562,7 +578,7 @@
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>24</pointsize>
+                    <pointsize>18</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -586,7 +602,7 @@
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>18</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -613,7 +629,7 @@
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>18</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">

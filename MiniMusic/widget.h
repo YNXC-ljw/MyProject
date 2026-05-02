@@ -37,6 +37,10 @@ public:
     void connectSignalAndSlots();
 
     QJsonArray randomPiction();
+
+    void updateBtformAnimation();
+
+    void onMiniMusicQuit();
 private slots:
     //关闭窗口
     void on_quit_clicked();
@@ -108,5 +112,7 @@ private:
     qint64 totalTime;       //记录媒体元的总时间
 
     QSqlDatabase sqlite;
+
+    bool isDrag;    //是否拖拽
 };
 #endif // WIDGET_H

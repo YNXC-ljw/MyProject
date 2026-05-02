@@ -21,7 +21,7 @@ public:
     int getPageId() const;
     void clearBackground();
 
-    void showAnimal();
+    void showAnimal(bool isShow);
 
 
 signals:

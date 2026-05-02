@@ -77,9 +77,16 @@ void BtForm::clearBackground()
     ui->btStyle->setStyleSheet("#btStyle:hover{ background-color: #66FFCC;}");
 }
 
-void BtForm::showAnimal()
+void BtForm::showAnimal(bool isShow)
 {
-    ui->lineBox->show();
+    if(isShow)
+    {
+        ui->lineBox->show();
+    }
+    else
+    {
+        ui->lineBox->hide();
+    }
 }
 
 void BtForm::mousePressEvent(QMouseEvent *event)

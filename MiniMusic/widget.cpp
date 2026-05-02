@@ -16,7 +16,9 @@
 #include <QSqlDatabase>
 #include <QMessageBox>
 #include <QSqlQuery>
-#include<QSqlError>
+#include <QSqlError>
+#include <QSystemTrayIcon>
+#include <QMenu>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -43,6 +45,168 @@ Widget::~Widget()
 {
     delete ui;
 }
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//初始化模块
+
+void Widget::initUi()
+{
+    this->setWindowFlag(Qt::FramelessWindowHint);
+
+    //给窗口背景设置透明
+    this->setAttribute(Qt::WA_TranslucentBackground);
+
+    //设置任务栏图标
+    this->setWindowIcon(QIcon(":/image/logotubiao.png"));
+
+    //添加系统托盘
+    QSystemTrayIcon* trayIcon = new QSystemTrayIcon(this);
+    trayIcon->setIcon(QIcon(":/image/logotubiao.png"));
+    trayIcon->show();
+    //给托盘添加菜单
+    QMenu* trayMenu = new QMenu();
+    trayMenu->addAction("显示",this,&QWidget::showNormal);
+    trayMenu->addAction("退出",this,&Widget::onMiniMusicQuit);
+    trayIcon->setContextMenu(trayMenu);
+
+    //给窗口设置阴影效果
+    QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);
+    shadowEffect->setOffset(0,0);
+    shadowEffect->setColor("#000000");
+    shadowEffect->setBlurRadius(10);
+    this->setGraphicsEffect(shadowEffect);
+
+    ui->max->setEnabled(false);//禁用窗口最大化
+
+    settingBox();
+
+    contralMusic();
+
+    //给BtForm设置图标和文本信息
+    ui->Rec->setIconAndText(":/image/rec.png","推荐", 0);
+    ui->audio->setIconAndText(":/image/radio.png","电台", 1);
+    ui->music->setIconAndText(":/image/music.png","音乐馆", 2);
+    ui->like->setIconAndText(":/image/like.png","我喜欢", 3);
+    ui->local->setIconAndText(":/image/local.png","本地和下载", 4);
+    ui->recent->setIconAndText(":/image/recent.png","最近播放", 5);
+
+    //将localPage设置为默认页面
+    ui->stackedWidget->setCurrentIndex(4);
+    currentPage = ui->localPage;
+    //让本地下载默认显示音符跳动
+    ui->local->showAnimal(true);
+
+    //初始化推荐页面
+    srand(time(NULL));
+    ui->recMusicBox->initRecBoxUi(randomPiction(),1);
+    ui->supplyMusicBox->initRecBoxUi(randomPiction(),2);
+
+    //初始化page页面
+    ui->likePage->setCommonPageUi("我喜欢",":/image/ilike.jpg");
+    ui->localPage->setCommonPageUi("本地音乐",":/image/local.jpg");
+    ui->recentPage->setCommonPageUi("最近播放",":/image/recent.jpg");
+
+    volumeTool = new VolumeTool(this);
+
+    //实例化LrcWord对象
+    lrcPage = new LrcPage(this);
+    lrcPage->setGeometry(10,10,lrcPage->width(),lrcPage->height());
+    lrcPage->hide();
+
+    //初始化上移对象
+    lrcPageAnimation = new QPropertyAnimation(lrcPage,"geometry",this);
+    lrcPageAnimation->setDuration(400);
+    lrcPageAnimation->setStartValue(QRect(10,10+lrcPage->height(),lrcPage->width(),lrcPage->height()));
+    lrcPageAnimation->setEndValue(QRect(10,10,lrcPage->width(),lrcPage->height()));
+}
+
+void Widget::playerInit()
+{
+    // 1. 初始化播放相关类对象
+    player = new QMediaPlayer(this);
+    playerList = new QMediaPlaylist(this);
+
+    // 2. 设置默认播放模式
+    playerList->setPlaybackMode(QMediaPlaylist::Random);
+
+    // 3. 将播放列表设置到播放媒体对象中
+    player->setPlaylist(playerList);
+
+    // 4. 设置默认音量
+    player->setVolume(20);
+//////////////////////////////////////////////////
+    //关联QMediaPlayer的信号
+
+    //关联QMediaPlayer::Duration信号
+    connect(player,&QMediaPlayer::durationChanged,this,&Widget::onDurationChanged);
+
+    //关联QMediaPlayer::Position信号
+    connect(player,&QMediaPlayer::positionChanged,this,&Widget::onPositionChanged);
+
+    //关联播放元数据改变时的信号
+    connect(player,&QMediaPlayer::metaDataAvailableChanged,this,&Widget::onMetaDataAvailableChanged);
+
+    //当playlist中播放源发生变化时
+    connect(playerList,&QMediaPlaylist::currentIndexChanged,this,&Widget::onCurrentIndexChanged);
+
+    //当播放模式发生改变时
+    connect(playerList,&QMediaPlaylist::playbackModeChanged,this,&Widget::onPlayModelClicked);
+}
+
+void Widget::initSqlite()
+{
+    // 1. 进行数据库驱动加载
+    sqlite = QSqlDatabase::addDatabase("QSQLITE");
+
+    // 2. 设置数据库名称
+    sqlite.setDatabaseName("MiniMusic.db");
+
+    // 3. 打开
+    if(!sqlite.open())
+    {
+        QMessageBox::critical(this,"MiniMusic","数据库打开失败");
+        return;
+    }
+    qDebug() << "MiniMusic数据库连接成功";
+
+    // 4. 创建表
+    QString sql = "CREATE TABLE IF NOT EXISTS MusicInfo(\
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,\
+                  musicId varchar(50) UNIQUE,\
+                  musicName varchar(50),\
+                  musicSinger varchar(50), \
+                  albumName varchar(50),\
+                  musicUrl varchar(256),\
+                  duration BIGINT,\
+                  isLike INTEGER,\
+                  isHistory INTEGER)";
+
+    QSqlQuery query;
+    if(!query.exec(sql))
+    {
+        QMessageBox::critical(this,"MiniMusic","初始化错误!!!");
+        return;
+    }
+
+    qDebug() << "MusicInfo表创建成功!!!";
+}
+
+//将数据库中的歌曲初始化到界面
+void Widget::initMusicList()
+{
+    musicList.readFromDB();
+
+    ui->likePage->setMusicListType(PageType::LIKE_PAGE);
+    ui->likePage->reFrush(musicList);
+
+    ui->localPage->setMusicListType(PageType::LOCAL_PAGE);
+    ui->localPage->reFrush(musicList);
+
+    ui->recentPage->setMusicListType(PageType::HISTORY_PAGE);
+    ui->recentPage->reFrush(musicList);
+}
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 
 //给窗口控制按钮设置图片
 void Widget::settingBox()
@@ -164,177 +328,51 @@ QJsonArray Widget::randomPiction()
     }
     return objArray;
 }
-//////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////
-//初始化模块
 
-void Widget::initUi()
+//将Btform动画与currentPage对应显示
+void Widget::updateBtformAnimation()
 {
-    this->setWindowFlag(Qt::FramelessWindowHint);
-
-    //给窗口背景设置透明
-    this->setAttribute(Qt::WA_TranslucentBackground);
-
-    //设置任务栏图标
-    this->setWindowIcon(QIcon(":/image/logotubiao.png"));
-
-    //给窗口设置阴影效果
-    QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);
-    shadowEffect->setOffset(0,0);
-    shadowEffect->setColor("#000000");
-    shadowEffect->setBlurRadius(10);
-    this->setGraphicsEffect(shadowEffect);
-
-    settingBox();
-
-    contralMusic();
-
-    //给BtForm设置图标和文本信息
-    ui->Rec->setIconAndText(":/image/rec.png","推荐", 0);
-    ui->audio->setIconAndText(":/image/radio.png","电台", 1);
-    ui->music->setIconAndText(":/image/music.png","音乐馆", 2);
-    ui->like->setIconAndText(":/image/like.png","我喜欢", 3);
-    ui->local->setIconAndText(":/image/local.png","本地和下载", 4);
-    ui->recent->setIconAndText(":/image/recent.png","最近播放", 5);
-
-    //让本地下载默认显示音符跳动
-    ui->local->showAnimal();
-
-    //将localPage设置为默认页面
-    ui->stackedWidget->setCurrentIndex(4);
-    currentPage = ui->localPage;
-
-    //初始化推荐页面
-    srand(time(NULL));
-    ui->recMusicBox->initRecBoxUi(randomPiction(),1);
-    ui->supplyMusicBox->initRecBoxUi(randomPiction(),2);
-
-    //初始化page页面
-    ui->likePage->setCommonPageUi("我喜欢",":/image/ilike.jpg");
-    ui->localPage->setCommonPageUi("本地音乐",":/image/local.jpg");
-    ui->recentPage->setCommonPageUi("最近播放",":/image/recent.jpg");
-
-    volumeTool = new VolumeTool(this);
-
-    //实例化LrcWord对象
-    lrcPage = new LrcPage(this);
-    lrcPage->setGeometry(10,10,lrcPage->width(),lrcPage->height());
-    lrcPage->hide();
-
-    //初始化上移对象
-    lrcPageAnimation = new QPropertyAnimation(lrcPage,"geometry",this);
-    lrcPageAnimation->setDuration(400);
-    lrcPageAnimation->setStartValue(QRect(10,10+lrcPage->height(),lrcPage->width(),lrcPage->height()));
-    lrcPageAnimation->setEndValue(QRect(10,10,lrcPage->width(),lrcPage->height()));
-}
-
-void Widget::playerInit()
-{
-    // 1. 初始化播放相关类对象
-    player = new QMediaPlayer(this);
-    playerList = new QMediaPlaylist(this);
-
-    // 2. 设置默认播放模式
-    playerList->setPlaybackMode(QMediaPlaylist::Random);
-
-    // 3. 将播放列表设置到播放媒体对象中
-    player->setPlaylist(playerList);
-
-    // 4. 设置默认音量
-    player->setVolume(20);
-//////////////////////////////////////////////////
-    //关联QMediaPlayer的信号
-
-    //关联QMediaPlayer::Duration信号
-    connect(player,&QMediaPlayer::durationChanged,this,&Widget::onDurationChanged);
-
-    //关联QMediaPlayer::Position信号
-    connect(player,&QMediaPlayer::positionChanged,this,&Widget::onPositionChanged);
-
-    //关联播放元数据改变时的信号
-    connect(player,&QMediaPlayer::metaDataAvailableChanged,this,&Widget::onMetaDataAvailableChanged);
-
-    //当playlist中播放源发生变化时
-    connect(playerList,&QMediaPlaylist::currentIndexChanged,this,&Widget::onCurrentIndexChanged);
-
-    //当播放模式发生改变时
-    connect(playerList,&QMediaPlaylist::playbackModeChanged,this,&Widget::onPlayModelClicked);
-}
-
-void Widget::initSqlite()
-{
-    // 1. 进行数据库驱动加载
-    sqlite = QSqlDatabase::addDatabase("QSQLITE");
-
-    // 2. 设置数据库名称
-    sqlite.setDatabaseName("MiniMusic.db");
-
-    // 3. 打开
-    if(!sqlite.open())
+    // 获取currentPage在stackedWidget上的索引
+    int index = ui->stackedWidget->indexOf(currentPage);
+    if(-1 == index)
     {
-        QMessageBox::critical(this,"MiniMusic","数据库打开失败");
-        return;
-    }
-    qDebug() << "MiniMusic数据库连接成功";
-
-    // 4. 创建表
-    QString sql = "CREATE TABLE IF NOT EXISTS MusicInfo(\
-                  id INTEGER PRIMARY KEY AUTOINCREMENT,\
-                  musicId varchar(50) UNIQUE,\
-                  musicName varchar(50),\
-                  musicSinger varchar(50), \
-                  albumName varchar(50),\
-                  musicUrl varchar(256),\
-                  duration BIGINT,\
-                  isLike INTEGER,\
-                  isHistory INTEGER)";
-
-    QSqlQuery query;
-    if(!query.exec(sql))
-    {
-        QMessageBox::critical(this,"MiniMusic","初始化错误!!!");
+        qDebug() << "该页面不存在";
         return;
     }
 
-    qDebug() << "MusicInfo表创建成功!!!";
+    //获取Widget界面上所有的BtForm
+    QList<BtForm*> btForms = this->findChildren<BtForm*>();
+    for(auto BtForm : btForms)
+    {
+        if(BtForm->getPageId() == index)
+        {
+            BtForm->showAnimal(true);
+        }
+        else
+        {
+            BtForm->showAnimal(false);
+        }
+    }
 }
 
-//将数据库中的歌曲初始化到界面
-void Widget::initMusicList()
+void Widget::onMiniMusicQuit()
 {
-    musicList.readFromDB();
+    // 关闭窗口前将music信息导入数据库
+    musicList.writeToDB();
 
-    ui->likePage->setMusicListType(PageType::LIKE_PAGE);
-    ui->likePage->reFrush(musicList);
+    // 断开与SQLite的连接
+    sqlite.close();
 
-    ui->localPage->setMusicListType(PageType::LOCAL_PAGE);
-    ui->localPage->reFrush(musicList);
-
-    ui->recentPage->setMusicListType(PageType::HISTORY_PAGE);
-    ui->recentPage->reFrush(musicList);
+    close();
 }
+
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 //窗口按钮模块
 //关闭窗口按钮
 void Widget::on_quit_clicked()
 {
-    // 关闭窗口前将music信息导入数据库
-    musicList.writeToDB();
-
-//    QSqlQuery query;
-//    // 执行删除语句
-//    if (query.exec("DELETE FROM MusicInfo")) {
-//        qDebug() << "成功清空 MusicInfo 表中的所有数据";
-//    } else
-//    {
-//        qDebug() << "清空数据失败:" << query.lastError().text();
-//    }
-
-    // 断开与SQLite的连接
-    sqlite.close();
-
-    close();
+    hide();
 }
 
 //窗口最小化
@@ -345,7 +383,7 @@ void Widget::on_min_clicked()
 //窗口最大化
 void Widget::on_max_clicked()
 {
-    this->setWindowState(Qt::WindowFullScreen);
+    this->setWindowState(Qt::WindowMaximized);
 }
 //换肤
 void Widget::on_skin_clicked()
@@ -368,6 +406,8 @@ void Widget::onBtClicked(int pageId)
         }
     }
     ui->stackedWidget->setCurrentIndex(pageId);
+
+    isDrag = false;
 }
 
 void Widget::updateLikeMusicAndPage(bool isLike, const QString &musicId)
@@ -391,6 +431,7 @@ void Widget::mousePressEvent(QMouseEvent *event)
     //鼠标按下时记录鼠标坐标
     if(Qt::LeftButton == event->button())
     {
+        isDrag = true;
         //获取鼠标相对于屏幕左上角的坐标
          dragPosition = event->globalPos() - geometry().topLeft();
          return;
@@ -401,7 +442,7 @@ void Widget::mousePressEvent(QMouseEvent *event)
 //鼠标移动
 void Widget::mouseMoveEvent(QMouseEvent *event)
 {
-    if(Qt::LeftButton == event->buttons())
+    if(Qt::LeftButton == event->buttons() && isDrag)
     {
         //将窗口移动到相对位置
         move(event->globalPos() - dragPosition);
@@ -584,6 +625,8 @@ void Widget::onPlayAll(PageType pageType)
 void Widget::playAllMusicOfCommonPage(CommonPage *page, int index)
 {
     currentPage = page;
+
+    updateBtformAnimation();
     //清空之前playlist中的歌曲
     playerList->clear();
     //添加要播放的歌曲

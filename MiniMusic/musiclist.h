@@ -4,6 +4,7 @@
 #include <QVector>
 #include <QUrl>
 #include <QList>
+#include <QSet>
 
 #include "music.h"
 
@@ -24,6 +25,8 @@ public:
     void readFromDB();
 private:
     QVector<Music> musicList;
+
+    QSet<QString> musicPaths;   // 防止歌曲文件重复加载
 };
 
 #endif // MUSICLIST_H
