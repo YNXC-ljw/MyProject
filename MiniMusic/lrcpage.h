@@ -32,6 +32,7 @@ public:
 
     void showLrcWordLine(qint64 time);
     int getLrcWordLineIndex(qint64 time);
+    QString getLrcWordByIndex(int index);
 
 private:
     Ui::LrcPage *ui;

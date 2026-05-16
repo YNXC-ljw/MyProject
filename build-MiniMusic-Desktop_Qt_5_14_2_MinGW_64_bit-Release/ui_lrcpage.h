@@ -130,7 +130,7 @@ public:
         line1->setMinimumSize(QSize(0, 50));
         line1->setMaximumSize(QSize(16777215, 50));
         QFont font;
-        font.setPointSize(15);
+        font.setPointSize(13);
         line1->setFont(font);
         line1->setAlignment(Qt::AlignCenter);
 
@@ -159,7 +159,7 @@ public:
         lineCenter->setMinimumSize(QSize(0, 80));
         lineCenter->setMaximumSize(QSize(16777215, 80));
         QFont font1;
-        font1.setPointSize(25);
+        font1.setPointSize(20);
         lineCenter->setFont(font1);
         lineCenter->setStyleSheet(QString::fromUtf8("#lineCenter\n"
 "{\n"

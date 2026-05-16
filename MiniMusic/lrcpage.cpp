@@ -32,26 +32,32 @@ LrcPage::LrcPage(QWidget *parent) :
     });
 
     ui->hideBtn->setIcon(QIcon(":/image/xiala.png"));
+
+    showLrcWordLine(-1);
 }
 
 LrcPage::~LrcPage()
 {
     delete ui;
 }
-
+//解析歌词
 bool LrcPage::parseLrcFile(const QString &lrcPath)
 {
     // 1. 打开文件
     QFile file(lrcPath);
-    if(file.open(QIODevice::ReadOnly))
+    if(!file.open(QIODevice::ReadOnly))
     {
         qDebug() << "打开lrc文件:" << lrcPath << "失败";
         return false;
     }
+
+    //将上一首歌曲歌词清空
+    lrcWordLines.clear();
+
     //一次性解析一行歌词
     while(!file.atEnd())
     {
-        QString lrcLineWord = file.readLine(1024);
+        QString lrcLineWord = file.readLine(1024);//读取一行
 
         // 1. 先解析出时间和 歌词的字符串文本--->按照]分割
         int start = 0, end = 0;
@@ -69,10 +75,10 @@ bool LrcPage::parseLrcFile(const QString &lrcPath)
 
         // 解析秒
         start = end+1;
-        end = lrcTime.indexOf('.', start);
+        end = lrcTime.indexOf(']', start);
         lineTime += lrcTime.mid(start, end - start).toInt()*1000;     // 解析秒并将其转换为毫秒
 
-        // 解析毫秒
+        // 解析毫秒(lrc歌词文本没有毫秒单位)
         start = end+1;
         end = lrcTime.indexOf('.', start);
         lineTime += lrcTime.mid(start, end - start).toInt();          // 解析毫秒
@@ -86,21 +92,40 @@ bool LrcPage::parseLrcFile(const QString &lrcPath)
     }
     return true;
 }
-
+//将歌词显示到界面
 void LrcPage::showLrcWordLine(qint64 time)
 {
     // 1. 根据当前所唱歌曲的时间来获取歌词在QVector的索引
     int index = getLrcWordLineIndex(time);
+
     // 2. 更新前三行、当前行和后三行到界面
-    (void)index;
-
+    if(-1 == index)
+    {
+        ui->line1->setText("");
+        ui->line2->setText("");
+        ui->line3->setText("");
+        ui->lineCenter->setText("当前歌曲暂无歌词");
+        ui->line4->setText("");
+        ui->line5->setText("");
+        ui->line6->setText("");
+    }
+    else
+    {
+        ui->line1->setText(getLrcWordByIndex(index - 1));
+        ui->line2->setText(getLrcWordByIndex(index - 2));
+        ui->line3->setText(getLrcWordByIndex(index - 3));
+        ui->lineCenter->setText(getLrcWordByIndex(index));
+        ui->line4->setText(getLrcWordByIndex(index + 1));
+        ui->line5->setText(getLrcWordByIndex(index + 2));
+        ui->line6->setText(getLrcWordByIndex(index + 3));
+    }
 }
-
+//歌词索引
 int LrcPage::getLrcWordLineIndex(qint64 time)
 {
     // 将time和QVector中保存的LrcWordLine中的time进行对比
-    // 当前歌曲没有lrc歌词文件
-    if(lrcWordLines.isEmpty()){
+    if(lrcWordLines.isEmpty())// 当前歌曲没有lrc歌词文件
+    {
         return -1;
     }
 
@@ -120,4 +145,13 @@ int LrcPage::getLrcWordLineIndex(qint64 time)
     // 最后一行唱完之后，歌曲结束了，但是还有收尾音乐
     // 让歌词界面显示最后一行歌词
     return lrcWordLines.size()-1;
+}
+//通过索引获取歌词
+QString LrcPage::getLrcWordByIndex(int index)
+{
+    if(index < 0 || index >= lrcWordLines.size())
+    {
+        return "";
+    }
+    return lrcWordLines[index].lrcText;
 }

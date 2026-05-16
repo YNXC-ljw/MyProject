@@ -84,7 +84,7 @@ private slots:
 
 
 
-    void on_skin_clicked();
+    void on_skin_clicked();//换肤
 
 protected:
     //重写鼠标点击函数

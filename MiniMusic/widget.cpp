@@ -23,6 +23,7 @@
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
+    , currentIndex(-1)
 {
     ui->setupUi(this);
 
@@ -631,7 +632,7 @@ void Widget::playAllMusicOfCommonPage(CommonPage *page, int index)
     playerList->clear();
     //添加要播放的歌曲
     page->addMusicToPlayList(musicList,playerList);
-    //从第首开始播放
+    //从第n首开始播放
     playerList->setCurrentIndex(index);
     //播放
     player->play();
@@ -675,7 +676,10 @@ void Widget::onPositionChanged(qint64 position)
     ui->progressBar->setStep(position/(float)totalTime);
 
     //在歌词界面同步歌词
-    lrcPage->showLrcWordLine(position);
+    if(currentIndex >= 0)
+    {
+        lrcPage->showLrcWordLine(position);
+    }
 }
 
 void Widget::onMusicSliderChanged(float ratio)
@@ -736,6 +740,8 @@ void Widget::onMetaDataAvailableChanged(bool available)
 //通过索引播放歌曲（双击播放）
 void Widget::playMusicByIndex(CommonPage *page, int index)
 {
+    //默认为暂停图标，双击播放要同步播放图标
+    ui->play->setIcon(QIcon(":/image/play_2.png"));
     playAllMusicOfCommonPage(page,index);
 }
 
