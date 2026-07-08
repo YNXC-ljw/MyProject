@@ -153,7 +153,7 @@ void Widget::playerInit()
     //当播放模式发生改变时
     connect(playerList,&QMediaPlaylist::playbackModeChanged,this,&Widget::onPlayModelClicked);
 }
-
+// 初始化数据库
 void Widget::initSqlite()
 {
     // 1. 进行数据库驱动加载
@@ -549,7 +549,7 @@ void Widget::onPlayDownClicked()
 {
     playerList->next();
 }
-
+// 播放模式切换
 void Widget::onPlayModelClicked()
 {
     //顺序播放--->随机播放--->单曲循环
@@ -582,19 +582,19 @@ void Widget::onPlayModelClicked()
         qDebug() << "暂不支持";
     }
 }
-
+// 设置静音
 void Widget::setPlayerMuted(bool isMuted)
 {
     player->setMuted(isMuted);
 }
-
+// 歌词显示
 void Widget::onLrcWordClicked()
 {
     lrcPage->show();
 
     lrcPageAnimation->start();
 }
-
+// 设置播放器媒体音量
 void Widget::setPlayerVolume(int volume)
 {
     player->setVolume(volume);
@@ -637,7 +637,7 @@ void Widget::playAllMusicOfCommonPage(CommonPage *page, int index)
     //播放
     player->play();
 }
-
+//
 void Widget::onCurrentIndexChanged(int index)
 {
     currentIndex = index;
