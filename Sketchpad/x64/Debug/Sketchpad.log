@@ -1,0 +1,82 @@
+﻿  Sketchpad.cpp
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(25,5): error C2360: “hhhSubMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(18,15):
+  参见“hhhSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(25,5): error C2360: “hhSubMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(17,15):
+  参见“hhSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(25,5): error C2360: “hSubMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(16,15):
+  参见“hSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(25,5): error C2360: “hMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(15,15):
+  参见“hMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(29,5): error C2360: “hhhSubMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(18,15):
+  参见“hhhSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(29,5): error C2360: “hhSubMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(17,15):
+  参见“hhSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(29,5): error C2360: “hSubMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(16,15):
+  参见“hSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(29,5): error C2360: “hMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(15,15):
+  参见“hMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(33,5): error C2360: “hhhSubMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(18,15):
+  参见“hhhSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(33,5): error C2360: “hhSubMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(17,15):
+  参见“hhSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(33,5): error C2360: “hSubMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(16,15):
+  参见“hSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(33,5): error C2360: “hMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(15,15):
+  参见“hMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(36,5): error C2360: “hhhSubMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(18,15):
+  参见“hhhSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(36,5): error C2360: “hhSubMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(17,15):
+  参见“hhSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(36,5): error C2360: “hSubMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(16,15):
+  参见“hSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(36,5): error C2360: “hMenu”的初始化操作由“case”标签跳过
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(15,15):
+  参见“hMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(44,5): error C2361: “default”标签跳过“hhhSubMenu”的初始化操作
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(18,15):
+  参见“hhhSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(44,5): error C2361: “default”标签跳过“hhSubMenu”的初始化操作
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(17,15):
+  参见“hhSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(44,5): error C2361: “default”标签跳过“hSubMenu”的初始化操作
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(16,15):
+  参见“hSubMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(44,5): error C2361: “default”标签跳过“hMenu”的初始化操作
+  D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(15,15):
+  参见“hMenu”的声明
+  
+D:\astudy\Git\my-project\Sketchpad\Sketchpad.cpp(91,21): warning C4806: “==”: 不安全操作: 从类型“bool”提升到类型“int”的值不能等于给定的常量
