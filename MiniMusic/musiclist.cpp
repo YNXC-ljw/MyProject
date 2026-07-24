@@ -119,7 +119,7 @@ void MusicList::readFromDB()
          music.setIsHistory(query.value(7).toBool());
          musicList.push_back(music);
 
-        // 回复musicPaths，防止程序重新启动时添加本地歌曲出现重复数据
+        // 恢复musicPaths，防止程序重新启动时添加本地歌曲出现重复数据
         musicPaths.insert(music.getMusicUrl().toLocalFile());
     }
 }

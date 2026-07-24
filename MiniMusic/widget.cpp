@@ -30,12 +30,16 @@ Widget::Widget(QWidget *parent)
     //调用初始化方法，构造窗口
     initUi();
 
+    // 初始化播放类对象
     playerInit();
 
+    // 初始化数据库
     initSqlite();
 
+    // 将数据库中歌曲初始化到界面
     initMusicList();
 
+    // 关联信号和槽函数
     connectSignalAndSlots();
 
 
@@ -206,6 +210,47 @@ void Widget::initMusicList()
     ui->recentPage->setMusicListType(PageType::HISTORY_PAGE);
     ui->recentPage->reFrush(musicList);
 }
+//管理所有信号与信号槽的函数
+void Widget::connectSignalAndSlots()
+{
+    connect(ui->Rec,&BtForm::btClicked,this,&Widget::onBtClicked);
+    connect(ui->audio,&BtForm::btClicked,this,&Widget::onBtClicked);
+    connect(ui->music,&BtForm::btClicked,this,&Widget::onBtClicked);
+    connect(ui->like,&BtForm::btClicked,this,&Widget::onBtClicked);
+    connect(ui->local,&BtForm::btClicked,this,&Widget::onBtClicked);
+    connect(ui->recent,&BtForm::btClicked,this,&Widget::onBtClicked);
+
+    //响应commonPage发出的处理信号
+    connect(ui->likePage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
+    connect(ui->localPage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
+    connect(ui->recentPage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
+
+    //播放控制区信号处理
+    connect(ui->play,&QPushButton::clicked,this,&Widget::onPlayMiusic);
+    connect(ui->playUp,&QPushButton::clicked,this,&Widget::onPlayUpClicked);
+    connect(ui->playDown,&QPushButton::clicked,this,&Widget::onPlayDownClicked);
+    connect(ui->playModel,&QPushButton::clicked,this,&Widget::onPlayModelClicked);
+
+    //播放所有按钮信号处理(likePage、localPage、recentPage都有playAll按钮)
+    connect(ui->likePage,&CommonPage::playAll,this,&Widget::onPlayAll);
+    connect(ui->localPage,&CommonPage::playAll,this,&Widget::onPlayAll);
+    connect(ui->recentPage,&CommonPage::playAll,this,&Widget::onPlayAll);
+
+    //处理likePage、localPage、recentPage三个页面双击歌曲
+    connect(ui->likePage,&CommonPage::playMusicByIndex,this,&Widget::playMusicByIndex);
+    connect(ui->localPage,&CommonPage::playMusicByIndex,this,&Widget::playMusicByIndex);
+    connect(ui->recentPage,&CommonPage::playMusicByIndex,this,&Widget::playMusicByIndex);
+
+    //静音信号处理
+    connect(volumeTool,&VolumeTool::setMusicMuted,this,&Widget::setPlayerMuted);
+    //设置音量信号处理
+    connect(volumeTool,&VolumeTool::setMusicVolume,this,&Widget::setPlayerVolume);
+    //显示歌词
+    connect(ui->lrcWord,&QPushButton::clicked,this,&Widget::onLrcWordClicked);
+
+    //musicSLider::setMusicSliderPosition
+    connect(ui->progressBar,&MusicSlider::setMusicSliderPosition,this,&Widget::onMusicSliderChanged);
+}
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -258,47 +303,6 @@ void Widget::contralMusic()
 }
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-//管理所有信号与信号槽的函数
-void Widget::connectSignalAndSlots()
-{
-    connect(ui->Rec,&BtForm::btClicked,this,&Widget::onBtClicked);
-    connect(ui->audio,&BtForm::btClicked,this,&Widget::onBtClicked);
-    connect(ui->music,&BtForm::btClicked,this,&Widget::onBtClicked);
-    connect(ui->like,&BtForm::btClicked,this,&Widget::onBtClicked);
-    connect(ui->local,&BtForm::btClicked,this,&Widget::onBtClicked);
-    connect(ui->recent,&BtForm::btClicked,this,&Widget::onBtClicked);
-
-    //响应commonPage发出的处理信号
-    connect(ui->likePage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
-    connect(ui->localPage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
-    connect(ui->recentPage,&CommonPage::updateLikeMusic,this,&Widget::updateLikeMusicAndPage);
-
-    //播放控制区信号处理
-    connect(ui->play,&QPushButton::clicked,this,&Widget::onPlayMiusic);
-    connect(ui->playUp,&QPushButton::clicked,this,&Widget::onPlayUpClicked);
-    connect(ui->playDown,&QPushButton::clicked,this,&Widget::onPlayDownClicked);
-    connect(ui->playModel,&QPushButton::clicked,this,&Widget::onPlayModelClicked);
-
-    //播放所有按钮信号处理(likePage、localPage、recentPage都有playAll按钮)
-    connect(ui->likePage,&CommonPage::playAll,this,&Widget::onPlayAll);
-    connect(ui->localPage,&CommonPage::playAll,this,&Widget::onPlayAll);
-    connect(ui->recentPage,&CommonPage::playAll,this,&Widget::onPlayAll);
-
-    //处理likePage、localPage、recentPage三个页面双击歌曲
-    connect(ui->likePage,&CommonPage::playMusicByIndex,this,&Widget::playMusicByIndex);
-    connect(ui->localPage,&CommonPage::playMusicByIndex,this,&Widget::playMusicByIndex);
-    connect(ui->recentPage,&CommonPage::playMusicByIndex,this,&Widget::playMusicByIndex);
-
-    //静音信号处理
-    connect(volumeTool,&VolumeTool::setMusicMuted,this,&Widget::setPlayerMuted);
-    //设置音量信号处理
-    connect(volumeTool,&VolumeTool::setMusicVolume,this,&Widget::setPlayerVolume);
-    //显示歌词
-    connect(ui->lrcWord,&QPushButton::clicked,this,&Widget::onLrcWordClicked);
-
-    //musicSLider::setMusicSliderPosition
-    connect(ui->progressBar,&MusicSlider::setMusicSliderPosition,this,&Widget::onMusicSliderChanged);
-}
 //随机推荐图片
 QJsonArray Widget::randomPiction()
 {
@@ -454,6 +458,7 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
 
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
+// 播放控制区
 //音量调节按钮
 void Widget::on_volume_clicked()
 {
@@ -512,10 +517,6 @@ void Widget::on_addLocal_clicked()
         ui->localPage->addMusicToPlayList(musicList,playerList);
     }
 }
-//////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////
-//播放控制区
-
 //播放歌曲按钮
 void Widget::onPlayMiusic()
 {
@@ -599,11 +600,12 @@ void Widget::setPlayerVolume(int volume)
 {
     player->setVolume(volume);
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 //播放全部歌曲，默认从第0首开始播放
 void Widget::onPlayAll(PageType pageType)
 {
-
+    ui->play->setIcon(QIcon(":/image/play_2.png"));
     CommonPage* page = ui->localPage;
     switch(pageType)
     {
