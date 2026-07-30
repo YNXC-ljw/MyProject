@@ -155,7 +155,8 @@ void Widget::playerInit()
     connect(playerList,&QMediaPlaylist::currentIndexChanged,this,&Widget::onCurrentIndexChanged);
 
     //当播放模式发生改变时
-    connect(playerList,&QMediaPlaylist::playbackModeChanged,this,&Widget::onPlayModelClicked);
+    connect(playerList,&QMediaPlaylist::playbackMode,this,&Widget::onPlayModelClicked);
+    //connect(ui->playModel, &QPushButton::clicked, this, &Widget::onPlayModelClicked);
 }
 // 初始化数据库
 void Widget::initSqlite()
@@ -553,6 +554,13 @@ void Widget::onPlayDownClicked()
 // 播放模式切换
 void Widget::onPlayModelClicked()
 {
+//    qDebug() << "进入 onPlayModelClicked";
+//    qDebug() << "playerList 地址:" << playerList;
+
+//    if (playerList == nullptr) {
+//        qDebug() << "playerList 是空指针！";
+//        return;
+//    }
     //顺序播放--->随机播放--->单曲循环
     if(playerList->playbackMode() == QMediaPlaylist::Loop)//顺序播放
     {

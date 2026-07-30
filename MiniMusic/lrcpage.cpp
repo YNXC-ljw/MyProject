@@ -75,15 +75,15 @@ bool LrcPage::parseLrcFile(const QString &lrcPath)
 
         // 解析秒
         start = end+1;
-        end = lrcTime.indexOf(']', start);
+        end = lrcTime.indexOf('.', start);
         lineTime += lrcTime.mid(start, end - start).toInt()*1000;     // 解析秒并将其转换为毫秒
 
         // 解析毫秒(lrc歌词文本没有毫秒单位)
         start = end+1;
-        end = lrcTime.indexOf('.', start);
+        end = lrcTime.indexOf(']', start);
         lineTime += lrcTime.mid(start, end - start).toInt();          // 解析毫秒
 
-        // 3. 将该行给次保存
+        // 3. 将该行歌詞保存
         lrcWordLines.push_back(LrcWordLine(lineTime, lrcWord));
     }
     for(auto e : lrcWordLines)

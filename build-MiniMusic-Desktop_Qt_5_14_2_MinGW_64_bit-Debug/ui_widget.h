@@ -105,11 +105,12 @@ public:
     QPushButton *volume;
     QPushButton *addLocal;
     QWidget *play3;
+    QHBoxLayout *horizontalLayout;
+    QLabel *labelNULL;
     QLabel *currentTime;
     QLabel *line;
     QLabel *totalTime;
     QPushButton *lrcWord;
-    QLabel *labelNULL;
 
     void setupUi(QWidget *Widget)
     {
@@ -367,6 +368,20 @@ public:
         scrollArea = new QScrollArea(recPage);
         scrollArea->setObjectName(QString::fromUtf8("scrollArea"));
         scrollArea->setGeometry(QRect(0, 0, 820, 500));
+        scrollArea->setStyleSheet(QString::fromUtf8("QScrollBar:vertical\n"
+"{\n"
+"	border: none;\n"
+"	width: 10px;\n"
+"	background-color: #ccffcc;\n"
+"	margin: 0px 0px 0px 0px;\n"
+"}\n"
+"QScrollBar::handle:vertical\n"
+"{\n"
+"    width:10px;\n"
+"    background-color:#E3E3E3;\n"
+"    border-radius:5px;\n"
+"    min-height: 20px;\n"
+"}"));
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QString::fromUtf8("scrollAreaWidgetContents"));
@@ -378,7 +393,7 @@ public:
         recText->setMinimumSize(QSize(0, 50));
         recText->setMaximumSize(QSize(16777215, 50));
         QFont font;
-        font.setPointSize(24);
+        font.setPointSize(18);
         recText->setFont(font);
 
         verticalLayout_7->addWidget(recText);
@@ -388,7 +403,7 @@ public:
         recMusicText->setMinimumSize(QSize(0, 30));
         recMusicText->setMaximumSize(QSize(16777215, 30));
         QFont font1;
-        font1.setPointSize(18);
+        font1.setPointSize(14);
         recMusicText->setFont(font1);
 
         verticalLayout_7->addWidget(recMusicText);
@@ -439,28 +454,32 @@ public:
 
         progressBar = new MusicSlider(bodyright);
         progressBar->setObjectName(QString::fromUtf8("progressBar"));
-        progressBar->setMinimumSize(QSize(0, 30));
-        progressBar->setMaximumSize(QSize(16777215, 30));
+        progressBar->setMinimumSize(QSize(0, 25));
+        progressBar->setMaximumSize(QSize(16777215, 25));
         progressBar->setStyleSheet(QString::fromUtf8(""));
 
         verticalLayout_6->addWidget(progressBar);
 
         controlBox = new QWidget(bodyright);
         controlBox->setObjectName(QString::fromUtf8("controlBox"));
-        controlBox->setMinimumSize(QSize(0, 60));
-        controlBox->setMaximumSize(QSize(16777215, 60));
+        controlBox->setMinimumSize(QSize(0, 70));
+        controlBox->setMaximumSize(QSize(16777215, 70));
         controlBox->setStyleSheet(QString::fromUtf8("background-color:#CCFFFF;"));
         horizontalLayout_8 = new QHBoxLayout(controlBox);
         horizontalLayout_8->setSpacing(0);
         horizontalLayout_8->setObjectName(QString::fromUtf8("horizontalLayout_8"));
-        horizontalLayout_8->setContentsMargins(0, 0, 0, 0);
+        horizontalLayout_8->setContentsMargins(0, 0, 0, 2);
         play1 = new QWidget(controlBox);
         play1->setObjectName(QString::fromUtf8("play1"));
         play1->setStyleSheet(QString::fromUtf8(""));
         gridLayout = new QGridLayout(play1);
+        gridLayout->setSpacing(0);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        gridLayout->setContentsMargins(0, 0, 0, 2);
         musicCover = new QLabel(play1);
         musicCover->setObjectName(QString::fromUtf8("musicCover"));
+        musicCover->setMinimumSize(QSize(60, 60));
+        musicCover->setMaximumSize(QSize(60, 60));
 
         gridLayout->addWidget(musicCover, 0, 0, 2, 1);
 
@@ -538,25 +557,37 @@ public:
         play3 = new QWidget(controlBox);
         play3->setObjectName(QString::fromUtf8("play3"));
         play3->setStyleSheet(QString::fromUtf8(""));
-        currentTime = new QLabel(play3);
-        currentTime->setObjectName(QString::fromUtf8("currentTime"));
-        currentTime->setGeometry(QRect(120, 20, 45, 18));
-        line = new QLabel(play3);
-        line->setObjectName(QString::fromUtf8("line"));
-        line->setGeometry(QRect(170, 20, 16, 18));
-        totalTime = new QLabel(play3);
-        totalTime->setObjectName(QString::fromUtf8("totalTime"));
-        totalTime->setGeometry(QRect(180, 20, 45, 18));
-        lrcWord = new QPushButton(play3);
-        lrcWord->setObjectName(QString::fromUtf8("lrcWord"));
-        lrcWord->setGeometry(QRect(235, 15, 30, 30));
-        lrcWord->setMinimumSize(QSize(30, 30));
-        lrcWord->setMaximumSize(QSize(30, 30));
+        horizontalLayout = new QHBoxLayout(play3);
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         labelNULL = new QLabel(play3);
         labelNULL->setObjectName(QString::fromUtf8("labelNULL"));
-        labelNULL->setGeometry(QRect(0, 20, 120, 18));
         labelNULL->setMinimumSize(QSize(120, 0));
         labelNULL->setMaximumSize(QSize(120, 16777215));
+
+        horizontalLayout->addWidget(labelNULL);
+
+        currentTime = new QLabel(play3);
+        currentTime->setObjectName(QString::fromUtf8("currentTime"));
+
+        horizontalLayout->addWidget(currentTime);
+
+        line = new QLabel(play3);
+        line->setObjectName(QString::fromUtf8("line"));
+
+        horizontalLayout->addWidget(line);
+
+        totalTime = new QLabel(play3);
+        totalTime->setObjectName(QString::fromUtf8("totalTime"));
+
+        horizontalLayout->addWidget(totalTime);
+
+        lrcWord = new QPushButton(play3);
+        lrcWord->setObjectName(QString::fromUtf8("lrcWord"));
+        lrcWord->setMinimumSize(QSize(30, 30));
+        lrcWord->setMaximumSize(QSize(30, 30));
+
+        horizontalLayout->addWidget(lrcWord);
+
 
         horizontalLayout_8->addWidget(play3);
 
@@ -600,11 +631,11 @@ public:
         playDown->setText(QString());
         volume->setText(QString());
         addLocal->setText(QString());
-        currentTime->setText(QCoreApplication::translate("Widget", "01:15", nullptr));
-        line->setText(QCoreApplication::translate("Widget", "/", nullptr));
-        totalTime->setText(QCoreApplication::translate("Widget", "04:15", nullptr));
-        lrcWord->setText(QCoreApplication::translate("Widget", "\350\257\215", nullptr));
         labelNULL->setText(QString());
+        currentTime->setText(QCoreApplication::translate("Widget", "00:00", nullptr));
+        line->setText(QCoreApplication::translate("Widget", "/", nullptr));
+        totalTime->setText(QCoreApplication::translate("Widget", "00:00", nullptr));
+        lrcWord->setText(QCoreApplication::translate("Widget", "\350\257\215", nullptr));
     } // retranslateUi
 
 };

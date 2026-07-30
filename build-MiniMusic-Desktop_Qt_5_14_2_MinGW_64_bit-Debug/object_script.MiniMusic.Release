@@ -1,6 +1,7 @@
 release/btform.o
 release/commonpage.o
 release/listitem.o
+release/lrcpage.o
 release/main.o
 release/music.o
 release/musiclist.o
@@ -13,6 +14,7 @@ release/qrc_resources.o
 release/moc_btform.o
 release/moc_commonpage.o
 release/moc_listitem.o
+release/moc_lrcpage.o
 release/moc_musicslider.o
 release/moc_recbox.o
 release/moc_recboxitem.o

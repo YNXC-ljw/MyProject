@@ -26,20 +26,20 @@ public:
     {
         if (MusicSlider->objectName().isEmpty())
             MusicSlider->setObjectName(QString::fromUtf8("MusicSlider"));
-        MusicSlider->resize(800, 30);
+        MusicSlider->resize(800, 25);
         MusicSlider->setStyleSheet(QString::fromUtf8(""));
         inLine = new QFrame(MusicSlider);
         inLine->setObjectName(QString::fromUtf8("inLine"));
         inLine->setGeometry(QRect(0, 8, 800, 4));
         inLine->setStyleSheet(QString::fromUtf8("#inLine\n"
 "{\n"
-"	background-color:#EBEEF5;\n"
+"	background-color:white;\n"
 "}"));
         inLine->setFrameShape(QFrame::StyledPanel);
         inLine->setFrameShadow(QFrame::Raised);
         outLine = new QFrame(MusicSlider);
         outLine->setObjectName(QString::fromUtf8("outLine"));
-        outLine->setGeometry(QRect(0, 8, 800, 4));
+        outLine->setGeometry(QRect(0, 8, 0, 4));
         outLine->setStyleSheet(QString::fromUtf8("#outLine\n"
 "{\n"
 "	background-color:#1ECC94;\n"
