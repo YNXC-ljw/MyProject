@@ -109,6 +109,7 @@ void MusicList::readFromDB()
     while(query.next())
     {
          Music music;
+         // 數據庫信息
          music.setMusicId(query.value(0).toString());
          music.setMusicName(query.value(1).toString());
          music.setMusicSinger(query.value(2).toString());
