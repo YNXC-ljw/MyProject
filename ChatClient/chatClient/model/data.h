@@ -1,0 +1,58 @@
+#pragma once
+
+#include <QString>
+#include <QIcon>
+
+namespace model
+{
+//////////////////////////////////////////////////
+/// 用户信息
+//////////////////////////////////////////////////
+
+class UserInfo
+{
+public:
+    QString userId;              // 用户编号
+    QString nickName;            // 用户昵称
+    QString description;         // 用户签名
+    QString phone;               // 手机号码
+    QIcon avatar;                // 用户头像
+};
+//////////////////////////////////////////////////
+/// 消息信息
+//////////////////////////////////////////////////
+enum MessageType
+{
+    TEXT_TYPE,          // 文本消息
+    IMAGE_TYPE,         // 图片消息
+    FILE_TYPE,          // 文件消息
+    SPEECH_TYPE         // 语音消息
+};
+
+class Message
+{
+public:
+    QString messageId;          // 消息编号
+    QString chatSessionId;      // 消息所属会话的编号
+    QString time;               // 消息时间，通过格式化时间的方式来表示，形如 08-06 19:00:01
+    MessageType messageType;    // 消息类型
+    UserInfo sender;            // 消息发送者
+    QByteArray content;         // 消息内容(QT表示二进制文本必须使用QByteArray,字符才能用QString)
+    QString fileId;             // 文件的身份标识，为图片、文件、语音时生效；为普通文本时为""
+    QString fileName;           // 文件名称，为文件时生效，其余为空
+};
+
+//////////////////////////////////////////////////
+/// 会话信息
+//////////////////////////////////////////////////
+
+class chatSessionInfo
+{
+public:
+    QString chatSessionId;          // 会话编号
+    QString chatSessionName;        // 会话名称(单聊即对方名称，群聊则群名)
+    Message lastMessage;            // 会话最后一条消息
+    QIcon avatar;                   // 会话头像
+    QString userId;                 // 会话
+};
+}        // end model
