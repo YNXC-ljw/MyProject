@@ -4,13 +4,28 @@
 #include <QIcon>
 #include <QUuid>
 #include <QFile>
+#include <QDebug>
 #include <QDateTime>
+#include <QFileInfo>
 
 namespace model
 {
 //////////////////////////////////////////////////
 /// 工具函数，后续很多模块可能用到
 //////////////////////////////////////////////////
+
+static inline QString getFileName(const QString& path) {
+    QFileInfo fileInfo(path);
+    return fileInfo.fileName();
+}
+
+// 封装一个 "宏" 作为打印日志的方式.
+#define TAG QString("[%1:%2]").arg(model::getFileName(__FILE__), QString::number(__LINE__))
+// #define TAG "[" << __LINE__ << "]"
+
+// qDebug 打印字符串的时候，就会自动加上 " "
+#define LOG() qDebug().noquote() << TAG
+
 
 // 函数定义如果写在.h文件中，必须加static或inline或全都加，避免链接时出现“函数重定义”错误
 static inline QString formatTime(int64_t timestamp)
@@ -37,13 +52,31 @@ static inline QIcon makeIcon(const QByteArray& byteArray)
 }
 
 // 读写文件（从指定文件中读取所有二进制内容，得到一个QByteArray 或 反过来写）
-static inline QFile writeFileFromQByteArray(const QByteArray& byteArray)
+static inline void writeFileFromQByteArray(const QString& path,const QByteArray& content)
 {
-
+    QFile file(path);
+    bool ok = file.open(QFile::WriteOnly);
+    if(!ok)
+    {
+        LOG() << "打开文件失败!";
+        return;
+    }
+    file.write(content);
+    file.flush(); // 刷新缓冲区
+    file.close();
 }
 static inline QByteArray readFiletoQByteArray(const QString& path)
 {
-
+    QFile file(path);
+    bool ok = file.open(QFile::ReadOnly);
+    if(!ok)
+    {
+        LOG() << "文件打开失败!";
+        return QByteArray();
+    }
+    QByteArray content = file.readAll();
+    file.close();
+    return content;
 }
 //////////////////////////////////////////////////
 /// 用户信息
