@@ -12,8 +12,15 @@ qt_add_executable(chatClient
     mainwidget.h
     mainwidget.ui
     model/data.h
+    resource.qrc
 )
 
+# 添加资源（关键！）
+qt_add_resources(chatClient "app_resources"
+    PREFIX "/"
+    FILES
+        resource/image/logo.png
+)
 target_link_libraries(chatClient
     PRIVATE
         Qt::Core
