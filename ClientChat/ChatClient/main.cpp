@@ -1,11 +1,13 @@
 #include "mainwidget.h"
-
+#include "model/data.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWidget w;
-    w.show();
+
+    MainWidget* w = MainWidget::getInstance();
+    w->show();
+
     return QApplication::exec();
 }
