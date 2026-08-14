@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QPushButton>
+#include <QLineEdit>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -34,6 +35,13 @@ private:
     void initLeftWindow();
     void initMidWindow();
     void initRightWindow();
+
+    // 初始化信号与槽
+    void initSignalSlot();
+
+    ///////////////////////////////////
+    /// 窗口各部分所用对象
+    ///////////////////////////////////
     // 窗口左侧区域
     QWidget* windowLeft;
     // 窗口中间区域
@@ -49,5 +57,27 @@ private:
     QPushButton* friendTabBtn;
     // 好友申请标签页按钮
     QPushButton* applyTabBtn;
+
+    // 搜索框
+    QLineEdit* searchLine;
+    // 添加好友按钮
+    QPushButton* addFriendBtn;
+
+    enum ActiveTab
+    {
+        SESSION_LIST,
+        FRIEND_LIST,
+        APPLY_LIST
+    };
+    ActiveTab activeTab = SESSION_LIST;
+
+    // 标签按钮点击，更新按钮状态
+    void switchTabToSession();
+    void switchTabToFriend();
+    void switchTabToApply();
+    // 标签按钮点击，对应界面显示
+    void loadSessionList();
+    void loadFriendList();
+    void loadApplyList();
 };
 #endif // MAINWIDGET_H

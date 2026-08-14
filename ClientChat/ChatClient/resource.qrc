@@ -1,5 +1,13 @@
 <RCC>
     <qresource prefix="/">
         <file>resource/image/logo.png</file>
+        <file>resource/image/avatar.jpg</file>
+        <file>resource/image/apply_active.png</file>
+        <file>resource/image/apply_inactive.png</file>
+        <file>resource/image/session_active.png</file>
+        <file>resource/image/session_inactive.png</file>
+        <file>resource/image/friend_active.png</file>
+        <file>resource/image/friend_inactive.png</file>
+        <file>resource/image/add_friend.png</file>
     </qresource>
 </RCC>
