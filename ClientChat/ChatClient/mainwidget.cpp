@@ -116,7 +116,8 @@ void MainWidget::initMidWindow()
     QGridLayout* layout = new QGridLayout();
 
     layout->setContentsMargins(0,20,0,0);
-    layout->setSpacing(0);
+    layout->setHorizontalSpacing(0);
+    layout->setVerticalSpacing(10);
     windowMid->setLayout(layout);
 
     searchLine = new QLineEdit();

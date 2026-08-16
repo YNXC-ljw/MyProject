@@ -6,6 +6,8 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QLabel>
+#include <QStyleOption>
+#include <QPainter>
 
 sessionFriendArea::sessionFriendArea(QWidget *parent)
     : QScrollArea{parent}
@@ -14,7 +16,7 @@ sessionFriendArea::sessionFriendArea(QWidget *parent)
     // 设置了该属性才能开启滚动效果
     this->setWidgetResizable(true);
     // 设置滚动条样式
-    this->verticalScrollBar()->setStyleSheet("QScrollBar:vertical{width:10px;background:transparent;}"
+    this->verticalScrollBar()->setStyleSheet("QScrollBar:vertical{width:7px;background:transparent;}"
         "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{background:none;}"
         "QScrollBar::sub-line:vertical,QScrollBar::add-line:vertical{height:0px;background:none;}"
         "QScrollBar::handle:vertical{background-color:rgb(130,130,130);border-radius:5px;min-height:22px;}"
@@ -81,13 +83,14 @@ void sessionFriendArea::addItem(const QIcon &avatar, const QString &name, const 
 SessionFriendItem::SessionFriendItem(QWidget *owner, const QIcon &avatar, const QString &name, const QString &text)
     :owner(owner)
 {
-    this->setFixedHeight(46);
+    this->setFixedHeight(70);
     this->setStyleSheet("QWidget { background-color: rgb(238,238,240)};");
     
     // 创建网格布局管理器
     QGridLayout* layout = new QGridLayout();
-    layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(0);
+    layout->setContentsMargins(10,0,0,0);
+    layout->setHorizontalSpacing(10);
+    layout->setVerticalSpacing(0);
     this->setLayout(layout);
     
     // 创建头像
@@ -101,7 +104,7 @@ SessionFriendItem::SessionFriendItem(QWidget *owner, const QIcon &avatar, const 
     // 创建名字
     QLabel* nameLabel = new QLabel();
     nameLabel->setText(name);
-    nameLabel->setStyleSheet("QLabel { font-size: 12px; font-weight: 600; }");
+    nameLabel->setStyleSheet("QLabel { font-size: 15px; font-weight: 600; }");
     nameLabel->setFixedHeight(35);
     nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
@@ -117,6 +120,71 @@ SessionFriendItem::SessionFriendItem(QWidget *owner, const QIcon &avatar, const 
     layout->addWidget(nameLabel, 0, 2, 1, 1);
     // 消息预览处于 1, 2 位置，占据 1 行，占据 1 列
     layout->addWidget(messageLabel, 1, 2, 1, 1);
+
+}
+
+void SessionFriendItem::paintEvent(QPaintEvent *event)
+{
+    (void)event;
+    QStyleOption opt;
+    opt.initFrom(this);
+    QPainter p(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+}
+
+// 鼠标点击时触发该函数，点击修改背景颜色
+void SessionFriendItem::mousePressEvent(QMouseEvent *event)
+{
+    (void) event;
+    select();
+}
+
+void SessionFriendItem::enterEvent(QEnterEvent *event)
+{
+    (void) event;
+    // 如果是被选中状态，直接返回
+    if(this->selected)
+    {
+        return;
+    }
+    // 设置背景色
+    this->setStyleSheet("QWidget { background-color: rgb(225, 225, 227);}");
+}
+
+void SessionFriendItem::leaveEvent(QEvent *event)
+{
+    (void) event;
+    // 如果是被选中状态，直接返回
+    if(this->selected)
+    {
+        return;
+    }
+    // 还原背景色
+    this->setStyleSheet("QWidget { background-color: rgb(238,238,240)};");
+}
+
+void SessionFriendItem::select()
+{
+    // 取到所有Item，将所有点击过的样式清空，再将当前点击的Item样式修改为指定样式
+    const QObjectList children = this->parentWidget()->children(); // 先拿到该元素的父元素，再通过该父元素找到所有子元素
+    for(QObject* child : children)
+    {
+        if(!child->isWidgetType())
+        {
+            // 判定是否是一个widget
+            continue;
+        }
+        // 确定是widget，就把child强转成sessionFriendItem
+        SessionFriendItem* item = dynamic_cast<SessionFriendItem*>(child);
+        if(item->selected)
+        {
+            item->selected = false;
+            item->setStyleSheet("QWidget { background-color: rgb(238,238,240)};");
+        }
+    }
+    // 将当前被点击的item背景设置为选中状态
+    this->setStyleSheet("QWidget { background-color: rgb(21, 172, 112);}");
+    this->selected = true;
 
 }
 

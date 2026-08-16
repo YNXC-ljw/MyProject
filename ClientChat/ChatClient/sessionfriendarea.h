@@ -25,6 +25,15 @@ class SessionFriendItem : public QWidget
     Q_OBJECT
 public:
     SessionFriendItem(QWidget* owner,const QIcon& avatar,const QString& name,const QString& text);
+
+    void paintEvent(QPaintEvent* event) override;
+    // 重写鼠标点击事件实现非按钮区域点击触发事件
+    void mousePressEvent(QMouseEvent* event) override;
+    void enterEvent(QEnterEvent* event) override;
+    void leaveEvent(QEvent* event) override;
+
+    void select();
+
 private:
     // 该指针指向滑动块sessionFriendArea
     QWidget* owner;
