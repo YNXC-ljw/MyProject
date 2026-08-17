@@ -47,7 +47,7 @@ sessionFriendArea::sessionFriendArea(QWidget *parent)
     QIcon icon(":/resource/image/avatar.jpg");
     for(int i = 0;i < 30;i++)
     {
-        this->addItem(icon,"可怡"+ QString::number(i),"最后一条消息" + QString::number(i));
+        this->addItem(APPLYITEM_TYPE,QString::number(i),icon,"可怡"+ QString::number(i),"最后一条消息" + QString::number(i));
     }
 
 #endif
@@ -70,15 +70,26 @@ void sessionFriendArea::clear()
     }
 }
 
-void sessionFriendArea::addItem(const QIcon &avatar, const QString &name, const QString &text)
+void sessionFriendArea::addItem(ItemType itemType,const QString& id,const QIcon &avatar, const QString &name, const QString &text)
 {
-    SessionFriendItem* item = new SessionFriendItem(this, avatar, name, text);
+    SessionFriendItem* item = nullptr;
+    if (itemType == SESSIONITEM_TYPE) {
+        item = new SessionItem(this, id, avatar, name, text);
+    } else if (itemType == FRIENDITEM_TYPE) {
+        item = new FriendItem(this, id, avatar, name, text);
+    } else if (itemType == APPLYITEM_TYPE) {
+        item = new ApplyItem(this, id, avatar, name);
+    } else {
+        LOG() << "错误的 ItemType! itemType=" << itemType;
+        return;
+    }
     container->layout()->addWidget(item);
+
 }
 
-//////////////////////////////////////////////////////////////////
-/// 会话 Item
-//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+/// 滚动区域会话 Item的实现
+//////////////////////////////////////////////////////////////////////////
 
 SessionFriendItem::SessionFriendItem(QWidget *owner, const QIcon &avatar, const QString &name, const QString &text)
     :owner(owner)
@@ -109,7 +120,7 @@ SessionFriendItem::SessionFriendItem(QWidget *owner, const QIcon &avatar, const 
     nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     // 创建消息预览的 label
-    QLabel* messageLabel = new QLabel();
+    messageLabel = new QLabel();
     messageLabel->setText(text);
     messageLabel->setFixedHeight(35);
     messageLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -117,9 +128,9 @@ SessionFriendItem::SessionFriendItem(QWidget *owner, const QIcon &avatar, const 
     // 头像处于 0, 0 位置，占据 2 行，占据 2 列
     layout->addWidget(avatarBtn, 0, 0, 2, 2);
     // 名字处于 0, 2 位置，占据 1 行，占据 1 列
-    layout->addWidget(nameLabel, 0, 2, 1, 1);
+    layout->addWidget(nameLabel, 0, 2, 1, 8);
     // 消息预览处于 1, 2 位置，占据 1 行，占据 1 列
-    layout->addWidget(messageLabel, 1, 2, 1, 1);
+    layout->addWidget(messageLabel, 1, 2, 1, 8);
 
 }
 
@@ -186,17 +197,77 @@ void SessionFriendItem::select()
     this->setStyleSheet("QWidget { background-color: rgb(21, 172, 112);}");
     this->selected = true;
 
+    // 调用 active
+    this->active();
 }
 
+void SessionFriendItem::active()
+{
 
+}
 
+/////////////////////////////////////////
+/// 会话Item的实现
+/////////////////////////////////////////
 
+SessionItem::SessionItem(QWidget *owner, const QString &chatSessionId, const QIcon &avatar, const QString &name, const QString &lastMessage)
+    :SessionFriendItem(owner,avatar,name,lastMessage),chatSessionId(chatSessionId)
+{
 
+}
 
+void SessionItem::active()
+{
+    // TODO 点击之后要加载会话的历史消息列表
+    LOG() << "点击SessionItem触发的逻辑！chatSessionId=" << chatSessionId;
+}
 
+/// /////////////////////////////////////
+/// 好友Item的实现
+/////////////////////////////////////////
 
+FriendItem::FriendItem(QWidget *owner, const QString &userId, const QIcon &avatar,
+                       const QString &name, const QString &description)
+    :SessionFriendItem(owner,avatar,name,description),userId(userId)
+{
 
+}
 
+void FriendItem::active()
+{
+    // TODO 点击后，要激活对应的会话列表元素
+    LOG() << "点击FriendItem触发的逻辑！userId=" << userId;
+}
+
+/////////////////////////////////////////
+/// 申请列表Item的实现
+/////////////////////////////////////////
+
+ApplyItem::ApplyItem(QWidget *owner, const QString &userId, const QIcon &avatar, const QString &name)
+    :SessionFriendItem(owner,avatar,name,""),userId(userId)
+{
+    // 1.移除父类的 messageLabel
+    QGridLayout* layout = dynamic_cast<QGridLayout*>(this->layout()); // 这里拿到的布局管理器是最初布局管理器的父类，需要强转
+    layout->removeWidget(messageLabel);
+    // 要记得释放内存避免资源泄露
+    delete messageLabel;
+
+    // 2.添加同意/拒绝按钮
+    QPushButton* acceptBtn = new QPushButton();
+    acceptBtn->setText("同意");
+    QPushButton* rejectBtn = new QPushButton();
+    rejectBtn->setText("拒绝");
+    // 3.添加到布局管理器中
+    layout->addWidget(acceptBtn,1,2,1,1);
+    layout->addWidget(rejectBtn,1,3,1,1);
+
+}
+
+void ApplyItem::active()
+{
+    // 这个函数本身不需要实现任何内容
+    LOG() << "点击ApplyItem触发的逻辑！userId=" << userId;
+}
 
 
 

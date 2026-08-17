@@ -2,6 +2,7 @@
 #include "ui_mainwidget.h"
 
 #include "sessionfriendarea.h"
+#include "debug.h"
 
 #include <QHBoxLayout>
 
@@ -154,6 +155,40 @@ void MainWidget::initMidWindow()
 
 void MainWidget::initRightWindow()
 {
+    // 1.创建右侧窗口布局管理器
+    QVBoxLayout* vlayout = new QVBoxLayout();
+    vlayout->setContentsMargins(0,0,0,0);
+    vlayout->setSpacing(0);
+    vlayout->setAlignment(Qt::AlignTop);
+    windowRight->setLayout(vlayout);
+
+    // 2.创建上方标题栏
+    QWidget *titleWidget = new QWidget();
+    titleWidget->setFixedHeight(62);
+    titleWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    //titleWidget->setObjectName();
+    vlayout->addWidget(titleWidget);
+
+    // 3.给标题栏添加布局管理器,并且加上按钮和标题
+    QHBoxLayout* hlayout = new QHBoxLayout();
+    hlayout->setContentsMargins(5,0,5,0);
+    hlayout->setSpacing(0);
+    titleWidget->setLayout(hlayout);
+
+    QLabel* sessionTitleLabel = new QLabel();
+    sessionTitleLabel->setStyleSheet("QLabel { font-size: 22px;}");
+#if TEST_UI
+    // 为了测试界面临时增加的. 实际这里的内容, 应该是使用从服务器获取的数据来设置.
+    sessionTitleLabel->setText("可怡宝宝");
+#endif
+    hlayout->addWidget(sessionTitleLabel);
+
+    QPushButton* extraBtn = new QPushButton();
+    extraBtn->setFixedSize(30, 30);
+    extraBtn->setIconSize(QSize(30, 30));
+    extraBtn->setIcon(QIcon(":/resource/image/more.png"));
+    extraBtn->setStyleSheet("QPushButton { border:none; background-color: rgb(245, 245, 245); } QPushButton:pressed { background-color: rgb(220,220,220)}");
+    hlayout->addWidget(extraBtn);
 
 }
 

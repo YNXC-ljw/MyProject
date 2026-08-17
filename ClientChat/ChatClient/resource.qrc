@@ -9,5 +9,6 @@
         <file>resource/image/friend_active.png</file>
         <file>resource/image/friend_inactive.png</file>
         <file>resource/image/add_friend.png</file>
+        <file>resource/image/more.png</file>
     </qresource>
 </RCC>
