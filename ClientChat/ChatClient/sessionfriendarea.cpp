@@ -47,7 +47,7 @@ sessionFriendArea::sessionFriendArea(QWidget *parent)
     QIcon icon(":/resource/image/avatar.jpg");
     for(int i = 0;i < 30;i++)
     {
-        this->addItem(APPLYITEM_TYPE,QString::number(i),icon,"可怡"+ QString::number(i),"最后一条消息" + QString::number(i));
+        this->addItem(SESSIONITEM_TYPE,QString::number(i),icon,"可怡"+ QString::number(i),"最后一条消息" + QString::number(i));
     }
 
 #endif

@@ -4,6 +4,7 @@
 #include "sessionfriendarea.h"
 #include "debug.h"
 
+
 #include <QHBoxLayout>
 
 MainWidget* MainWidget::instance = nullptr;
@@ -26,7 +27,7 @@ MainWidget::MainWidget(QWidget *parent)
 
     this->setGeometry(400,200,880,600);
 
-    this->setWindowTitle("我的聊天桌面");
+    this->setWindowTitle(" ");
     this->setWindowIcon(QIcon(":/resource/image/logo.png"));
 
     // 初始化主窗口
@@ -176,7 +177,7 @@ void MainWidget::initRightWindow()
     titleWidget->setLayout(hlayout);
 
     QLabel* sessionTitleLabel = new QLabel();
-    sessionTitleLabel->setStyleSheet("QLabel { font-size: 22px;}");
+    sessionTitleLabel->setStyleSheet("QLabel { font-size: 22px;border-bottom: 1px solid rgb(230,230,230);}");
 #if TEST_UI
     // 为了测试界面临时增加的. 实际这里的内容, 应该是使用从服务器获取的数据来设置.
     sessionTitleLabel->setText("可怡宝宝");
@@ -189,6 +190,14 @@ void MainWidget::initRightWindow()
     extraBtn->setIcon(QIcon(":/resource/image/more.png"));
     extraBtn->setStyleSheet("QPushButton { border:none; background-color: rgb(245, 245, 245); } QPushButton:pressed { background-color: rgb(220,220,220)}");
     hlayout->addWidget(extraBtn);
+
+    // 4.添加消息展示区
+    sessionShowArea = new SessionShowArea();
+    vlayout->addWidget(sessionShowArea);
+
+    // 5.添加消息编辑区
+    messageEditArea = new MessageEditArea();
+    vlayout->addWidget(messageEditArea,0,Qt::AlignBottom);
 
 }
 
