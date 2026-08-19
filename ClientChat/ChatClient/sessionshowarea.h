@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QLabel>
 
+
 #include "model/data.h"
 
 // .h 文件中不宜进行 using namespace xxxx
@@ -37,7 +38,7 @@ public:
     static MessageItem* makeMessageItem(bool isLeft,const Message& message);
 
     // 添加工厂函数
-    static QWidget* makeTextMessage();
+    static QWidget* makeTextMessage(bool isLeft,const QString& text);
     static QWidget* makeFileMessage();
     static QWidget* makeImageMessage();
     static QWidget* makeSpeechMessage();
@@ -52,6 +53,8 @@ private:
 ////////////////////////////////////////////////////
 class MessageContentLabel : public QWidget{
     MessageContentLabel(const QString& text,bool isLeft);
+
+    void paintEvent(QPaintEvent* event) override;
 private:
     QLabel* label;
     bool isLeft;

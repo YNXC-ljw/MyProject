@@ -4,6 +4,9 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QLabel>
+#include <QFontMetrics>
+#include <QPainter>
+#include <QPainterPath>
 
 using namespace model;
 
@@ -81,10 +84,10 @@ MessageItem *MessageItem::makeMessageItem(bool isLeft, const Message &message)
     }
 
     // 4.创建消息体
-    QWidget* contentWidget = new QWidget();
+    QWidget* contentWidget = nullptr;
     switch (message.messageType) {
     case TEXT_TYPE:
-        contentWidget = makeTextMessage();
+        contentWidget = makeTextMessage(isLeft,message.content);
         break;
     case FILE_TYPE:
         contentWidget = makeFileMessage();
@@ -109,6 +112,11 @@ MessageItem *MessageItem::makeMessageItem(bool isLeft, const Message &message)
     return messageItem;
 }
 
+QWidget *MessageItem::makeTextMessage(bool isLeft, const QString &text)
+{
+
+}
+
 ////////////////////////////////////////////////////
 /// 创建类表示“文本消息”正文部分
 ////////////////////////////////////////////////////
@@ -127,6 +135,88 @@ MessageContentLabel::MessageContentLabel(const QString &text, bool isLeft)
     this->label->setWordWrap(true); // 文本自动换行
     this->setStyleSheet("QLabel { padding: 0 10px; line-height: 1.2;}");
 }
+
+// 这个函数会在该空间被显示的时候自动调用到
+void MessageContentLabel::paintEvent(QPaintEvent *event)
+{
+    (void) event;
+    // 1.获取到父元素的宽度
+    QObject* object = this->parent();
+    if(!object->isWidgetType())
+    {
+        // 说明这个对象的父元素不是预期的 QWidget，此时不需要任何后续的绘制操作
+        return;
+    }
+    QWidget* parent = dynamic_cast<QWidget*>(object);
+    int width = parent->width(); //包含两侧边框
+
+    // 2.计算当前文本，如果是一行放置，需要多宽
+    QFontMetrics metrics(this->label->font());
+    int totalWidth = metrics.horizontalAdvance(this->label->text()); // 文本总宽度
+
+    // 3.计算行数(40表示每行带的左右边距)
+    int rows = (totalWidth / (width - 40));
+    if(rows == 1)
+    {
+        // 如果只有一行，那消息体宽度就是文字宽度 + 40边距
+        width = totalWidth + 40;
+    }
+
+    // 4.根据行数计算出消息展示文本框的总高度(20表示上下边距)
+    int height = rows * (this->label->font().pixelSize() * 1.2) + 20;
+
+    // 5.绘制圆角矩形和箭头
+    QPainter painter(this);
+    QPainterPath path;
+    // 设置 抗锯齿
+    painter.setRenderHint(QPainter::Antialiasing);
+    if(isLeft){
+        painter.setPen(QPen(QColor(255,255,255))); //设置画笔和画刷
+        painter.setBrush(QColor(255,255,255));
+
+        // 绘制圆角矩形
+        painter.drawRoundedRect(10,0,width,height,10,10);
+        // 绘制箭头
+        path.moveTo(10,15);
+        path.lineTo(0,20);
+        path.lineTo(10,25);
+        path.closeSubpath(); // 绘制的线形成闭合的多边形，才能使用Brush进行颜色填充
+        painter.drawPath(path); // 真正的绘制操作
+
+        this->label->setGeometry(10,0,width,height);
+    }else{
+        painter.setPen(QPen(QColor(157, 242, 159)));
+        painter.setBrush(QColor(157, 242, 159));
+
+        // 圆角矩形左侧边的横坐标位置
+        int leftPos = this->width() - width - 10; // 10 是用来容纳 箭头 的宽度
+        // 圆角矩形右侧边的横坐标位置
+        int rightPos = this->width() - 10;
+        // 绘制圆角矩形
+        painter.drawRoundedRect(leftPos, 0, width, height, 10, 10);
+        // 绘制箭头
+        path.moveTo(rightPos, 15);
+        path.lineTo(rightPos + 10, 20);
+        path.lineTo(rightPos, 25);
+        path.closeSubpath();
+        painter.drawPath(path);
+
+        this->label->setGeometry(leftPos, 0, width, height);
+    }
+
+    // 6. 重新设置父元素的高度，确保父元素足够高，能够容纳下上述绘制的消息显示的区域
+    // 注意高度要涵盖之前名字和时间的 label 的高度，以及留点冗余空间。
+    parent->setFixedHeight(height + 50);
+
+}
+
+
+
+
+
+
+
+
 
 
 
