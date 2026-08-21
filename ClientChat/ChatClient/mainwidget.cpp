@@ -180,7 +180,7 @@ void MainWidget::initRightWindow()
     sessionTitleLabel->setStyleSheet("QLabel { font-size: 22px;border-bottom: 1px solid rgb(230,230,230);}");
 #if TEST_UI
     // 为了测试界面临时增加的. 实际这里的内容, 应该是使用从服务器获取的数据来设置.
-    sessionTitleLabel->setText("可怡宝宝");
+    sessionTitleLabel->setText("你好");
 #endif
     hlayout->addWidget(sessionTitleLabel);
 

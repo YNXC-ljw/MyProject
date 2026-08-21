@@ -114,6 +114,24 @@ MessageItem *MessageItem::makeMessageItem(bool isLeft, const Message &message)
 
 QWidget *MessageItem::makeTextMessage(bool isLeft, const QString &text)
 {
+    return nullptr;
+}
+
+QWidget *MessageItem::makeFileMessage()
+{
+    return nullptr;
+
+}
+
+QWidget *MessageItem::makeImageMessage()
+{
+    return nullptr;
+
+}
+
+QWidget *MessageItem::makeSpeechMessage()
+{
+    return nullptr;
 
 }
 
