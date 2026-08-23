@@ -28,7 +28,7 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
 
     //调用初始化方法，构造窗口
-    initUi();
+    initUiTotal();
 
     // 初始化播放类对象
     playerInit();
@@ -51,11 +51,12 @@ Widget::~Widget()
     delete ui;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////
+/// 初始化界面相关
 //////////////////////////////////////////////////////////////////////////////////////////////
-//初始化模块
 
-void Widget::initUi()
+void Widget::initUiTotal()
 {
+    // 去除窗口标题栏
     this->setWindowFlag(Qt::FramelessWindowHint);
 
     //给窗口背景设置透明
@@ -83,17 +84,11 @@ void Widget::initUi()
 
     ui->max->setEnabled(false);//禁用窗口最大化
 
-    settingBox();
+    initHead();
 
-    contralMusic();
+    initBottom();
 
-    //给BtForm设置图标和文本信息
-    ui->Rec->setIconAndText(":/image/rec.png","推荐", 0);
-    ui->audio->setIconAndText(":/image/radio.png","电台", 1);
-    ui->music->setIconAndText(":/image/music.png","音乐馆", 2);
-    ui->like->setIconAndText(":/image/like.png","我喜欢", 3);
-    ui->local->setIconAndText(":/image/local.png","本地和下载", 4);
-    ui->recent->setIconAndText(":/image/recent.png","最近播放", 5);
+    initLeft();
 
     //将localPage设置为默认页面
     ui->stackedWidget->setCurrentIndex(4);
@@ -106,17 +101,7 @@ void Widget::initUi()
     ui->recMusicBox->initRecBoxUi(randomPiction(),1);
     ui->supplyMusicBox->initRecBoxUi(randomPiction(),2);
 
-    //初始化page页面
-    ui->likePage->setCommonPageUi("我喜欢",":/image/ilike.jpg");
-    ui->localPage->setCommonPageUi("本地音乐",":/image/local.jpg");
-    ui->recentPage->setCommonPageUi("最近播放",":/image/recent.jpg");
-
-    volumeTool = new VolumeTool(this);
-
-    //实例化LrcWord对象
-    lrcPage = new LrcPage(this);
-    lrcPage->setGeometry(10,10,lrcPage->width(),lrcPage->height());
-    lrcPage->hide();
+    initBody();
 
     //初始化上移对象
     lrcPageAnimation = new QPropertyAnimation(lrcPage,"geometry",this);
@@ -125,6 +110,47 @@ void Widget::initUi()
     lrcPageAnimation->setEndValue(QRect(10,10,lrcPage->width(),lrcPage->height()));
 }
 
+void Widget::initLeft()
+{
+    //给BtForm设置图标和文本信息
+    ui->Rec->setIconAndText(":/image/rec.png","推荐", 0);
+    ui->audio->setIconAndText(":/image/radio.png","电台", 1);
+    ui->music->setIconAndText(":/image/music.png","音乐馆", 2);
+    ui->like->setIconAndText(":/image/like.png","我喜欢", 3);
+    ui->local->setIconAndText(":/image/local.png","本地和下载", 4);
+    ui->recent->setIconAndText(":/image/recent.png","最近播放", 5);
+}
+
+void Widget::initHead()
+{
+    // 窗口按钮图标
+    settingBox();
+}
+
+void Widget::initBody()
+{
+    //初始化page页面
+    ui->likePage->setCommonPageUi("我喜欢",":/image/ilike.jpg");
+    ui->localPage->setCommonPageUi("本地音乐",":/image/local.jpg");
+    ui->recentPage->setCommonPageUi("最近播放",":/image/recent.jpg");
+}
+
+void Widget::initBottom()
+{
+    // 播放控制器图标
+    contralMusic();
+
+    //实例化LrcWord对象
+    lrcPage = new LrcPage(this);
+    lrcPage->setGeometry(10,10,lrcPage->width(),lrcPage->height());
+    lrcPage->hide();
+
+    // 实例化音量调节对象
+    volumeTool = new VolumeTool(this);
+}
+////////////////////////////////////////////////////////////////////////////////
+/// 其他初始化
+////////////////////////////////////////////////////////////////////////////////
 void Widget::playerInit()
 {
     // 1. 初始化播放相关类对象
@@ -196,7 +222,6 @@ void Widget::initSqlite()
 
     qDebug() << "MusicInfo表创建成功!!!";
 }
-
 //将数据库中的歌曲初始化到界面
 void Widget::initMusicList()
 {
@@ -211,6 +236,10 @@ void Widget::initMusicList()
     ui->recentPage->setMusicListType(PageType::HISTORY_PAGE);
     ui->recentPage->reFrush(musicList);
 }
+/////////////////////////////////////////////////////////////////////////////////////////////
+/// 管理信号与槽
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 //管理所有信号与信号槽的函数
 void Widget::connectSignalAndSlots()
 {
@@ -253,6 +282,7 @@ void Widget::connectSignalAndSlots()
     connect(ui->progressBar,&MusicSlider::setMusicSliderPosition,this,&Widget::onMusicSliderChanged);
 }
 /////////////////////////////////////////////////////////////////////////////////
+/// 设置按钮图片
 /////////////////////////////////////////////////////////////////////////////////
 
 //给窗口控制按钮设置图片
@@ -372,9 +402,41 @@ void Widget::onMiniMusicQuit()
     close();
 }
 
+void Widget::updateLikeMusicAndPage(bool isLike, const QString &musicId)
+{
+    // 1. 修改状态
+    auto it = musicList.findMusicById(musicId);
+    if(it != musicList.end())
+    {
+        it->setIsLike(isLike);
+    }
+
+    // 2. 更新page页面的歌曲信息
+    ui->likePage->reFrush(musicList);
+    ui->localPage->reFrush(musicList);
+    ui->recentPage->reFrush(musicList);
+}
+
+//响应btform发出的信号（信号处理函数）
+void Widget::onBtClicked(int pageId)
+{
+    //获取到所有btForm的按钮并清除点击后残留的颜色
+    QList<BtForm*> btFormList = this->findChildren<BtForm*>();
+    for(auto btForm : btFormList)
+    {
+        if(btForm->getPageId() != pageId)
+        {
+            btForm->clearBackground();
+        }
+    }
+    ui->stackedWidget->setCurrentIndex(pageId);
+
+    isDrag = false;
+}
 /////////////////////////////////////////////////////////////////////////////////////////
+/// 窗口按钮模块
 /////////////////////////////////////////////////////////////////////////////////////////
-//窗口按钮模块
+
 //关闭窗口按钮
 void Widget::on_quit_clicked()
 {
@@ -397,39 +459,10 @@ void Widget::on_skin_clicked()
     //更换背景颜色 或者 更换背景图片
     QMessageBox::information(this,"温馨提示","换肤功能暂未支持，敬请期待...");
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
+/// 重写事件处理函数
 //////////////////////////////////////////////////////////////////////////////////////////////////
-//响应btform发出的信号（信号处理函数）
-void Widget::onBtClicked(int pageId)
-{
-    //获取到所有btForm的按钮并清除点击后残留的颜色
-    QList<BtForm*> btFormList = this->findChildren<BtForm*>();
-    for(auto btForm : btFormList)
-    {
-        if(btForm->getPageId() != pageId)
-        {
-            btForm->clearBackground();
-        }
-    }
-    ui->stackedWidget->setCurrentIndex(pageId);
-
-    isDrag = false;
-}
-
-void Widget::updateLikeMusicAndPage(bool isLike, const QString &musicId)
-{
-    // 1. 修改状态
-    auto it = musicList.findMusicById(musicId);
-    if(it != musicList.end())
-    {
-        it->setIsLike(isLike);
-    }
-
-    // 2. 更新page页面的歌曲信息
-    ui->likePage->reFrush(musicList);
-    ui->localPage->reFrush(musicList);
-    ui->recentPage->reFrush(musicList);
-}
 
 //鼠标点击
 void Widget::mousePressEvent(QMouseEvent *event)
@@ -458,8 +491,8 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
+/// 播放控制区
 /////////////////////////////////////////////////////////////////////////////////////
-// 播放控制区
 //音量调节按钮
 void Widget::on_volume_clicked()
 {
@@ -591,17 +624,17 @@ void Widget::onPlayModelClicked()
         qDebug() << "暂不支持";
     }
 }
-// 设置静音
-void Widget::setPlayerMuted(bool isMuted)
-{
-    player->setMuted(isMuted);
-}
 // 歌词显示
 void Widget::onLrcWordClicked()
 {
     lrcPage->show();
 
     lrcPageAnimation->start();
+}
+// 设置静音
+void Widget::setPlayerMuted(bool isMuted)
+{
+    player->setMuted(isMuted);
 }
 // 设置播放器媒体音量
 void Widget::setPlayerVolume(int volume)

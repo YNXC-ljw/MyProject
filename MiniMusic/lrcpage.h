@@ -32,6 +32,7 @@ public:
 
     void showLrcWordLine(qint64 time);
     int getLrcWordLineIndex(qint64 time);
+    // 通过索引获取歌词
     QString getLrcWordByIndex(int index);
 
 private:
@@ -39,7 +40,7 @@ private:
 
     QPropertyAnimation* animation;
 
-    QVector<LrcWordLine> lrcWordLines;
+    QVector<LrcWordLine> lrcWordLines; // 解析的歌词全部保存于此
 };
 
 #endif // LRCPAGE_H

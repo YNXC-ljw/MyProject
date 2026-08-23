@@ -14,8 +14,7 @@ LrcPage::LrcPage(QWidget *parent) :
     //设置窗口无标题栏
     setWindowFlag(Qt::FramelessWindowHint);
 
-
-
+    // 设置歌词界面动画
     animation = new QPropertyAnimation(this,"geometry",this);
     animation->setDuration(400);
     animation->setStartValue(QRect(10,10,width(),height()));
@@ -25,11 +24,11 @@ LrcPage::LrcPage(QWidget *parent) :
     connect(ui->hideBtn,&QPushButton::clicked,this,[=]{
         animation->start();
     });
-
     //动画结束就隐藏起来
     connect(animation,&QPropertyAnimation::finished,this,[=]{
         hide();
     });
+
 
     ui->hideBtn->setIcon(QIcon(":/image/xiala.png"));
 
@@ -40,7 +39,7 @@ LrcPage::~LrcPage()
 {
     delete ui;
 }
-//解析歌词
+// 1.从歌曲文件夹中找到.lrc文件并解析歌词
 bool LrcPage::parseLrcFile(const QString &lrcPath)
 {
     // 1. 打开文件
@@ -92,7 +91,7 @@ bool LrcPage::parseLrcFile(const QString &lrcPath)
     }
     return true;
 }
-//将歌词显示到界面
+// 4.将歌词显示到界面
 void LrcPage::showLrcWordLine(qint64 time)
 {
     // 1. 根据当前所唱歌曲的时间来获取歌词在QVector的索引
@@ -120,10 +119,9 @@ void LrcPage::showLrcWordLine(qint64 time)
         ui->line6->setText(getLrcWordByIndex(index + 3));
     }
 }
-//歌词索引
+// 2.将time和QVector中保存的LrcWordLine中的time进行对比获取歌词索引
 int LrcPage::getLrcWordLineIndex(qint64 time)
 {
-    // 将time和QVector中保存的LrcWordLine中的time进行对比
     if(lrcWordLines.isEmpty())// 当前歌曲没有lrc歌词文件
     {
         return -1;
@@ -146,7 +144,8 @@ int LrcPage::getLrcWordLineIndex(qint64 time)
     // 让歌词界面显示最后一行歌词
     return lrcWordLines.size()-1;
 }
-//通过索引获取歌词
+
+// 3.通过索引获取歌词
 QString LrcPage::getLrcWordByIndex(int index)
 {
     if(index < 0 || index >= lrcWordLines.size())

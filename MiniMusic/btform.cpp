@@ -89,6 +89,7 @@ void BtForm::showAnimal(bool isShow)
     }
 }
 
+// 点击触发按钮样式并发送信号更新UI界面
 void BtForm::mousePressEvent(QMouseEvent *event)
 {
     // 1.鼠标按下显示其他颜色

@@ -25,10 +25,23 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
-    void initUi();
+    ////////////////////////////
+    /// 初始化界面相关
+    ////////////////////////////
+    void initUiTotal();
+    void initLeft();
+    void initHead();
+    void initBody();
+    void initBottom();
+    ////////////////////////////
+    /// 初始化其他
+    ////////////////////////////
     void playerInit();
     void initSqlite();
     void initMusicList();
+    ////////////////////////////
+    /// 设置按钮图片
+    ////////////////////////////
     //窗口按钮区设置图片
     void settingBox();
     //播放控制区设置图片
@@ -36,8 +49,10 @@ public:
     //管理所有信号与信号槽的函数
     void connectSignalAndSlots();
 
+    // 随机推荐图片
     QJsonArray randomPiction();
 
+    // 将页面按钮动画同步到对应按钮
     void updateBtformAnimation();
 
     void onMiniMusicQuit();
@@ -57,7 +72,8 @@ private slots:
 
     void on_addLocal_clicked();
 ////////////////////////////////////////////////////////////////////////////
-    //播放控制区的槽函数
+/// 播放控制区的槽函数
+////////////////////////////////////////////////////////////////////////////
     void onPlayMiusic();
     void onPlayUpClicked();//上一首
     void onPlayDownClicked();//下一首
@@ -83,10 +99,12 @@ private slots:
     void playMusicByIndex(CommonPage* page,int index);
 
 
-
     void on_skin_clicked();//换肤
 
 protected:
+    //////////////////////////////////////////////////
+    /// 重写事件处理函数
+    //////////////////////////////////////////////////
     //重写鼠标点击函数
     void mousePressEvent(QMouseEvent *event);
     //重写鼠标移动函数
