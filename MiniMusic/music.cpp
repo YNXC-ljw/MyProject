@@ -23,7 +23,7 @@ Music::Music(QUrl url)
     musicId = QUuid::createUuid().toString();
     parseMediaMetaMusic();
 }
-
+///////////////////////////////////////////////////////////////////////////////
 void Music::setMusicId(const QString& musicId)
 {
     this->musicId = musicId;
@@ -101,7 +101,7 @@ QString Music::getLrcFilePath() const
 
     return lrcPath;
 }
-
+////////////////////////////////////////////////////////////////////////////
 void Music::insertMusicToDB()
 {
     // 1. 检查music对象是否存在于数据库中
@@ -163,7 +163,7 @@ void Music::insertMusicToDB()
     }
 
 }
-
+// 解析音频文件
 void Music::parseMediaMetaMusic()
 {
     // 1. 创建媒体播放对象

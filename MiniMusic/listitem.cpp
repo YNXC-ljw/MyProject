@@ -44,6 +44,7 @@ void ListItem::setMusicAlbum(const QString &musicAlbum)
     ui->musicAlbumLabel->setText(musicAlbum);
 }
 
+///////////////////////////////////////////////////////////////////
 void ListItem::setLikeMusic(bool isLike)
 {
     this->isLike = isLike;

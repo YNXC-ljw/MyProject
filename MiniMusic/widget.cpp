@@ -85,29 +85,9 @@ void Widget::initUiTotal()
     ui->max->setEnabled(false);//禁用窗口最大化
 
     initHead();
-
     initBottom();
-
     initLeft();
-
-    //将localPage设置为默认页面
-    ui->stackedWidget->setCurrentIndex(4);
-    currentPage = ui->localPage;
-    //让本地下载默认显示音符跳动
-    ui->local->showAnimal(true);
-
-    //初始化推荐页面
-    srand(time(NULL));
-    ui->recMusicBox->initRecBoxUi(randomPiction(),1);
-    ui->supplyMusicBox->initRecBoxUi(randomPiction(),2);
-
     initBody();
-
-    //初始化上移对象
-    lrcPageAnimation = new QPropertyAnimation(lrcPage,"geometry",this);
-    lrcPageAnimation->setDuration(400);
-    lrcPageAnimation->setStartValue(QRect(10,10+lrcPage->height(),lrcPage->width(),lrcPage->height()));
-    lrcPageAnimation->setEndValue(QRect(10,10,lrcPage->width(),lrcPage->height()));
 }
 
 void Widget::initLeft()
@@ -119,6 +99,9 @@ void Widget::initLeft()
     ui->like->setIconAndText(":/image/like.png","我喜欢", 3);
     ui->local->setIconAndText(":/image/local.png","本地和下载", 4);
     ui->recent->setIconAndText(":/image/recent.png","最近播放", 5);
+
+    //让本地下载默认显示音符跳动
+    ui->local->showAnimal(true);
 }
 
 void Widget::initHead()
@@ -129,10 +112,19 @@ void Widget::initHead()
 
 void Widget::initBody()
 {
+    //初始化推荐页面
+    srand(time(NULL));
+    ui->recMusicBox->initRecBoxUi(randomPiction(),1);
+    ui->supplyMusicBox->initRecBoxUi(randomPiction(),2);
+
     //初始化page页面
     ui->likePage->setCommonPageUi("我喜欢",":/image/ilike.jpg");
     ui->localPage->setCommonPageUi("本地音乐",":/image/local.jpg");
     ui->recentPage->setCommonPageUi("最近播放",":/image/recent.jpg");
+
+    //将localPage设置为默认页面
+    ui->stackedWidget->setCurrentIndex(4);
+    currentPage = ui->localPage;
 }
 
 void Widget::initBottom()
@@ -144,6 +136,12 @@ void Widget::initBottom()
     lrcPage = new LrcPage(this);
     lrcPage->setGeometry(10,10,lrcPage->width(),lrcPage->height());
     lrcPage->hide();
+
+    //初始化歌词按钮上移对象
+    lrcPageAnimation = new QPropertyAnimation(lrcPage,"geometry",this);
+    lrcPageAnimation->setDuration(400);
+    lrcPageAnimation->setStartValue(QRect(10,10+lrcPage->height(),lrcPage->width(),lrcPage->height()));
+    lrcPageAnimation->setEndValue(QRect(10,10,lrcPage->width(),lrcPage->height()));
 
     // 实例化音量调节对象
     volumeTool = new VolumeTool(this);
@@ -165,8 +163,9 @@ void Widget::playerInit()
 
     // 4. 设置默认音量
     player->setVolume(20);
-//////////////////////////////////////////////////
-    //关联QMediaPlayer的信号
+///////////////////////////////////
+/// 关联QMediaPlayer的信号
+///////////////////////////////////
 
     //关联QMediaPlayer::Duration信号
     connect(player,&QMediaPlayer::durationChanged,this,&Widget::onDurationChanged);
@@ -184,6 +183,7 @@ void Widget::playerInit()
     connect(playerList,&QMediaPlaylist::playbackMode,this,&Widget::onPlayModelClicked);
     //connect(ui->playModel, &QPushButton::clicked, this, &Widget::onPlayModelClicked);
 }
+
 // 初始化数据库
 void Widget::initSqlite()
 {
@@ -243,6 +243,7 @@ void Widget::initMusicList()
 //管理所有信号与信号槽的函数
 void Widget::connectSignalAndSlots()
 {
+    // 响应btform按钮发送的信号
     connect(ui->Rec,&BtForm::btClicked,this,&Widget::onBtClicked);
     connect(ui->audio,&BtForm::btClicked,this,&Widget::onBtClicked);
     connect(ui->music,&BtForm::btClicked,this,&Widget::onBtClicked);
@@ -391,6 +392,7 @@ void Widget::updateBtformAnimation()
     }
 }
 
+// 通过托盘退出MiniMusic
 void Widget::onMiniMusicQuit()
 {
     // 关闭窗口前将music信息导入数据库
@@ -401,7 +403,7 @@ void Widget::onMiniMusicQuit()
 
     close();
 }
-
+// 将"我喜欢"歌曲状态同步到三个页面
 void Widget::updateLikeMusicAndPage(bool isLike, const QString &musicId)
 {
     // 1. 修改状态
@@ -516,7 +518,7 @@ void Widget::on_addLocal_clicked()
 {
     QFileDialog fileDialog(this);
 
-    //添加本地音源
+    //添加本地音乐
     fileDialog.setWindowTitle("添加本地音乐");
 
     //设置文件对话框打开的默认路径
@@ -528,7 +530,7 @@ void Widget::on_addLocal_clicked()
 
     //设置一次可以选择多个文件
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
-//    fileDialog.exec();
+    //fileDialog.exec();
 
     //通过MIME类型来过滤文件
     QStringList mimeTypeFilters;
@@ -574,12 +576,12 @@ void Widget::onPlayMiusic()
         qDebug() << player->errorString();
     }
 }
-
+// 播放上一首
 void Widget::onPlayUpClicked()
 {
     playerList->previous();
 }
-
+// 播放下一首
 void Widget::onPlayDownClicked()
 {
     playerList->next();
@@ -642,6 +644,7 @@ void Widget::setPlayerVolume(int volume)
     player->setVolume(volume);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////
+/// 播放歌曲
 //////////////////////////////////////////////////////////////////////////////////////////////
 //播放全部歌曲，默认从第0首开始播放
 void Widget::onPlayAll(PageType pageType)
@@ -666,6 +669,7 @@ void Widget::onPlayAll(PageType pageType)
     playAllMusicOfCommonPage(page,0);
 }
 
+// 播放所有歌曲函数
 void Widget::playAllMusicOfCommonPage(CommonPage *page, int index)
 {
     currentPage = page;
@@ -680,6 +684,16 @@ void Widget::playAllMusicOfCommonPage(CommonPage *page, int index)
     //播放
     player->play();
 }
+//通过索引播放歌曲（双击播放）
+void Widget::playMusicByIndex(CommonPage *page, int index)
+{
+    //默认为暂停图标，双击播放要同步播放图标
+    ui->play->setIcon(QIcon(":/image/play_2.png"));
+    playAllMusicOfCommonPage(page,index);
+}
+//////////////////////////////////////////////////////////////////////
+/// 当某某条件发生改变时
+//////////////////////////////////////////////////////////////////////
 //
 void Widget::onCurrentIndexChanged(int index)
 {
@@ -779,13 +793,6 @@ void Widget::onMetaDataAvailableChanged(bool available)
         //解析歌词文件
         lrcPage->parseLrcFile(lrcPath);
     }
-}
-//通过索引播放歌曲（双击播放）
-void Widget::playMusicByIndex(CommonPage *page, int index)
-{
-    //默认为暂停图标，双击播放要同步播放图标
-    ui->play->setIcon(QIcon(":/image/play_2.png"));
-    playAllMusicOfCommonPage(page,index);
 }
 
 

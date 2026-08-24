@@ -24,7 +24,7 @@ public:
     void writeToDB();
     void readFromDB();
 private:
-    QVector<Music> musicList;
+    QVector<Music> musicList; // 存放所有音乐
 
     QSet<QString> musicPaths;   // 防止歌曲文件重复加载
 };

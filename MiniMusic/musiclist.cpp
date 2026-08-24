@@ -64,6 +64,7 @@ void MusicList::addMusicsByUrl(const QList<QUrl> &musicUrls)
     }
 }
 
+// 通过ID找到对应歌曲
 Iterator MusicList::findMusicById(const QString& musicId)
 {
     for(auto it = begin();it != end();it++)
@@ -75,17 +76,9 @@ Iterator MusicList::findMusicById(const QString& musicId)
     }
     return end();
 }
-
-Iterator MusicList::begin()
-{
-    return musicList.begin();
-}
-
-Iterator MusicList::end()
-{
-    return musicList.end();
-}
-
+//////////////////////////////////////////////////////////
+/// 读写数据库
+//////////////////////////////////////////////////////////
 void MusicList::writeToDB()
 {
     for(auto music : musicList)
@@ -94,7 +87,7 @@ void MusicList::writeToDB()
         music.insertMusicToDB();
     }
 }
-
+// 从数据库中恢复歌曲到musicPath
 void MusicList::readFromDB()
 {
     QSqlQuery query;
@@ -109,7 +102,7 @@ void MusicList::readFromDB()
     while(query.next())
     {
          Music music;
-         // 數據庫信息
+         // 数据库信息
          music.setMusicId(query.value(0).toString());
          music.setMusicName(query.value(1).toString());
          music.setMusicSinger(query.value(2).toString());
@@ -125,6 +118,16 @@ void MusicList::readFromDB()
     }
 }
 
+// 迭代器
+Iterator MusicList::begin()
+{
+    return musicList.begin();
+}
+
+Iterator MusicList::end()
+{
+    return musicList.end();
+}
 
 
 

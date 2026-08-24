@@ -70,7 +70,7 @@ void CommonPage::addMusicToMusicPage(MusicList &musicList)
         }
     }
 }
-//将歌曲信息上传到对应的page页面
+//将一个个歌曲listitem信息刷新到对应的page页面
 void CommonPage::reFrush(MusicList& musicList)
 {
     //将QWidgetList之前添加的内容全部清空
@@ -109,6 +109,8 @@ void CommonPage::reFrush(MusicList& musicList)
     repaint();      //立马处理paintEvent
 }
 
+// 将当前页面存在的歌曲一个个放进播放队列当中
+// musicList里是所有歌曲，但是如果当前页面是"我喜欢"页面，那么只加载是"我喜欢"的歌曲到播放列表中
 void CommonPage::addMusicToPlayList(MusicList &musicList, QMediaPlaylist *playList)
 {
     for(auto music : musicList)

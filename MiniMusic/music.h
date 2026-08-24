@@ -29,7 +29,8 @@ public:
 
     QString getLrcFilePath()const;
 
-    void insertMusicToDB();//将歌曲属性写入到数据库
+    //将歌曲属性写入到数据库
+    void insertMusicToDB();
 
 private:
     void parseMediaMetaMusic();

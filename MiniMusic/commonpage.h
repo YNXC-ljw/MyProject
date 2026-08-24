@@ -29,6 +29,7 @@ public:
 
     void addMusicToMusicPage(MusicList& musicList);
 
+    // 刷新歌曲到界面
     void reFrush(MusicList& musicList);
 
     // 将歌曲添加到播放列表中

@@ -83,7 +83,8 @@ void RecBox::createRecBoxItem()
         index++;
     }
 }
-
+///////////////////////////////////////////////////////////////////////////
+// 上一页推荐
 void RecBox::on_btUp_clicked()
 {
     //点击之后显示上一组的图片，如果已经是第0组了，点击后就显示最后一组
@@ -95,7 +96,7 @@ void RecBox::on_btUp_clicked()
 
     createRecBoxItem();
 }
-
+// 下一页推荐
 void RecBox::on_btDown_clicked()
 {
     //点击之后显示下一组的图片，如果已经是最后一组了，点击后就显示第0组
