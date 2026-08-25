@@ -35,6 +35,20 @@ SessionShowArea::SessionShowArea() {
     container->setLayout(layout);
 }
 
+void SessionShowArea::addMessageItem(bool isLeft, const Message &message)
+{
+    // 构造MessageItem,添加到布局管理器中
+    MessageItem* messageItem = MessageItem::makeMessageItem(isLeft,message);
+    container->layout()->addWidget(messageItem);
+}
+
+void SessionShowArea::addFrontMessageItem(bool isLeft, const Message &message)
+{
+    MessageItem* messageItem = MessageItem::makeMessageItem(isLeft,message);
+    QVBoxLayout* layout = dynamic_cast<QVBoxLayout*>(container->layout());
+    layout->insertWidget(0,messageItem);
+}
+
 ////////////////////////////////////////////////////
 /// 表示一个消息元素
 /// 这个里面要能同时支持 文本消息 语音消息 图片消息 文件消息
@@ -87,16 +101,16 @@ MessageItem *MessageItem::makeMessageItem(bool isLeft, const Message &message)
     QWidget* contentWidget = nullptr;
     switch (message.messageType) {
     case TEXT_TYPE:
-        contentWidget = makeTextMessage(isLeft,message.content);
+        contentWidget = makeTextMessageItem(isLeft,message.content);
         break;
     case FILE_TYPE:
-        contentWidget = makeFileMessage();
+        contentWidget = makeFileMessageItem();
         break;
     case IMAGE_TYPE:
-        contentWidget = makeImageMessage();
+        contentWidget = makeImageMessageItem();
         break;
     case SPEECH_TYPE:
-        contentWidget = makeSpeechMessage();
+        contentWidget = makeSpeechMessageItem();
         break;
     default:
         LOG() << "错误的消息类型！MessageType = " << message.messageType;
@@ -112,24 +126,25 @@ MessageItem *MessageItem::makeMessageItem(bool isLeft, const Message &message)
     return messageItem;
 }
 
-QWidget *MessageItem::makeTextMessage(bool isLeft, const QString &text)
+QWidget *MessageItem::makeTextMessageItem(bool isLeft, const QString &text)
 {
-    return nullptr;
+    MessageContentLabel* messageContentLabel = new MessageContentLabel(text,isLeft);
+    return messageContentLabel;
 }
 
-QWidget *MessageItem::makeFileMessage()
-{
-    return nullptr;
-
-}
-
-QWidget *MessageItem::makeImageMessage()
+QWidget *MessageItem::makeFileMessageItem()
 {
     return nullptr;
 
 }
 
-QWidget *MessageItem::makeSpeechMessage()
+QWidget *MessageItem::makeImageMessageItem()
+{
+    return nullptr;
+
+}
+
+QWidget *MessageItem::makeSpeechMessageItem()
 {
     return nullptr;
 

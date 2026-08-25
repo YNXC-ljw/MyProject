@@ -19,6 +19,11 @@ class SessionShowArea : public QScrollArea
     Q_OBJECT
 public:
     SessionShowArea();
+
+    // 添加消息体至消息展示区(尾插)
+    void addMessageItem(bool isLeft,const Message& message);
+    // 头插
+    void addFrontMessageItem(bool isLeft,const Message& message);
 private:
     QWidget* container;
 };
@@ -38,10 +43,10 @@ public:
     static MessageItem* makeMessageItem(bool isLeft,const Message& message);
 
     // 添加工厂函数
-    static QWidget* makeTextMessage(bool isLeft,const QString& text);
-    static QWidget* makeFileMessage();
-    static QWidget* makeImageMessage();
-    static QWidget* makeSpeechMessage();
+    static QWidget* makeTextMessageItem(bool isLeft,const QString& text);
+    static QWidget* makeFileMessageItem();
+    static QWidget* makeImageMessageItem();
+    static QWidget* makeSpeechMessageItem();
 
 private:
     // 此处的 isLeft 表示该Item是否属于"左侧消息"
@@ -52,6 +57,8 @@ private:
 /// 创建类表示“文本消息”正文部分
 ////////////////////////////////////////////////////
 class MessageContentLabel : public QWidget{
+    Q_OBJECT
+public:
     MessageContentLabel(const QString& text,bool isLeft);
 
     void paintEvent(QPaintEvent* event) override;
