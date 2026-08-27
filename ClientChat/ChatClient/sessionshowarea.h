@@ -24,6 +24,8 @@ public:
     void addMessageItem(bool isLeft,const Message& message);
     // 头插
     void addFrontMessageItem(bool isLeft,const Message& message);
+    // 清空
+    void clear();
 private:
     QWidget* container;
 };

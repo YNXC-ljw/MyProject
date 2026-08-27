@@ -49,6 +49,12 @@ void SessionShowArea::addFrontMessageItem(bool isLeft, const Message &message)
     layout->insertWidget(0,messageItem);
 }
 
+void SessionShowArea::clear()
+{
+    // 遍历布局管理器清空消息元素
+
+}
+
 ////////////////////////////////////////////////////
 /// 表示一个消息元素
 /// 这个里面要能同时支持 文本消息 语音消息 图片消息 文件消息
