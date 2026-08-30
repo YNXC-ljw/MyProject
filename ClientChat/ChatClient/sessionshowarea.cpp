@@ -1,4 +1,5 @@
 #include "sessionshowarea.h"
+#include "debug.h"
 
 #include <QScrollBar>
 #include <QVBoxLayout>
@@ -33,6 +34,26 @@ SessionShowArea::SessionShowArea() {
     layout->setContentsMargins(0,0,0,0);
     layout->setSpacing(0);
     container->setLayout(layout);
+
+    // 4.添加“测试数据”
+#if TEST_UI
+    for(int i = 0;i < 30;i++)
+    {
+        UserInfo userInfo;
+        userInfo.nickName = "可怡宝宝";
+        userInfo.avatar = QIcon(":/resource/image/avatar.jpg");
+        Message message = Message::makeMessage(TEXT_TYPE,"",userInfo,
+                                               (QString("可怡宝宝我好爱你")+QString::number(i)).toUtf8(),"");
+        this->addMessageItem(true,message);
+    }
+    UserInfo userInfo;
+    userInfo.nickName = "可怡";
+    userInfo.avatar = QIcon(":/resource/image/avatar.jpg");
+    Message message = Message::makeMessage(TEXT_TYPE,"",userInfo,
+                                           (QString("可怡宝宝我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你")).toUtf8(),"");
+    this->addMessageItem(false,message);
+#endif
+
 }
 
 void SessionShowArea::addMessageItem(bool isLeft, const Message &message)
@@ -52,7 +73,16 @@ void SessionShowArea::addFrontMessageItem(bool isLeft, const Message &message)
 void SessionShowArea::clear()
 {
     // 遍历布局管理器清空消息元素
-
+    QLayout* layout = container->layout();
+    for(int i = layout->count() - 1;i >= 0;i--)
+    {
+        QLayoutItem* item = layout->takeAt(i);
+        if(item != nullptr && item->widget() != nullptr)
+        {
+            delete item->widget();
+        }
+        delete item;
+    }
 }
 
 ////////////////////////////////////////////////////
@@ -72,8 +102,8 @@ MessageItem *MessageItem::makeMessageItem(bool isLeft, const Message &message)
     // 1.创建对象和布局管理器
     MessageItem* messageItem = new MessageItem(isLeft);
     QGridLayout* layout = new QGridLayout();
-    layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(0);
+    layout->setContentsMargins(20,10,20,0);
+    layout->setSpacing(10);
     // 这个messageItem最低不能低于100
     messageItem->setMinimumHeight(100);
     messageItem->setLayout(layout);
@@ -162,6 +192,8 @@ QWidget *MessageItem::makeSpeechMessageItem()
 MessageContentLabel::MessageContentLabel(const QString &text, bool isLeft)
     :isLeft(isLeft)
 {
+    // 设置SizePolicy
+    this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
     QFont font;
     font.setFamily("微软雅黑");
@@ -172,7 +204,7 @@ MessageContentLabel::MessageContentLabel(const QString &text, bool isLeft)
     this->label->setFont(font);
     this->label->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     this->label->setWordWrap(true); // 文本自动换行
-    this->setStyleSheet("QLabel { padding: 0 10px; line-height: 1.2;}");
+    this->setStyleSheet("QLabel { padding: 0 10px; line-height: 1.2; background-color: transparent; }");
 }
 
 // 这个函数会在该空间被显示的时候自动调用到
@@ -187,14 +219,14 @@ void MessageContentLabel::paintEvent(QPaintEvent *event)
         return;
     }
     QWidget* parent = dynamic_cast<QWidget*>(object);
-    int width = parent->width(); //包含两侧边框
+    int width = parent->width() * 0.6; //包含两侧边框
 
     // 2.计算当前文本，如果是一行放置，需要多宽
     QFontMetrics metrics(this->label->font());
     int totalWidth = metrics.horizontalAdvance(this->label->text()); // 文本总宽度
 
     // 3.计算行数(40表示每行带的左右边距)
-    int rows = (totalWidth / (width - 40));
+    int rows = (totalWidth / (width - 40)) + 1;
     if(rows == 1)
     {
         // 如果只有一行，那消息体宽度就是文字宽度 + 40边距
