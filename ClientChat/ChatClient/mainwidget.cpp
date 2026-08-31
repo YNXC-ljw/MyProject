@@ -3,6 +3,7 @@
 
 #include "sessionfriendarea.h"
 #include "debug.h"
+#include "selfinfowidget.h"
 
 
 #include <QHBoxLayout>
@@ -209,6 +210,15 @@ void MainWidget::initSignalSlot()
     connect(sessionTabBtn,&QPushButton::clicked,this,&MainWidget::switchTabToSession);
     connect(friendTabBtn,&QPushButton::clicked,this,&MainWidget::switchTabToFriend);
     connect(applyTabBtn,&QPushButton::clicked,this,&MainWidget::switchTabToApply);
+
+    //////////////////////////////////////////
+    /// 连接信号槽，处理头像点击显示个人信息事件
+    //////////////////////////////////////////
+    connect(userAvatar,&QPushButton::clicked,this,[=](){
+        SelfInfoWidget* selfInfoWidget = new SelfInfoWidget(this);
+        selfInfoWidget->exec(); // 弹出模态对话框(影响整个窗口)
+        // selfInfoWidget->show(); // 弹出非模态对话框
+    });
 }
 
 /////////////////////////////////////////////////////////////////////////////////
