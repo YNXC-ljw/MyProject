@@ -119,6 +119,8 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
     phoneSubmitBtn->setStyleSheet(btnStyle);
     phoneSubmitBtn->hide();
 
+    // 8.
+
 
     // 第 0 列被头像占用了，下列内容都是从第一列开始
     layout->addWidget(idTag,0,1);
