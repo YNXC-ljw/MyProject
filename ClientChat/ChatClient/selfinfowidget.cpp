@@ -119,7 +119,18 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
     phoneSubmitBtn->setStyleSheet(btnStyle);
     phoneSubmitBtn->hide();
 
-    // 8.
+    // 8. 添加验证码
+    verifyCodeTag = new QLabel();
+    verifyCodeTag->setFixedWidth(50);
+    verifyCodeTag->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    verifyCodeTag->setText("验证码");
+    verifyCodeTag->setStyleSheet(labelStyle);
+
+    verifyCodeEdit = new QLineEdit();
+
+    getVerifyCodeBtn = new QPushButton();
+    getVerifyCodeBtn->setText("获取验证码");
+
 
 
     // 第 0 列被头像占用了，下列内容都是从第一列开始
@@ -138,7 +149,9 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
     layout->addWidget(phoneLabel,3,2);
     layout->addWidget(phoneModifyBtn,3,3);
 
-
+    layout->addWidget(verifyCodeTag,4,1);
+    layout->addWidget(verifyCodeEdit,4,2);
+    layout->addWidget(getVerifyCodeBtn,4,3);
 
 
 #if TEST_UI

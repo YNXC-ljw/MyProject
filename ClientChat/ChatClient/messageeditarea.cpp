@@ -15,7 +15,7 @@ MessageEditArea::MessageEditArea(QWidget *parent)
     // 2.创建垂直方向布局管理器
     QVBoxLayout* vlayout = new QVBoxLayout();
     vlayout->setSpacing(0);
-    vlayout->setContentsMargins(10,0,10,10);
+    vlayout->setContentsMargins(10,0,10,0);
     this->setLayout(vlayout);
 
     // 5. 添加多行编辑框
@@ -28,7 +28,7 @@ MessageEditArea::MessageEditArea(QWidget *parent)
     // 3.创建水平方向布局管理器
     QHBoxLayout* hlayout = new QHBoxLayout();
     hlayout->setSpacing(0);
-    hlayout->setContentsMargins(10,0,0,10);
+    hlayout->setContentsMargins(10,0,0,8);
     hlayout->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
     vlayout->addLayout(hlayout);
 
