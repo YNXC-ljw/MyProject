@@ -30,6 +30,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         sessionshowarea.h sessionshowarea.cpp
         messageeditarea.h messageeditarea.cpp
         selfinfowidget.h selfinfowidget.cpp
+        userinfowidget.h userinfowidget.cpp
+        sessiondetailwidget.h sessiondetailwidget.cpp
 
 
     )

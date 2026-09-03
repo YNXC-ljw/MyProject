@@ -1,5 +1,7 @@
 #include "sessionshowarea.h"
 #include "debug.h"
+#include "userinfowidget.h"
+#include "mainwidget.h"
 
 #include <QScrollBar>
 #include <QVBoxLayout>
@@ -37,21 +39,27 @@ SessionShowArea::SessionShowArea() {
 
     // 4.添加“测试数据”
 #if TEST_UI
-    for(int i = 0;i < 30;i++)
+    UserInfo userInfo;
+    userInfo.nickName = "可怡";
+    userInfo.phone = "18212345678";
+    userInfo.description = "从今天开始好好爱可怡";
+    userInfo.userId = QString::number(1000);
+    userInfo.avatar = QIcon(":/resource/image/avatar.jpg");
+    Message message = Message::makeMessage(TEXT_TYPE,"",userInfo,
+                                           (QString("可怡宝宝我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你")).toUtf8(),"");
+    this->addMessageItem(false,message);
+    for(int i = 1;i <= 30;i++)
     {
         UserInfo userInfo;
         userInfo.nickName = "可怡宝宝";
+        userInfo.description = "从今天开始好好爱可怡";
+        userInfo.userId = QString::number(1000 + i);
+        userInfo.phone = "18212345678";
         userInfo.avatar = QIcon(":/resource/image/avatar.jpg");
         Message message = Message::makeMessage(TEXT_TYPE,"",userInfo,
                                                (QString("可怡宝宝我好爱你")+QString::number(i)).toUtf8(),"");
         this->addMessageItem(true,message);
     }
-    UserInfo userInfo;
-    userInfo.nickName = "可怡";
-    userInfo.avatar = QIcon(":/resource/image/avatar.jpg");
-    Message message = Message::makeMessage(TEXT_TYPE,"",userInfo,
-                                           (QString("可怡宝宝我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你我好爱你")).toUtf8(),"");
-    this->addMessageItem(false,message);
 #endif
 
 }
@@ -159,6 +167,13 @@ MessageItem *MessageItem::makeMessageItem(bool isLeft, const Message &message)
         layout->addWidget(contentWidget,1,0);
     }
 
+    // 在消息展示区每一个消息Item中连接信号槽，表示点击Item头像时生成一个模态对话框以展示被点击用户的主页信息
+    connect(avatarBtn,&QPushButton::clicked,messageItem,[=](){
+        MainWidget* mainWidget = MainWidget::getInstance();
+        UserInfoWidget* userInfoWidget = new UserInfoWidget(message.sender,mainWidget);
+        userInfoWidget->exec();
+        // userInfoWidget->show(); // 非模态对话框
+    });
     return messageItem;
 }
 

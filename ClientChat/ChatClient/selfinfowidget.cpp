@@ -7,7 +7,7 @@
 SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
 {
     // 1.设置整个窗口的属性
-    this->setFixedSize(450,300);
+    this->setFixedSize(500,300);
     this->setWindowTitle("个人信息");
 
     // 把对话框移动到鼠标点击的位置
@@ -15,13 +15,19 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
 
     // 2.创建网格布局管理器
     QGridLayout* layout = new QGridLayout();
-    layout->setSpacing(0);
-    layout->setContentsMargins(0,0,0,0);
+    //layout->setSpacing(0); // 默认设置布局管理器内所有控件的水平、垂直间距;也可以分开设置
+    layout->setHorizontalSpacing(10);
+    layout->setVerticalSpacing(5);
+    layout->setContentsMargins(20,20,20,0);
+    layout->setAlignment(Qt::AlignTop); // 靠上对齐
     this->setLayout(layout);
 
     QString labelStyle = "QLabel { font-size: 14px; font-weight: 800; }";
     QString btnStyle = "QPushButton { border: none; background-color: transparent; }";
     btnStyle += "QPushButton:pressed { background-color: rgb(210,210,210); }";
+    QString editStyle = "QLineEdit { border: none; border-radius: 5px; padding-left: 3px; }";
+
+    int height = 30;
 
     // 3.创建头像
     avatarBtn = new QPushButton();
@@ -33,23 +39,25 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
 
     // 4.添加用户id显示
     idTag = new QLabel();
-    idTag->setFixedWidth(50);
-    idTag->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
+    idTag->setFixedSize(50,height);
+    idTag->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     idTag->setText("序号");
     idTag->setStyleSheet(labelStyle);
 
     idLabel = new QLabel();
+    idLabel->setFixedHeight(height);
     idLabel->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
     // 5.添加用户的名字显示
     nameTag = new QLabel();
-    nameTag->setFixedWidth(50);
-    nameTag->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    nameTag->setFixedSize(50,height);
+    nameTag->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     nameTag->setText("昵称");
     nameTag->setStyleSheet(labelStyle);
 
     nameLabel = new QLabel();
-    nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    nameLabel->setFixedHeight(height);
+    nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     nameModifyBtn = new QPushButton();
     nameModifyBtn->setFixedSize(25, 25);
@@ -58,6 +66,9 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
     nameModifyBtn->setStyleSheet(btnStyle);
 
     nameEdit = new QLineEdit();
+    nameEdit->setFixedHeight(height);
+    nameEdit->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    nameEdit->setStyleSheet(editStyle);
     nameEdit->hide();
 
     nameSubmitBtn = new QPushButton();
@@ -69,13 +80,14 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
 
     // 6.添加个性签名显示
     descTag = new QLabel();
-    descTag->setFixedWidth(50);
-    descTag->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
+    descTag->setFixedSize(50,height);
+    descTag->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     descTag->setText("签名");
     descTag->setStyleSheet(labelStyle);
 
     descLabel = new QLabel();
-    descLabel->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    descLabel->setFixedHeight(height);
+    descLabel->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
     descModifyBtn = new QPushButton();
     descModifyBtn->setFixedSize(25,25);
@@ -84,6 +96,9 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
     descModifyBtn->setStyleSheet(btnStyle);
 
     descEdit = new QLineEdit();
+    descEdit->setFixedHeight(height);
+    descEdit->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    descEdit->setStyleSheet(editStyle);
     descEdit->hide();
 
     descSubmitBtn = new QPushButton();
@@ -95,13 +110,14 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
 
     // 7. 添加电话
     phoneTag = new QLabel();
-    phoneTag->setFixedWidth(50);
-    phoneTag->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    phoneTag->setFixedSize(50,height);
+    phoneTag->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     phoneTag->setText("电话");
     phoneTag->setStyleSheet(labelStyle);
 
     phoneLabel = new QLabel();
-    phoneLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    phoneLabel->setFixedHeight(height);
+    phoneLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     phoneModifyBtn = new QPushButton();
     phoneModifyBtn->setFixedSize(25, 25);
@@ -110,6 +126,9 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
     phoneModifyBtn->setStyleSheet(btnStyle);
 
     phoneEdit = new QLineEdit();
+    phoneEdit->setFixedHeight(height);
+    phoneEdit->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    phoneEdit->setStyleSheet(editStyle);
     phoneEdit->hide();
 
     phoneSubmitBtn = new QPushButton();
@@ -121,19 +140,27 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
 
     // 8. 添加验证码
     verifyCodeTag = new QLabel();
-    verifyCodeTag->setFixedWidth(50);
-    verifyCodeTag->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    verifyCodeTag->setFixedSize(50,height);
+    verifyCodeTag->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     verifyCodeTag->setText("验证码");
     verifyCodeTag->setStyleSheet(labelStyle);
+    verifyCodeTag->hide();
 
     verifyCodeEdit = new QLineEdit();
+    verifyCodeEdit->setFixedHeight(height);
+    verifyCodeEdit->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    verifyCodeEdit->setStyleSheet(editStyle);
+    verifyCodeEdit->setPlaceholderText("请输入验证码");
+    verifyCodeEdit->hide();
 
     getVerifyCodeBtn = new QPushButton();
     getVerifyCodeBtn->setText("获取验证码");
+    getVerifyCodeBtn->setStyleSheet("QPushButton { border: none; border-radius: 5px; background-color: transparent; } QPushButton:pressed { background-color: rgb(231,231,231);}");
+    getVerifyCodeBtn->setFixedSize(70,height);
+    getVerifyCodeBtn->hide();
 
 
-
-    // 第 0 列被头像占用了，下列内容都是从第一列开始
+    // 9.将控件都放入布局管理器  第 0 列被头像占用了，下列内容都是从第一列开始
     layout->addWidget(idTag,0,1);
     layout->addWidget(idLabel,0,2);
 
@@ -149,10 +176,6 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
     layout->addWidget(phoneLabel,3,2);
     layout->addWidget(phoneModifyBtn,3,3);
 
-    layout->addWidget(verifyCodeTag,4,1);
-    layout->addWidget(verifyCodeEdit,4,2);
-    layout->addWidget(getVerifyCodeBtn,4,3);
-
 
 #if TEST_UI
     idLabel->setText("1234");
@@ -160,8 +183,60 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
     descLabel->setText("可怡宝宝最可爱了");
     phoneLabel->setText("18212345678");
 
-
 #endif
+
+    // 10.连接信号槽
+    connect(nameModifyBtn,&QPushButton::clicked,this,[=](){
+        // 把当前的nameLabel和nameModifyBtn隐藏起来，并将它们移除出布局管理器
+        nameLabel->hide();
+        nameModifyBtn->hide();
+        layout->removeWidget(nameLabel);
+        layout->removeWidget(nameModifyBtn);
+        // 将nameEdit和nameSubmit显示出来
+        nameEdit->show();
+        nameSubmitBtn->show();
+        layout->addWidget(nameEdit,1,2);
+        layout->addWidget(nameSubmitBtn,1,3);
+        // 把输入框的内容进行设置
+        nameEdit->setText(nameLabel->text());
+
+    });
+
+    connect(descModifyBtn, &QPushButton::clicked, this, [=]() {
+        descLabel->hide();
+        descModifyBtn->hide();
+        layout->removeWidget(descLabel);
+        layout->removeWidget(descModifyBtn);
+
+        descEdit->show();
+        descSubmitBtn->show();
+        layout->addWidget(descEdit, 2, 2);
+        layout->addWidget(descSubmitBtn, 2, 3);
+
+        descEdit->setText(descLabel->text());
+    });
+
+    connect(phoneModifyBtn, &QPushButton::clicked, this, [=]() {
+        phoneLabel->hide();
+        phoneModifyBtn->hide();
+        layout->removeWidget(phoneLabel);
+        layout->removeWidget(phoneModifyBtn);
+
+        phoneEdit->show();
+        phoneSubmitBtn->show();
+        layout->addWidget(phoneEdit, 3, 2);
+        layout->addWidget(phoneSubmitBtn, 3, 3);
+
+        phoneEdit->setText(phoneLabel->text());
+
+        // 验证码相关控件默认不显示，只有当点击"编辑电话号码"按钮时才显示出来
+        verifyCodeTag->show();
+        verifyCodeEdit->show();
+        getVerifyCodeBtn->show();
+        layout->addWidget(verifyCodeTag,4,1);
+        layout->addWidget(verifyCodeEdit,4,2);
+        layout->addWidget(getVerifyCodeBtn,4,3);
+    });
 
     // 点击关闭对话框后要及时释放掉对象内存以免内存泄露
     this->setAttribute(Qt::WA_DeleteOnClose);

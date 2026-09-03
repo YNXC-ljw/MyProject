@@ -7,10 +7,11 @@
 MessageEditArea::MessageEditArea(QWidget *parent)
     : QWidget{parent}
 {
+    this->setAttribute(Qt::WA_StyledBackground, true);
     // 1.设置必要属性
     this->setFixedHeight(200);
     this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-    //this->setStyleSheet("border-radius: 10px; background-color: rgb(235,235,235);");
+    this->setStyleSheet("MessageEditArea {border-radius: 10px; border: 1px solid rgb(227, 227, 227);}");
     
     // 2.创建垂直方向布局管理器
     QVBoxLayout* vlayout = new QVBoxLayout();
