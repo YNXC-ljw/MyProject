@@ -4,6 +4,7 @@
 #include "sessionfriendarea.h"
 #include "debug.h"
 #include "selfinfowidget.h"
+#include "sessiondetailwidget.h"
 
 
 #include <QHBoxLayout>
@@ -191,6 +192,12 @@ void MainWidget::initRightWindow()
     extraBtn->setIcon(QIcon(":/resource/image/more.png"));
     extraBtn->setStyleSheet("QPushButton { border:none; background-color: rgb(245, 245, 245); } QPushButton:pressed { background-color: rgb(220,220,220)}");
     hlayout->addWidget(extraBtn);
+
+    // 连接信号槽处理"扩展"按钮点击事件
+    connect(extraBtn,&QPushButton::clicked,this,[=](){
+        SessionDetailWidget* sessionDetailWidget = new SessionDetailWidget(this);
+        sessionDetailWidget->exec();
+    });
 
     // 4.添加消息展示区
     sessionShowArea = new SessionShowArea();
