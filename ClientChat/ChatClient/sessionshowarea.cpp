@@ -262,6 +262,7 @@ void MessageContentLabel::paintEvent(QPaintEvent *event)
 
         // 绘制圆角矩形
         painter.drawRoundedRect(10,0,width,height,10,10);
+
         // 绘制箭头
         path.moveTo(10,15);
         path.lineTo(0,20);

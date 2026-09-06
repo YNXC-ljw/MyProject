@@ -10,7 +10,11 @@
 SessionDetailWidget::SessionDetailWidget(QWidget* parent)
     :QDialog(parent)
 {
-
+    // 1.设置一些基本属性
+    this->setWindowTitle("会话详情");
+    this->setFixedSize(300,200);
+    this->setWindowIcon(QIcon(":/resource/image/logo.png"));
+    this->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 ////////////////////////////////////////////////
@@ -56,7 +60,7 @@ AvatarItem::AvatarItem(const QIcon &avatar, const QString &name)
         nameLabel->setText(newName + tail);
     }
 
-    // 6.
+    // 6.将控件添加到布局管理器中
     layout->addWidget(avatarBtn);
     layout->addWidget(nameLabel);
 
