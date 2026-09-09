@@ -89,7 +89,7 @@ UserInfoWidget::UserInfoWidget(const UserInfo& userInfo,QWidget* parent)
     deleteFriendBtn->setFixedSize(80, 30);
     deleteFriendBtn->setStyleSheet(btnStyle);
 
-    // 8.将上述控件添加到布局管理器中
+    // 8.将上述控件都添加到布局管理器中
     layout->addWidget(avatarBtn, 0, 0, 3, 1);
 
     layout->addWidget(idTag, 0, 1);
