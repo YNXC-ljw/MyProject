@@ -152,8 +152,8 @@ void Widget::initBottom()
 void Widget::playerInit()
 {
     // 1. 初始化播放相关类对象
-    player = new QMediaPlayer(this);
-    playerList = new QMediaPlaylist(this);
+    player = new QMediaPlayer(this); // 播放类
+    playerList = new QMediaPlaylist(this); // 播放列表
 
     // 2. 设置默认播放模式
     playerList->setPlaybackMode(QMediaPlaylist::Random);
