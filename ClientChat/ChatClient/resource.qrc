@@ -16,5 +16,8 @@
         <file>resource/image/speech.png</file>
         <file>resource/image/submit.png</file>
         <file>resource/image/modify.png</file>
+        <file>resource/image/cross.png</file>
+        <file>resource/image/check.png</file>
+        <file>resource/image/uncheck.png</file>
     </qresource>
 </RCC>

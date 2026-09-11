@@ -32,6 +32,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         selfinfowidget.h selfinfowidget.cpp
         userinfowidget.h userinfowidget.cpp
         sessiondetailwidget.h sessiondetailwidget.cpp
+        choosefrienddialog.h choosefrienddialog.cpp
 
 
     )

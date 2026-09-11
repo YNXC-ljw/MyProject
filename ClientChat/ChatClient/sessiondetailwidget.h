@@ -13,6 +13,8 @@ class SessionDetailWidget : public QDialog
     Q_OBJECT
 public:
     SessionDetailWidget(QWidget* parent);
+
+    QPushButton* deleteFriendBtn;
 };
 
 ////////////////////////////////////////////////
@@ -24,6 +26,11 @@ class AvatarItem : public QWidget
     Q_OBJECT
 public:
     AvatarItem(const QIcon& avatar,const QString& name);
+
+    QPushButton* getAvatarBtn()
+    {
+        return avatarBtn;
+    }
 private:
     QPushButton* avatarBtn;
     QLabel* nameLabel;
