@@ -65,6 +65,9 @@ private:
     // 添加好友按钮
     QPushButton* addFriendBtn;
 
+    // 会话展示区详情按钮
+    QPushButton* extraBtn;
+
     //消息展示区
     SessionShowArea* sessionShowArea;
     //消息编辑区

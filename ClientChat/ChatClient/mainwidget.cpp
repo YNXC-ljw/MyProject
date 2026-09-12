@@ -5,6 +5,7 @@
 #include "debug.h"
 #include "selfinfowidget.h"
 #include "sessiondetailwidget.h"
+#include "groupsessiondetailwidget.h"
 
 
 #include <QHBoxLayout>
@@ -186,18 +187,12 @@ void MainWidget::initRightWindow()
 #endif
     hlayout->addWidget(sessionTitleLabel);
 
-    QPushButton* extraBtn = new QPushButton();
+    extraBtn = new QPushButton();
     extraBtn->setFixedSize(30, 30);
     extraBtn->setIconSize(QSize(30, 30));
     extraBtn->setIcon(QIcon(":/resource/image/more.png"));
     extraBtn->setStyleSheet("QPushButton { border:none; background-color: rgb(245, 245, 245); } QPushButton:pressed { background-color: rgb(220,220,220)}");
     hlayout->addWidget(extraBtn);
-
-    // 连接信号槽处理"扩展"按钮点击事件
-    connect(extraBtn,&QPushButton::clicked,this,[=](){
-        SessionDetailWidget* sessionDetailWidget = new SessionDetailWidget(this);
-        sessionDetailWidget->exec();
-    });
 
     // 4.添加消息展示区
     sessionShowArea = new SessionShowArea();
@@ -225,6 +220,27 @@ void MainWidget::initSignalSlot()
         SelfInfoWidget* selfInfoWidget = new SelfInfoWidget(this);
         selfInfoWidget->exec(); // 弹出模态对话框(影响整个窗口)
         // selfInfoWidget->show(); // 弹出非模态对话框
+    });
+
+    //////////////////////////////////////////
+    /// 连接信号槽，处理消息展示区详情按钮点击事件
+    //////////////////////////////////////////
+    connect(extraBtn,&QPushButton::clicked,this,[=](){
+
+#if GROUP_SESSION_DETAIL_WIDGET
+        bool isSingleChat = false;
+#else
+        bool isSingleChat = true;
+#endif
+        if(isSingleChat){
+            // 单聊窗口
+            SessionDetailWidget* sessionDetailWidget = new SessionDetailWidget(this);
+            sessionDetailWidget->exec();
+        }else{
+            // 群聊窗口
+            GroupSessionDetailWidget* groupSessionDetialWidget = new GroupSessionDetailWidget(this);
+            groupSessionDetialWidget->exec();
+        }
     });
 }
 
