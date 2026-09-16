@@ -6,6 +6,7 @@
 #include "selfinfowidget.h"
 #include "sessiondetailwidget.h"
 #include "groupsessiondetailwidget.h"
+#include "addfrienddialog.h"
 
 
 #include <QHBoxLayout>
@@ -241,6 +242,14 @@ void MainWidget::initSignalSlot()
             GroupSessionDetailWidget* groupSessionDetialWidget = new GroupSessionDetailWidget(this);
             groupSessionDetialWidget->exec();
         }
+    });
+
+    //////////////////////////////////////////
+    /// 连接信号槽，处理添加好友按钮信号
+    //////////////////////////////////////////
+    connect(addFriendBtn,&QPushButton::clicked,this,[=](){
+        AddFriendDialog* addFriendDialog = new AddFriendDialog(this);
+        addFriendDialog->exec();
     });
 }
 

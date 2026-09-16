@@ -19,5 +19,6 @@
         <file>resource/image/cross.png</file>
         <file>resource/image/check.png</file>
         <file>resource/image/uncheck.png</file>
+        <file>resource/image/search.png</file>
     </qresource>
 </RCC>
