@@ -1,4 +1,4 @@
-#include "widget.h"
+ #include "widget.h"
 #include "ui_widget.h"
 #include "btform.h"
 #include "commonpage.h"
@@ -102,6 +102,7 @@ void Widget::initLeft()
 
     //让本地下载默认显示音符跳动
     ui->local->showAnimal(true);
+    //ui->local->setStyleSheet("")
 }
 
 void Widget::initHead()
@@ -493,7 +494,7 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-/// 播放控制区
+/// 播放控制区按钮响应事件
 /////////////////////////////////////////////////////////////////////////////////////
 //音量调节按钮
 void Widget::on_volume_clicked()

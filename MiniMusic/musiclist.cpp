@@ -20,21 +20,21 @@ void MusicList::addMusicsByUrl(const QList<QUrl> &musicUrls)
 
 
         //时间复杂度过高O(n)
-        #if 0
-        auto it = begin();
-        for(; it != end(); ++it)
-        {
-            if(it->getMusicUrl() == e)
-            {
-                break;
-            }
-        }
+//        #if 0
+//        auto it = begin();
+//        for(; it != end(); ++it)
+//        {
+//            if(it->getMusicUrl() == e)
+//            {
+//                break;
+//            }
+//        }
 
-        if(it != end())
-        {
-            continue;
-        }
-        #endif
+//        if(it != end())
+//        {
+//            continue;
+//        }
+//        #endif
 
         //使用哈希unordered_map 时间复杂度O(1)
 

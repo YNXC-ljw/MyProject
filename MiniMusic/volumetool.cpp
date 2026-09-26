@@ -94,6 +94,7 @@ bool VolumeTool::eventFilter(QObject *watched, QEvent *event)
         //鼠标按下
         if(event->type() == QEvent::MouseButtonPress)
         {
+            // 计算鼠标按下时音量Btn所在位置
             calcVolume();
         }
         //鼠标释放
