@@ -46,6 +46,7 @@ BtForm::BtForm(QWidget *parent) :
     line4Animal->setKeyValueAt(1,QRect(21,15,2,0));
     line4Animal->setLoopCount(-1);
     line4Animal->start();
+
 }
 
 BtForm::~BtForm()
