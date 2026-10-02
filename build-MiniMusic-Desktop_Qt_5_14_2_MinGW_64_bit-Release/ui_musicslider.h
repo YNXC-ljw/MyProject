@@ -40,10 +40,7 @@ public:
         outLine = new QFrame(MusicSlider);
         outLine->setObjectName(QString::fromUtf8("outLine"));
         outLine->setGeometry(QRect(0, 8, 0, 4));
-        outLine->setStyleSheet(QString::fromUtf8("#outLine\n"
-"{\n"
-"	background-color:#1ECC94;\n"
-"}"));
+        outLine->setStyleSheet(QString::fromUtf8(""));
         outLine->setFrameShape(QFrame::StyledPanel);
         outLine->setFrameShadow(QFrame::Raised);
 

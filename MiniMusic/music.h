@@ -1,4 +1,4 @@
-#ifndef MUSIC_H
+ #ifndef MUSIC_H
 #define MUSIC_H
 
 #include <QUrl>

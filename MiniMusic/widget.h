@@ -29,6 +29,7 @@ public:
     /// 初始化界面相关
     ////////////////////////////
     void initUiTotal();
+    void initWindow();
     void initLeft();
     void initHead();
     void initBody();
@@ -89,11 +90,11 @@ private slots:
     void playAllMusicOfCommonPage(CommonPage *page,int index);
 //////////////////////////////////////////////////////////////////////////////
     //QMeidaPlayer中stateChanged信号对应槽函数
-    void onCurrentIndexChanged(int);//播放媒体切换
+    void onCurrentIndexChanged(int); //播放媒体切换
     void onDurationChanged(qint64 duration);
-    void onPositionChanged(qint64 position);//播放进度发生改变
-    void onMusicSliderChanged(float ratio);//进度条发生改变时修改音乐播放时间
-    void onMetaDataAvailableChanged(bool available);//元数据发生改变时
+    void onPositionChanged(qint64 position); //播放进度发生改变
+    void onMusicSliderChanged(float ratio); //进度条发生改变时修改音乐播放时间
+    void onMetaDataAvailableChanged(bool available); //元数据发生改变时
 
     //双击播放槽函数
     void playMusicByIndex(CommonPage* page,int index);
@@ -113,11 +114,11 @@ protected:
 private:
     Ui::Widget *ui;
 
-    QPoint dragPosition;
+    QPoint dragPosition; // 拖拽对象
 
-    VolumeTool* volumeTool;
-    LrcPage *lrcPage;
-    QPropertyAnimation* lrcPageAnimation;
+    VolumeTool* volumeTool; // 音量类对象
+    LrcPage *lrcPage; // lrc歌词界面对象
+    QPropertyAnimation* lrcPageAnimation; // lrc歌词界面动画
 
     MusicList musicList;    //组织歌曲文件
 
@@ -126,10 +127,10 @@ private:
 
     int currentIndex;       //记录当前播放元在列表中的索引
 
-    CommonPage* currentPage; //记录当前播放歌曲的页面
+    CommonPage* currentCommonPage; //记录当前播放歌曲的页面
     qint64 totalTime;       //记录媒体元的总时间
 
-    QSqlDatabase sqlite;
+    QSqlDatabase sqlite; // 数据库
 
     bool isDrag;    //是否拖拽
 };

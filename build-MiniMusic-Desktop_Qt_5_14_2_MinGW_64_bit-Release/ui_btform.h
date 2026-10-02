@@ -43,9 +43,7 @@ public:
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
         btStyle = new QWidget(BtForm);
         btStyle->setObjectName(QString::fromUtf8("btStyle"));
-        btStyle->setStyleSheet(QString::fromUtf8("#btStyle:hover{\n"
-"	background-color: #ccffcc;\n"
-"}\n"
+        btStyle->setStyleSheet(QString::fromUtf8("\n"
 "#btStyle{\n"
 "	background-image: center center;\n"
 "}"));

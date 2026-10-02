@@ -21,6 +21,7 @@ public:
     Iterator begin();
     Iterator end();
 
+    // 数据库读写
     void writeToDB();
     void readFromDB();
 private:

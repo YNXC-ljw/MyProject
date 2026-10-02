@@ -139,7 +139,7 @@
                <string notr="true"/>
               </property>
               <property name="text">
-               <string>陈奕迅</string>
+               <string/>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -152,7 +152,7 @@
                <string notr="true"/>
               </property>
               <property name="text">
-               <string>葡萄成熟时</string>
+               <string/>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>

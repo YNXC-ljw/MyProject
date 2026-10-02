@@ -14,7 +14,7 @@ LrcPage::LrcPage(QWidget *parent) :
     //设置窗口无标题栏
     setWindowFlag(Qt::FramelessWindowHint);
 
-    // 设置歌词界面动画
+    // 设置歌词界面下拉动画
     animation = new QPropertyAnimation(this,"geometry",this);
     animation->setDuration(400);
     animation->setStartValue(QRect(10,10,width(),height()));
@@ -42,7 +42,10 @@ LrcPage::~LrcPage()
 // 1.从歌曲文件夹中找到.lrc文件并解析歌词
 bool LrcPage::parseLrcFile(const QString &lrcPath)
 {
-    // 1. 打开文件
+    // 1.将上一首歌曲歌词清空
+    lrcWordLines.clear();
+
+    // 2. 打开文件
     QFile file(lrcPath);
     if(!file.open(QIODevice::ReadOnly))
     {
@@ -50,10 +53,7 @@ bool LrcPage::parseLrcFile(const QString &lrcPath)
         return false;
     }
 
-    //将上一首歌曲歌词清空
-    lrcWordLines.clear();
-
-    //一次性解析一行歌词
+    // 3.一次性解析一行歌词
     while(!file.atEnd())
     {
         QString lrcLineWord = file.readLine(1024);//读取一行
@@ -91,35 +91,7 @@ bool LrcPage::parseLrcFile(const QString &lrcPath)
     }
     return true;
 }
-// 4.将歌词显示到界面
-void LrcPage::showLrcWordLine(qint64 time)
-{
-    // 1. 根据当前所唱歌曲的时间来获取歌词在QVector的索引
-    int index = getLrcWordLineIndex(time);
-
-    // 2. 更新前三行、当前行和后三行到界面
-    if(-1 == index)
-    {
-        ui->line1->setText("");
-        ui->line2->setText("");
-        ui->line3->setText("");
-        ui->lineCenter->setText("当前歌曲暂无歌词");
-        ui->line4->setText("");
-        ui->line5->setText("");
-        ui->line6->setText("");
-    }
-    else
-    {
-        ui->line1->setText(getLrcWordByIndex(index - 1));
-        ui->line2->setText(getLrcWordByIndex(index - 2));
-        ui->line3->setText(getLrcWordByIndex(index - 3));
-        ui->lineCenter->setText(getLrcWordByIndex(index));
-        ui->line4->setText(getLrcWordByIndex(index + 1));
-        ui->line5->setText(getLrcWordByIndex(index + 2));
-        ui->line6->setText(getLrcWordByIndex(index + 3));
-    }
-}
-// 2.将time和QVector中保存的LrcWordLine中的time进行对比获取歌词索引
+// 2.将time和QVector中保存的LrcWordLine中的time进行对比获取歌词索引(因为要同时显示7行，所以一定要有索引，才知道在QVector里的七行歌词分别是什么)
 int LrcPage::getLrcWordLineIndex(qint64 time)
 {
     if(lrcWordLines.isEmpty())// 当前歌曲没有lrc歌词文件
@@ -153,4 +125,32 @@ QString LrcPage::getLrcWordByIndex(int index)
         return "";
     }
     return lrcWordLines[index].lrcText;
+}
+// 4.将歌词显示到界面
+void LrcPage::showLrcWordLine(qint64 time)
+{
+    // 1. 根据当前所唱歌曲的时间来获取歌词在QVector的索引
+    int index = getLrcWordLineIndex(time);
+
+    // 2. 更新前三行、当前行和后三行到界面
+    if(-1 == index)
+    {
+        ui->line1->setText("");
+        ui->line2->setText("");
+        ui->line3->setText("");
+        ui->lineCenter->setText("当前歌曲暂无歌词");
+        ui->line4->setText("");
+        ui->line5->setText("");
+        ui->line6->setText("");
+    }
+    else
+    {
+        ui->line1->setText(getLrcWordByIndex(index - 3));
+        ui->line2->setText(getLrcWordByIndex(index - 2));
+        ui->line3->setText(getLrcWordByIndex(index - 1));
+        ui->lineCenter->setText(getLrcWordByIndex(index));
+        ui->line4->setText(getLrcWordByIndex(index + 1));
+        ui->line5->setText(getLrcWordByIndex(index + 2));
+        ui->line6->setText(getLrcWordByIndex(index + 3));
+    }
 }

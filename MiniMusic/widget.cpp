@@ -41,9 +41,6 @@ Widget::Widget(QWidget *parent)
 
     // 关联信号和槽函数
     connectSignalAndSlots();
-
-
-//    ui->progressBar->setStyleSheet("background-color:white;");
 }
 
 Widget::~Widget()
@@ -55,6 +52,15 @@ Widget::~Widget()
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 void Widget::initUiTotal()
+{
+    initWindow(); // 总窗口
+    initHead(); // 窗口顶部
+    initLeft(); // 窗口左侧
+    initBody(); // 主界面
+    initBottom(); // 窗口底部
+}
+
+void Widget::initWindow()
 {
     // 去除窗口标题栏
     this->setWindowFlag(Qt::FramelessWindowHint);
@@ -83,11 +89,12 @@ void Widget::initUiTotal()
     this->setGraphicsEffect(shadowEffect);
 
     ui->max->setEnabled(false);//禁用窗口最大化
+}
 
-    initHead();
-    initBottom();
-    initLeft();
-    initBody();
+void Widget::initHead()
+{
+    // 设置窗口按钮图标
+    settingBox();
 }
 
 void Widget::initLeft()
@@ -102,13 +109,6 @@ void Widget::initLeft()
 
     //让本地下载默认显示音符跳动
     ui->local->showAnimal(true);
-    //ui->local->setStyleSheet("")
-}
-
-void Widget::initHead()
-{
-    // 窗口按钮图标
-    settingBox();
 }
 
 void Widget::initBody()
@@ -118,26 +118,25 @@ void Widget::initBody()
     ui->recMusicBox->initRecBoxUi(randomPiction(),1);
     ui->supplyMusicBox->initRecBoxUi(randomPiction(),2);
 
-    //初始化page页面
+    //初始化commonPage页面
     ui->likePage->setCommonPageUi("我喜欢",":/image/ilike.jpg");
     ui->localPage->setCommonPageUi("本地音乐",":/image/local.jpg");
     ui->recentPage->setCommonPageUi("最近播放",":/image/recent.jpg");
 
     //将localPage设置为默认页面
     ui->stackedWidget->setCurrentIndex(4);
-    currentPage = ui->localPage;
+    currentCommonPage = ui->localPage;
 }
 
 void Widget::initBottom()
 {
-    // 播放控制器图标
+    // 设置播放控制区图标
     contralMusic();
 
     //实例化LrcWord对象
     lrcPage = new LrcPage(this);
     lrcPage->setGeometry(10,10,lrcPage->width(),lrcPage->height());
     lrcPage->hide();
-
     //初始化歌词按钮上移对象
     lrcPageAnimation = new QPropertyAnimation(lrcPage,"geometry",this);
     lrcPageAnimation->setDuration(400);
@@ -181,7 +180,7 @@ void Widget::playerInit()
     connect(playerList,&QMediaPlaylist::currentIndexChanged,this,&Widget::onCurrentIndexChanged);
 
     //当播放模式发生改变时
-    connect(playerList,&QMediaPlaylist::playbackMode,this,&Widget::onPlayModelClicked);
+    //connect(playerList,&QMediaPlaylist::playbackModeChanged,this,&Widget::onPlayModelClicked);
     //connect(ui->playModel, &QPushButton::clicked, this, &Widget::onPlayModelClicked);
 }
 
@@ -223,13 +222,14 @@ void Widget::initSqlite()
 
     qDebug() << "MusicInfo表创建成功!!!";
 }
+
 //将数据库中的歌曲初始化到界面
 void Widget::initMusicList()
 {
     musicList.readFromDB();
 
     ui->likePage->setMusicListType(PageType::LIKE_PAGE);
-    ui->likePage->reFrush(musicList);
+    ui->likePage->reFrush(musicList); // 将歌曲item一个个刷新到对应的界面中
 
     ui->localPage->setMusicListType(PageType::LOCAL_PAGE);
     ui->localPage->reFrush(musicList);
@@ -237,14 +237,15 @@ void Widget::initMusicList()
     ui->recentPage->setMusicListType(PageType::HISTORY_PAGE);
     ui->recentPage->reFrush(musicList);
 }
+
 /////////////////////////////////////////////////////////////////////////////////////////////
-/// 管理信号与槽
+/// 管理信号与槽函数
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 //管理所有信号与信号槽的函数
 void Widget::connectSignalAndSlots()
 {
-    // 响应btform按钮发送的信号
+    // 响应btform按钮发送的信号(处理点击与界面对应)
     connect(ui->Rec,&BtForm::btClicked,this,&Widget::onBtClicked);
     connect(ui->audio,&BtForm::btClicked,this,&Widget::onBtClicked);
     connect(ui->music,&BtForm::btClicked,this,&Widget::onBtClicked);
@@ -277,6 +278,7 @@ void Widget::connectSignalAndSlots()
     connect(volumeTool,&VolumeTool::setMusicMuted,this,&Widget::setPlayerMuted);
     //设置音量信号处理
     connect(volumeTool,&VolumeTool::setMusicVolume,this,&Widget::setPlayerVolume);
+
     //显示歌词
     connect(ui->lrcWord,&QPushButton::clicked,this,&Widget::onLrcWordClicked);
 
@@ -284,7 +286,7 @@ void Widget::connectSignalAndSlots()
     connect(ui->progressBar,&MusicSlider::setMusicSliderPosition,this,&Widget::onMusicSliderChanged);
 }
 /////////////////////////////////////////////////////////////////////////////////
-/// 设置按钮图片
+/// 主界面设置按钮图片
 /////////////////////////////////////////////////////////////////////////////////
 
 //给窗口控制按钮设置图片
@@ -366,12 +368,15 @@ QJsonArray Widget::randomPiction()
     }
     return objArray;
 }
+///////////////////////////////////////////////////////////
+/// 主界面与btform关联的函数
+///////////////////////////////////////////////////////////
 
-//将Btform动画与currentPage对应显示
+// 将Btform动画与currentCommonPage对应显示(点击哪个BtFrom，动画就显示在哪个BtFrom)
 void Widget::updateBtformAnimation()
 {
     // 获取currentPage在stackedWidget上的索引
-    int index = ui->stackedWidget->indexOf(currentPage);
+    int index = ui->stackedWidget->indexOf(currentCommonPage);
     if(-1 == index)
     {
         qDebug() << "该页面不存在";
@@ -392,18 +397,39 @@ void Widget::updateBtformAnimation()
         }
     }
 }
-
-// 通过托盘退出MiniMusic
-void Widget::onMiniMusicQuit()
+//响应btform发出的信号更新UI（信号处理函数）,并且显示与被点击的BtFrom对应的界面
+void Widget::onBtClicked(int pageId)
 {
-    // 关闭窗口前将music信息导入数据库
-    musicList.writeToDB();
+    // 1.获取到所有btForm的按钮并清除点击后残留的颜色
+    QList<BtForm*> btFormList = this->findChildren<BtForm*>();
+    for(auto btForm : btFormList)
+    {
+        if(btForm->getPageId() != pageId)
+        {
+            btForm->clearBackground();
+        }
+    }
+    // 2.切换到对应的界面
+    ui->stackedWidget->setCurrentIndex(pageId); // 处理完鼠标点击事件后通过点击的BtFrom的Id，显示对应的界面
 
-    // 断开与SQLite的连接
-    sqlite.close();
+    // 3. 更新 currentPage（关键！）
+    switch(pageId)
+    {
+        case 3: currentCommonPage = ui->likePage; break;
+        case 4: currentCommonPage = ui->localPage; break;
+        case 5: currentCommonPage = ui->recentPage; break;
+        default: break;
+    }
 
-    close();
+    // 4. 同步更新按钮动画
+    updateBtformAnimation();
+
+    isDrag = false;
 }
+////////////////////////////////////////////////////////////////////
+/// 与commonPage类相关的函数集
+////////////////////////////////////////////////////////////////////
+
 // 将"我喜欢"歌曲状态同步到三个页面
 void Widget::updateLikeMusicAndPage(bool isLike, const QString &musicId)
 {
@@ -420,22 +446,6 @@ void Widget::updateLikeMusicAndPage(bool isLike, const QString &musicId)
     ui->recentPage->reFrush(musicList);
 }
 
-//响应btform发出的信号（信号处理函数）
-void Widget::onBtClicked(int pageId)
-{
-    //获取到所有btForm的按钮并清除点击后残留的颜色
-    QList<BtForm*> btFormList = this->findChildren<BtForm*>();
-    for(auto btForm : btFormList)
-    {
-        if(btForm->getPageId() != pageId)
-        {
-            btForm->clearBackground();
-        }
-    }
-    ui->stackedWidget->setCurrentIndex(pageId);
-
-    isDrag = false;
-}
 /////////////////////////////////////////////////////////////////////////////////////////
 /// 窗口按钮模块
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -462,12 +472,22 @@ void Widget::on_skin_clicked()
     //更换背景颜色 或者 更换背景图片
     QMessageBox::information(this,"温馨提示","换肤功能暂未支持，敬请期待...");
 }
+// 通过托盘退出MiniMusic
+void Widget::onMiniMusicQuit()
+{
+    // 关闭窗口前将music信息导入数据库
+    musicList.writeToDB();
 
+    // 断开与SQLite的连接
+    sqlite.close();
+
+    close();
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////
 /// 重写事件处理函数
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-//鼠标点击
+// 鼠标点击
 void Widget::mousePressEvent(QMouseEvent *event)
 {
     //鼠标按下时记录鼠标坐标
@@ -481,7 +501,7 @@ void Widget::mousePressEvent(QMouseEvent *event)
     //自己实现只需要关注左键按下  其余情况交给父类函数实现
     QWidget::mousePressEvent(event);
 }
-//鼠标移动
+// 鼠标移动
 void Widget::mouseMoveEvent(QMouseEvent *event)
 {
     if(Qt::LeftButton == event->buttons() && isDrag)
@@ -494,7 +514,7 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-/// 播放控制区按钮响应事件
+/// 播放控制区按钮响应函数
 /////////////////////////////////////////////////////////////////////////////////////
 //音量调节按钮
 void Widget::on_volume_clicked()
@@ -519,21 +539,21 @@ void Widget::on_addLocal_clicked()
 {
     QFileDialog fileDialog(this);
 
-    //添加本地音乐
+    // 1.添加本地音乐
     fileDialog.setWindowTitle("添加本地音乐");
 
-    //设置文件对话框打开的默认路径
+    // 2.设置文件对话框打开的默认路径
     QDir dir(QDir::currentPath());
     dir.cdUp();
     QString projectPath = dir.path();
     projectPath += "/MiniMusic/music";
     fileDialog.setDirectory(projectPath);
 
-    //设置一次可以选择多个文件
+    // 3.设置一次可以选择多个文件
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
     //fileDialog.exec();
 
-    //通过MIME类型来过滤文件
+    // 4.通过MIME类型来过滤文件
     QStringList mimeTypeFilters;
     mimeTypeFilters << "application/octet-stream";
     fileDialog.setMimeTypeFilters(mimeTypeFilters);
@@ -634,6 +654,9 @@ void Widget::onLrcWordClicked()
 
     lrcPageAnimation->start();
 }
+/////////////////////////////////////////////////////////////////////////////////////////////
+/// 与音量类相关信号处理函数
+/////////////////////////////////////////////////////////////////////////////////////////////
 // 设置静音
 void Widget::setPlayerMuted(bool isMuted)
 {
@@ -645,7 +668,7 @@ void Widget::setPlayerVolume(int volume)
     player->setVolume(volume);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////
-/// 播放歌曲
+/// 播放所有歌曲按钮响应函数
 //////////////////////////////////////////////////////////////////////////////////////////////
 //播放全部歌曲，默认从第0首开始播放
 void Widget::onPlayAll(PageType pageType)
@@ -673,7 +696,7 @@ void Widget::onPlayAll(PageType pageType)
 // 播放所有歌曲函数
 void Widget::playAllMusicOfCommonPage(CommonPage *page, int index)
 {
-    currentPage = page;
+    currentCommonPage = page;
 
     updateBtformAnimation();
     //清空之前playlist中的歌曲
@@ -693,15 +716,15 @@ void Widget::playMusicByIndex(CommonPage *page, int index)
     playAllMusicOfCommonPage(page,index);
 }
 //////////////////////////////////////////////////////////////////////
-/// 当某某条件发生改变时
+/// 当播放歌曲某某条件发生改变时响应函数
 //////////////////////////////////////////////////////////////////////
-//
+// 当播放列表QMediaPlaylist中正在播放的歌曲索引发生改变时(切换播放的歌曲时)
 void Widget::onCurrentIndexChanged(int index)
 {
     currentIndex = index;
     // 由于commonPage中的歌曲和正在播放的歌曲先后次序是相同的
     // 所以知道playlist中的index，就可以到commonPage中获取该歌曲
-    QString musicId = currentPage->getMusicIdByIndex(index);
+    QString musicId = currentCommonPage->getMusicIdByIndex(index);
 
     //通过索引拿到歌曲，修改歌曲的History属性
     auto it = musicList.findMusicById(musicId);
@@ -712,7 +735,7 @@ void Widget::onCurrentIndexChanged(int index)
 
     ui->recentPage->reFrush(musicList);
 }
-//更新歌曲总时间
+// 当播放源音频切换时更新歌曲总时间(切换播放歌曲，歌曲时长发生改变时)
 void Widget::onDurationChanged(qint64 duration)
 {
     // 将整形总时间转换为min:sec
@@ -724,7 +747,8 @@ void Widget::onDurationChanged(qint64 duration)
                                            .arg(duration/1000%60,2,10,QChar('0')));
 }
 
-void Widget::onPositionChanged(qint64 position)
+// 当歌曲播放进度发生改变时(只要在播放那就一直触发，一直更新播放时间)
+void Widget::onPositionChanged(qint64 position)// position就是player发过来的信号附带参数，为已播放时长，单位ms
 {
     //更新实时播放时间
     ui->currentTime->setText(QString("%1:%2").arg(position/1000/60,2,10,QChar('0'))
@@ -740,6 +764,7 @@ void Widget::onPositionChanged(qint64 position)
     }
 }
 
+// 进度条发生改变时(用户手动拖动或点击进度条)
 void Widget::onMusicSliderChanged(float ratio)
 {
     //根据总宽度与比率的乘积，修改播放时间
@@ -755,7 +780,7 @@ void Widget::onMetaDataAvailableChanged(bool available)
     (void)available;
     //歌曲名称、歌手直接在music对象中获取
     //需要知道媒体源在播放列表中的索引
-    QString musicId = currentPage->getMusicIdByIndex(currentIndex);
+    QString musicId = currentCommonPage->getMusicIdByIndex(currentIndex);
     auto it = musicList.findMusicById(musicId);
 
     QString musicName = "未知歌曲";
@@ -774,14 +799,14 @@ void Widget::onMetaDataAvailableChanged(bool available)
     {
         QImage image = coverImage.value<QImage>();
         ui->musicCover->setPixmap(QPixmap::fromImage(image));
-        currentPage->setMusicImage(QPixmap::fromImage(image));
+        currentCommonPage->setMusicImage(QPixmap::fromImage(image));
     }
     else
     {
         qDebug() << "歌曲无封面图";
         QString path = ":/image/pages/030.jpg";
         ui->musicCover->setPixmap(path);
-        currentPage->setMusicImage(path);
+        currentCommonPage->setMusicImage(path);
     }
     ui->musicCover->setScaledContents(true);//图像自动填满容器
 

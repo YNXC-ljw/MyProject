@@ -7,7 +7,7 @@ MusicSlider::MusicSlider(QWidget *parent) :
 {
     ui->setupUi(this);
     maxWidth = this->width();
-//    setStyleSheet("background-color: yellow");
+
     setAutoFillBackground(true);
 }
 
@@ -16,27 +16,36 @@ MusicSlider::~MusicSlider()
     delete ui;
 }
 
+// 移动进度条
+void MusicSlider::moveSlider()
+{
+    ui->outLine->setGeometry(ui->outLine->x(),ui->outLine->y(),currentPos,ui->outLine->height());
+    ui->outLine->setStyleSheet("#outLine{ background-color:#1ECC94; }");
+}
+
 void MusicSlider::setStep(float ratio)
 {
     currentPos = maxWidth * ratio;
     moveSlider();
 }
 
+// 鼠标点击事件
 void MusicSlider::mousePressEvent(QMouseEvent *event)
 {
     currentPos = event->pos().x();
     moveSlider();
 }
 
+// 鼠标移动事件
 void MusicSlider::mouseMoveEvent(QMouseEvent *event)
 {
     // 鼠标移动的时候一定要在MusicSlider范围内
     QRect musicSliderRect = QRect(0,0,geometry().width(),geometry().height());
+    // 鼠标移动到控件外直接返回
     if(!musicSliderRect.contains(event->pos()))
     {
         return;
     }
-
 
     if(event->buttons() == Qt::LeftButton)
     {
@@ -54,6 +63,7 @@ void MusicSlider::mouseMoveEvent(QMouseEvent *event)
     moveSlider();
 }
 
+// 鼠标释放事件
 void MusicSlider::mouseReleaseEvent(QMouseEvent *event)
 {
     currentPos = event->pos().x();
@@ -62,7 +72,3 @@ void MusicSlider::mouseReleaseEvent(QMouseEvent *event)
     emit setMusicSliderPosition(ui->outLine->width()/(float)maxWidth);
 }
 
-void MusicSlider::moveSlider()
-{
-    ui->outLine->setGeometry(ui->outLine->x(),ui->outLine->y(),currentPos,ui->outLine->height());
-}

@@ -43,7 +43,7 @@ void RecBox::initRecBoxUi(QJsonArray data, int row)
     createRecBoxItem();
 }
 
-//在recbox中构造并添加recBoxItem对象
+// 在recbox中构造并添加recBoxItem对象
 void RecBox::createRecBoxItem()
 {
     //为了避免重复构造item，导致推荐框图片大于4，要删除原先已经存在的推荐图再构造
@@ -84,6 +84,7 @@ void RecBox::createRecBoxItem()
     }
 }
 ///////////////////////////////////////////////////////////////////////////
+
 // 上一页推荐
 void RecBox::on_btUp_clicked()
 {

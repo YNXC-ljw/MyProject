@@ -102,13 +102,17 @@ QString Music::getLrcFilePath() const
     return lrcPath;
 }
 ////////////////////////////////////////////////////////////////////////////
+/// 解析音频文件并将数据加载到数据库中
+////////////////////////////////////////////////////////////////////////////
+// 将解析好的歌曲数属性存入到数据库中(musiclist类调用)
 void Music::insertMusicToDB()
 {
     // 1. 检查music对象是否存在于数据库中
     QSqlQuery query;
+
     //query.prepare("select * from MusicInfo where musicId = ?");
     //query.prepare("select id from MusicInfo where musicId = ?");
-    query.prepare("select exists (select 1 from MusicInfo where musicId = ?)");//select exists:存在返回true，否则false
+    query.prepare("select exists (select 1 from MusicInfo where musicId = ?)"); // select exists:存在返回true，否则false
     query.addBindValue(musicId);
 
     if(!query.exec())
@@ -121,10 +125,9 @@ void Music::insertMusicToDB()
     {
         bool isExists = query.value(0).toBool();
 
+        // 2. 存在：不需要插入；此时只需要将isLike和isHistory属性更新即可
         if(isExists)
         {
-            //歌曲存在
-            // 2. 存在：不需要插入；此时只需要将isLike和isHistory属性更新即可
             query.prepare("UPDATE MusicInfo SET isLike = ?, isHistory = ? WHERE musicId = ?");
             query.addBindValue(isLike ? 1 : 0);
             query.addBindValue(isHistory ? 1 : 0);
@@ -136,9 +139,9 @@ void Music::insertMusicToDB()
 
             qDebug() << "更新music信息：" << musicName << " " << musicId;
         }
+        // 3. 不存在：直接将music对象属性插入数据库
         else
         {
-            // 3. 不存在：直接将music对象属性插入数据库
             query.prepare("INSERT INTO MusicInfo(musicId, musicName, musicSinger, albumName\
                                                   , musicUrl, duration, isLike, isHistory) \
                           VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
@@ -163,6 +166,7 @@ void Music::insertMusicToDB()
     }
 
 }
+
 // 解析音频文件
 void Music::parseMediaMetaMusic()
 {

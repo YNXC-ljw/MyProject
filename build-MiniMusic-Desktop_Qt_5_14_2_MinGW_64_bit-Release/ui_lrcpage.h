@@ -216,8 +216,8 @@ public:
     {
         LrcPage->setWindowTitle(QCoreApplication::translate("LrcPage", "Form", nullptr));
         hideBtn->setText(QString());
-        musicSinger->setText(QCoreApplication::translate("LrcPage", "\351\231\210\345\245\225\350\277\205", nullptr));
-        musicName->setText(QCoreApplication::translate("LrcPage", "\350\221\241\350\220\204\346\210\220\347\206\237\346\227\266", nullptr));
+        musicSinger->setText(QString());
+        musicName->setText(QString());
         line1->setText(QCoreApplication::translate("LrcPage", "TextLabel", nullptr));
         line2->setText(QCoreApplication::translate("LrcPage", "TextLabel", nullptr));
         line3->setText(QCoreApplication::translate("LrcPage", "TextLabel", nullptr));

@@ -48,10 +48,7 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">#outLine
-{
-	background-color:#1ECC94;
-}</string>
+    <string notr="true"/>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>

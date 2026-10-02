@@ -70,7 +70,7 @@ void CommonPage::addMusicToMusicPage(MusicList &musicList)
         }
     }
 }
-//将一个个歌曲listitem信息刷新到对应的page页面
+//将一个个歌曲listitem信息刷新到对应的CommonPage页面
 void CommonPage::reFrush(MusicList& musicList)
 {
     //将QWidgetList之前添加的内容全部清空
@@ -78,6 +78,7 @@ void CommonPage::reFrush(MusicList& musicList)
 
     //添加新的歌曲
     addMusicToMusicPage(musicList);
+
     for(auto musicId : musicOfPage)//有了id就该获取到此id对应的所有数据
     {
         auto it = musicList.findMusicById(musicId);//通过id查找对应的文件

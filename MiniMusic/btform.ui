@@ -32,9 +32,7 @@
    <item>
     <widget class="QWidget" name="btStyle" native="true">
      <property name="styleSheet">
-      <string notr="true">#btStyle:hover{
-	background-color: #ccffcc;
-}
+      <string notr="true">
 #btStyle{
 	background-image: center center;
 }</string>

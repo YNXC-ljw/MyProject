@@ -29,7 +29,7 @@ signals:
 private:
     Ui::VolumeTool *ui;
     bool isMuted;
-    int volumeRatio;//标记音量大小
+    int volumeRatio; //标记音量大小
 };
 
 #endif // VOLUMETOOL_H

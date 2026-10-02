@@ -44,7 +44,7 @@ void MusicList::addMusicsByUrl(const QList<QUrl> &musicUrls)
             continue;
         }
 
-        //歌曲不存在
+        //歌曲不存在，此时将该歌曲的路径添加到musicPaths
         musicPaths.insert(musicPath);
 
         //将收到的musicUrls文件通过检测，确认其为歌曲文件再将其添加到列表中
@@ -76,9 +76,9 @@ Iterator MusicList::findMusicById(const QString& musicId)
     }
     return end();
 }
-//////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
 /// 读写数据库
-//////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
 void MusicList::writeToDB()
 {
     for(auto music : musicList)
@@ -87,7 +87,7 @@ void MusicList::writeToDB()
         music.insertMusicToDB();
     }
 }
-// 从数据库中恢复歌曲到musicPath
+// 从数据库中恢复歌曲到musicList和
 void MusicList::readFromDB()
 {
     QSqlQuery query;

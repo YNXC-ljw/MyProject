@@ -16,27 +16,33 @@ public:
     explicit BtForm(QWidget *parent = nullptr);
     ~BtForm();
 
+    void setAnimation();
+
     void setIconAndText(const QString& btIcon,const QString& btText,int pageId);
 
     int getPageId() const;
-    void clearBackground();
 
     void showAnimal(bool isShow);
+    void clearBackground();
 
+    void enterEvent(QEvent* event) override;
+    void leaveEvent(QEvent* event) override;
 
 signals:
-    void btClicked(int Id);
+    void btClicked(int Id); // 鼠标点击事件发送信号
 
 protected:
-    void mousePressEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     Ui::BtForm *ui;
     int pageId;
-    QPropertyAnimation* line1Animal;
-    QPropertyAnimation* line2Animal;
-    QPropertyAnimation* line3Animal;
-    QPropertyAnimation* line4Animal;
+    QPropertyAnimation* line1Animation;
+    QPropertyAnimation* line2Animation;
+    QPropertyAnimation* line3Animation;
+    QPropertyAnimation* line4Animation;
+
+    bool isSelected = false; // 标记此时该是否被选中
 };
 
 #endif // BTFORM_H
