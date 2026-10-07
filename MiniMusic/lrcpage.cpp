@@ -49,6 +49,7 @@ bool LrcPage::parseLrcFile(const QString &lrcPath)
     QFile file(lrcPath);
     if(!file.open(QIODevice::ReadOnly))
     {
+        qDebug() << "此歌曲暂无歌词";
         qDebug() << "打开lrc文件:" << lrcPath << "失败";
         return false;
     }

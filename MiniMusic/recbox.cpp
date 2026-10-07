@@ -23,30 +23,13 @@ RecBox::~RecBox()
 }
 ////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
-void RecBox::initRecBoxUi(QJsonArray data, int row)
-{
-    if(2 == row)
-    {
-        this->row = row;
-        col = 8;
-    }
-    else
-    {
-        ui->recListDown->hide();
-    }
-    //将传过来的data保存起来，在成员添加即可
-    imageList = data;
-
-    currentIndex = 0;
-    count = imageList.size() / col;
-    //在RecBox中添加RecBoxItem对象
-    createRecBoxItem();
-}
-
 // 在recbox中构造并添加recBoxItem对象
 void RecBox::createRecBoxItem()
 {
-    //为了避免重复构造item，导致推荐框图片大于4，要删除原先已经存在的推荐图再构造
+    // 为了避免重复构造item，导致推荐框图片大于4，要删除原先已经存在的推荐图再构造
+    // 也就是换页时要注意把原先的推荐页面元素删掉再构造新的推荐页面，否则会越积越多
+
+    // 1.先获取子元素列表再挨个删除
     QList<RecBoxItem*> recUpList = ui->recListUp->findChildren<RecBoxItem*>();
     for(auto e : recUpList)
     {
@@ -60,6 +43,7 @@ void RecBox::createRecBoxItem()
         delete e;
     }
 
+    // 2.开始构造recBoxItem元素
     int index = 0;
     for(int i = currentIndex * col;i < col + col * currentIndex; i++)
     {
@@ -83,8 +67,29 @@ void RecBox::createRecBoxItem()
         index++;
     }
 }
-///////////////////////////////////////////////////////////////////////////
 
+// 供主界面初始化推荐界面
+void RecBox::initRecBoxUi(QJsonArray data, int row)
+{
+    if(2 == row)
+    {
+        this->row = row;
+        col = 8;
+    }
+    else
+    {
+        ui->recListDown->hide();
+    }
+    //将传过来的data保存起来，在成员添加即可
+    imageList = data;
+
+    currentIndex = 0;
+    count = imageList.size() / col;
+    //在RecBox中添加RecBoxItem对象
+    createRecBoxItem();
+}
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // 上一页推荐
 void RecBox::on_btUp_clicked()
 {

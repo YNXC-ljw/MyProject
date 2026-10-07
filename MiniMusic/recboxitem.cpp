@@ -16,12 +16,12 @@ RecBoxItem::~RecBoxItem()
 {
     delete ui;
 }
-//给推荐歌设置文本
+// 给推荐歌设置文本
 void RecBoxItem::setRecText(const QString &text)
 {
     ui->recBoxItemText->setText(text);
 }
-//给推荐歌设置图片
+// 给推荐歌设置图片
 void RecBoxItem::setRecImage(const QString &imagePath)
 {
 //    QString style = "background-image:url("+imagePath+");background-position:center center;";

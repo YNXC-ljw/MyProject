@@ -31,7 +31,7 @@ private:
     int row;
     int col;
 
-    QJsonArray imageList;
+    QJsonArray imageList; // 存放主界面类传过来的图片集合，以便全局能用
 
     int currentIndex;//标记当前显示的是第几组
     int count;       //标记推荐页有几组

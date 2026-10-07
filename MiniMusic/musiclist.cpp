@@ -18,23 +18,22 @@ void MusicList::addMusicsByUrl(const QList<QUrl> &musicUrls)
         // 过滤方式: 将当前要添加的musicList中的文件路径，与musicList中已经存在的
         //          歌曲文件路径对比，如果相同则说明歌曲已经存在，不同则添加
 
-
         //时间复杂度过高O(n)
-//        #if 0
-//        auto it = begin();
-//        for(; it != end(); ++it)
-//        {
-//            if(it->getMusicUrl() == e)
-//            {
-//                break;
-//            }
-//        }
+#if 0
+        auto it = begin();
+        for(; it != end(); ++it)
+        {
+            if(it->getMusicUrl() == e)
+            {
+                break;
+            }
+        }
 
-//        if(it != end())
-//        {
-//            continue;
-//        }
-//        #endif
+        if(it != end())
+        {
+            continue;
+        }
+#endif
 
         //使用哈希unordered_map 时间复杂度O(1)
 

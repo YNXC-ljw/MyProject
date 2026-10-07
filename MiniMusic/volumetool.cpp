@@ -13,8 +13,8 @@ VolumeTool::VolumeTool(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowFlags(Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
-    setAttribute(Qt::WA_TranslucentBackground);//去掉背景
+    setWindowFlags(Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint); // 点击该窗口以外区域Qt自动隐藏该窗口
+    setAttribute(Qt::WA_TranslucentBackground); //去掉背景
 
     // 窗口增加自定义的阴影效果
     QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);
@@ -23,7 +23,7 @@ VolumeTool::VolumeTool(QWidget *parent) :
     shadowEffect->setOffset(0, 0);
     setGraphicsEffect(shadowEffect);
 
-    //设置图标
+    // 设置图标
     ui->silenceBtn->setIcon(QIcon(":/image/volume.png"));
 
     ui->volumeRatio->setText("20%");
@@ -32,11 +32,11 @@ VolumeTool::VolumeTool(QWidget *parent) :
     // 窗体原本高度180*20%，25rect具体父元素上方的距离
     ui->outLine->setGeometry(rect.x(), 180 - 36 + 25, rect.width(), 36);
 
-    //移动按钮位置
+    // 移动按钮位置
     ui->sliderBtn->move(ui->sliderBtn->x(),ui->outLine->y() - ui->sliderBtn->height()/2);
 
     connect(ui->silenceBtn,&QPushButton::clicked,this,&VolumeTool::onSilenceBtnClicked);
-    //安装事件拦截器
+    // 安装事件过滤器
     ui->volumeBox->installEventFilter(this);
 }
 

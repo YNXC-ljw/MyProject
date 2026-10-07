@@ -37,10 +37,9 @@ void CommonPage::setCommonPageUi(const QString& text,const QString& imagePath)
     ui->pageTitle->setText(text);
     ui->musicImageLabel->setPixmap(QPixmap(imagePath));
     ui->musicImageLabel->setScaledContents(true);
-
-
 }
 
+// 将musicList中对应属性的歌曲添加到对应界面的musicOfPage中
 void CommonPage::addMusicToMusicPage(MusicList &musicList)
 {
     //每调用一次该函数都会重复添加原先已经存在过的歌曲，所以要新增歌曲就要把原先已经存在的清除掉
@@ -70,10 +69,10 @@ void CommonPage::addMusicToMusicPage(MusicList &musicList)
         }
     }
 }
-//将一个个歌曲listitem信息刷新到对应的CommonPage页面
+// 将一个个歌曲listitem信息刷新到对应的CommonPage页面
 void CommonPage::reFrush(MusicList& musicList)
 {
-    //将QWidgetList之前添加的内容全部清空
+    //将QListWidget之前添加的内容全部清空
     ui->pageMusicList->clear();
 
     //添加新的歌曲

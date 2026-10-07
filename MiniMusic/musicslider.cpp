@@ -23,6 +23,7 @@ void MusicSlider::moveSlider()
     ui->outLine->setStyleSheet("#outLine{ background-color:#1ECC94; }");
 }
 
+// 播放进度在不断变化，需要一直通过播放进度更新播放进度条
 void MusicSlider::setStep(float ratio)
 {
     currentPos = maxWidth * ratio;
@@ -49,18 +50,17 @@ void MusicSlider::mouseMoveEvent(QMouseEvent *event)
 
     if(event->buttons() == Qt::LeftButton)
     {
-
+        currentPos = event->pos().x();
+        if(currentPos < 0)
+        {
+            currentPos = 0;
+        }
+        if(currentPos > maxWidth)
+        {
+            currentPos = maxWidth;
+        }
+        moveSlider();
     }
-    currentPos = event->pos().x();
-    if(currentPos < 0)
-    {
-        currentPos = 0;
-    }
-    if(currentPos > maxWidth)
-    {
-        currentPos = maxWidth;
-    }
-    moveSlider();
 }
 
 // 鼠标释放事件

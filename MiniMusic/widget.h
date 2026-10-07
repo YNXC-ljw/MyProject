@@ -44,9 +44,9 @@ public:
     /// 设置按钮图片
     ////////////////////////////
     //窗口按钮区设置图片
-    void settingBox();
+    void setWindowImage();
     //播放控制区设置图片
-    void contralMusic();
+    void setContralMusicImage();
     //管理所有信号与信号槽的函数
     void connectSignalAndSlots();
 
@@ -114,24 +114,24 @@ protected:
 private:
     Ui::Widget *ui;
 
-    QPoint dragPosition; // 拖拽对象
+    QPoint dragPosition; // 鼠标按下时相对窗口左上角的位置
 
     VolumeTool* volumeTool; // 音量类对象
     LrcPage *lrcPage; // lrc歌词界面对象
     QPropertyAnimation* lrcPageAnimation; // lrc歌词界面动画
 
-    MusicList musicList;    //组织歌曲文件
+    MusicList musicList;    // 组织歌曲对象
 
-    QMediaPlayer* player;   //专门用于播放控制
-    QMediaPlaylist* playerList; //专门用来管理播放源，包含播放设置
+    QMediaPlayer* player;   // 播放控制对象
+    QMediaPlaylist* playerList; // 播放列表
 
-    int currentIndex;       //记录当前播放元在列表中的索引
+    int currentIndex;       // 当前播放元在播放列表中的索引
 
-    CommonPage* currentCommonPage; //记录当前播放歌曲的页面
-    qint64 totalTime;       //记录媒体元的总时间
+    CommonPage* currentCommonPage; // 当前播放歌曲的页面
+    qint64 totalTime;       //  当前媒体元的总时间
 
     QSqlDatabase sqlite; // 数据库
 
-    bool isDrag;    //是否拖拽
+    bool isDrag;    // 是否拖拽标志位
 };
 #endif // WIDGET_H

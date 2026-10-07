@@ -19,6 +19,7 @@
 #include <QSqlError>
 #include <QSystemTrayIcon>
 #include <QMenu>
+#include <QStyle>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -94,7 +95,7 @@ void Widget::initWindow()
 void Widget::initHead()
 {
     // 设置窗口按钮图标
-    settingBox();
+    setWindowImage();
 }
 
 void Widget::initLeft()
@@ -115,8 +116,8 @@ void Widget::initBody()
 {
     //初始化推荐页面
     srand(time(NULL));
-    ui->recMusicBox->initRecBoxUi(randomPiction(),1);
-    ui->supplyMusicBox->initRecBoxUi(randomPiction(),2);
+    ui->recMusicBox->initRecBoxUi(randomPiction(),1);        // 今日为你推荐
+    ui->supplyMusicBox->initRecBoxUi(randomPiction(),2);     // 你的音乐补给站
 
     //初始化commonPage页面
     ui->likePage->setCommonPageUi("我喜欢",":/image/ilike.jpg");
@@ -131,7 +132,7 @@ void Widget::initBody()
 void Widget::initBottom()
 {
     // 设置播放控制区图标
-    contralMusic();
+    setContralMusicImage();
 
     //实例化LrcWord对象
     lrcPage = new LrcPage(this);
@@ -290,7 +291,7 @@ void Widget::connectSignalAndSlots()
 /////////////////////////////////////////////////////////////////////////////////
 
 //给窗口控制按钮设置图片
-void Widget::settingBox()
+void Widget::setWindowImage()
 {
     QPixmap pixmapskin(":/image/skin.png");
     ui->skin->setIcon(QIcon(pixmapskin));
@@ -310,7 +311,7 @@ void Widget::settingBox()
 }
 
 //播放控制区按钮图片
-void Widget::contralMusic()
+void Widget::setContralMusicImage()
 {
     QPixmap pixmapShuffle(":/image/random.png");
     ui->playModel->setIcon(QIcon(pixmapShuffle));
@@ -368,89 +369,12 @@ QJsonArray Widget::randomPiction()
     }
     return objArray;
 }
-///////////////////////////////////////////////////////////
-/// 主界面与btform关联的函数
-///////////////////////////////////////////////////////////
-
-// 将Btform动画与currentCommonPage对应显示(点击哪个BtFrom，动画就显示在哪个BtFrom)
-void Widget::updateBtformAnimation()
-{
-    // 获取currentPage在stackedWidget上的索引
-    int index = ui->stackedWidget->indexOf(currentCommonPage);
-    if(-1 == index)
-    {
-        qDebug() << "该页面不存在";
-        return;
-    }
-
-    //获取Widget界面上所有的BtForm
-    QList<BtForm*> btForms = this->findChildren<BtForm*>();
-    for(auto BtForm : btForms)
-    {
-        if(BtForm->getPageId() == index)
-        {
-            BtForm->showAnimal(true);
-        }
-        else
-        {
-            BtForm->showAnimal(false);
-        }
-    }
-}
-//响应btform发出的信号更新UI（信号处理函数）,并且显示与被点击的BtFrom对应的界面
-void Widget::onBtClicked(int pageId)
-{
-    // 1.获取到所有btForm的按钮并清除点击后残留的颜色
-    QList<BtForm*> btFormList = this->findChildren<BtForm*>();
-    for(auto btForm : btFormList)
-    {
-        if(btForm->getPageId() != pageId)
-        {
-            btForm->clearBackground();
-        }
-    }
-    // 2.切换到对应的界面
-    ui->stackedWidget->setCurrentIndex(pageId); // 处理完鼠标点击事件后通过点击的BtFrom的Id，显示对应的界面
-
-    // 3. 更新 currentPage（关键！）
-    switch(pageId)
-    {
-        case 3: currentCommonPage = ui->likePage; break;
-        case 4: currentCommonPage = ui->localPage; break;
-        case 5: currentCommonPage = ui->recentPage; break;
-        default: break;
-    }
-
-    // 4. 同步更新按钮动画
-    updateBtformAnimation();
-
-    isDrag = false;
-}
-////////////////////////////////////////////////////////////////////
-/// 与commonPage类相关的函数集
-////////////////////////////////////////////////////////////////////
-
-// 将"我喜欢"歌曲状态同步到三个页面
-void Widget::updateLikeMusicAndPage(bool isLike, const QString &musicId)
-{
-    // 1. 修改状态
-    auto it = musicList.findMusicById(musicId);
-    if(it != musicList.end())
-    {
-        it->setIsLike(isLike);
-    }
-
-    // 2. 更新page页面的歌曲信息
-    ui->likePage->reFrush(musicList);
-    ui->localPage->reFrush(musicList);
-    ui->recentPage->reFrush(musicList);
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /// 窗口按钮模块
 /////////////////////////////////////////////////////////////////////////////////////////
 
-//关闭窗口按钮
+// 关闭窗口按钮
 void Widget::on_quit_clicked()
 {
     hide();
@@ -654,22 +578,84 @@ void Widget::onLrcWordClicked()
 
     lrcPageAnimation->start();
 }
-/////////////////////////////////////////////////////////////////////////////////////////////
-/// 与音量类相关信号处理函数
-/////////////////////////////////////////////////////////////////////////////////////////////
-// 设置静音
-void Widget::setPlayerMuted(bool isMuted)
+///////////////////////////////////////////////////////////
+/// 主界面与btform关联的函数
+///////////////////////////////////////////////////////////
+
+// 将Btform动画与currentCommonPage对应显示(点击哪个BtFrom，动画就显示在哪个BtFrom)
+void Widget::updateBtformAnimation()
 {
-    player->setMuted(isMuted);
+    // 获取currentPage在stackedWidget上的索引
+    int index = ui->stackedWidget->indexOf(currentCommonPage);
+    if(-1 == index)
+    {
+        qDebug() << "该页面不存在";
+        return;
+    }
+
+    //获取Widget界面上所有的BtForm
+    QList<BtForm*> btForms = this->findChildren<BtForm*>();
+    for(auto BtForm : btForms)
+    {
+        if(BtForm->getPageId() == index)
+        {
+            BtForm->showAnimal(true);
+        }
+        else
+        {
+            BtForm->showAnimal(false);
+        }
+    }
 }
-// 设置播放器媒体音量
-void Widget::setPlayerVolume(int volume)
+//响应btform发出的信号更新UI（信号处理函数）,并且显示与被点击的BtFrom对应的界面
+void Widget::onBtClicked(int pageId)
 {
-    player->setVolume(volume);
+    // 1.获取到所有btForm的按钮并清除点击后残留的颜色
+    QList<BtForm*> btFormList = this->findChildren<BtForm*>();
+    for(auto btForm : btFormList)
+    {
+        if(btForm->getPageId() != pageId)
+        {
+            btForm->clearBackground();
+        }
+    }
+    // 2.切换到对应的界面
+    ui->stackedWidget->setCurrentIndex(pageId); // 处理完鼠标点击事件后通过点击的BtFrom的Id，显示对应的界面
+
+    // 3. 更新 currentPage（关键！）
+    switch(pageId)
+    {
+        case 3: currentCommonPage = ui->likePage; break;
+        case 4: currentCommonPage = ui->localPage; break;
+        case 5: currentCommonPage = ui->recentPage; break;
+        default: break;
+    }
+
+    // 4. 同步更新按钮动画
+    updateBtformAnimation();
+
+    isDrag = false;
 }
-//////////////////////////////////////////////////////////////////////////////////////////////
-/// 播放所有歌曲按钮响应函数
-//////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+/// 与commonPage类相关的函数集
+////////////////////////////////////////////////////////////////////
+
+// 将"我喜欢"歌曲状态同步到三个页面
+void Widget::updateLikeMusicAndPage(bool isLike, const QString &musicId)
+{
+    // 1. 修改状态
+    auto it = musicList.findMusicById(musicId);
+    if(it != musicList.end())
+    {
+        it->setIsLike(isLike);
+    }
+
+    // 2. 更新page页面的歌曲信息
+    ui->likePage->reFrush(musicList);
+    ui->localPage->reFrush(musicList);
+    ui->recentPage->reFrush(musicList);
+}
+
 //播放全部歌曲，默认从第0首开始播放
 void Widget::onPlayAll(PageType pageType)
 {
@@ -688,6 +674,7 @@ void Widget::onPlayAll(PageType pageType)
         break;
     default:
         qDebug() << "暂未支持";
+        return;
     }
     //page中记录的就是要播放的页面
     playAllMusicOfCommonPage(page,0);
@@ -708,6 +695,7 @@ void Widget::playAllMusicOfCommonPage(CommonPage *page, int index)
     //播放
     player->play();
 }
+
 //通过索引播放歌曲（双击播放）
 void Widget::playMusicByIndex(CommonPage *page, int index)
 {
@@ -715,11 +703,26 @@ void Widget::playMusicByIndex(CommonPage *page, int index)
     ui->play->setIcon(QIcon(":/image/play_2.png"));
     playAllMusicOfCommonPage(page,index);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+/// 与volumeTool相关信号处理函数
+/////////////////////////////////////////////////////////////////////////////////////////////
+// 设置静音
+void Widget::setPlayerMuted(bool isMuted)
+{
+    player->setMuted(isMuted);
+}
+// 设置播放器媒体音量
+void Widget::setPlayerVolume(int volume)
+{
+    player->setVolume(volume);
+}
+
 //////////////////////////////////////////////////////////////////////
 /// 当播放歌曲某某条件发生改变时响应函数
 //////////////////////////////////////////////////////////////////////
 // 当播放列表QMediaPlaylist中正在播放的歌曲索引发生改变时(切换播放的歌曲时)
-void Widget::onCurrentIndexChanged(int index)
+void Widget::onCurrentIndexChanged(int index) // 更新历史属性
 {
     currentIndex = index;
     // 由于commonPage中的歌曲和正在播放的歌曲先后次序是相同的
