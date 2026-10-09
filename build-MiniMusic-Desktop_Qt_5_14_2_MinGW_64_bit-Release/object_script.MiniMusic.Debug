@@ -6,6 +6,7 @@ debug/main.o
 debug/music.o
 debug/musiclist.o
 debug/musicslider.o
+debug/musicworker.o
 debug/recbox.o
 debug/recboxitem.o
 debug/volumetool.o
@@ -16,6 +17,7 @@ debug/moc_commonpage.o
 debug/moc_listitem.o
 debug/moc_lrcpage.o
 debug/moc_musicslider.o
+debug/moc_musicworker.o
 debug/moc_recbox.o
 debug/moc_recboxitem.o
 debug/moc_volumetool.o

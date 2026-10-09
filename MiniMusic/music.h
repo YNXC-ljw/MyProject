@@ -2,6 +2,7 @@
 #define MUSIC_H
 
 #include <QUrl>
+#include <QMetaType>
 
 class Music
 {
@@ -52,5 +53,8 @@ private:
     //音乐路径
     QUrl musicUrl;
 };
+
+// 声明元类型，供跨线程的信号槽传递 Music 对象
+Q_DECLARE_METATYPE(Music)
 
 #endif // MUSIC_H

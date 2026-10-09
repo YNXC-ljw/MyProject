@@ -24,6 +24,7 @@ SOURCES += \
     music.cpp \
     musiclist.cpp \
     musicslider.cpp \
+    musicworker.cpp \
     recbox.cpp \
     recboxitem.cpp \
     volumetool.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     music.h \
     musiclist.h \
     musicslider.h \
+    musicworker.h \
     recbox.h \
     recboxitem.h \
     volumetool.h \

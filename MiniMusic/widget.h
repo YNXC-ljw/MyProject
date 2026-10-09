@@ -6,12 +6,15 @@
 #include <QMediaPlaylist>
 #include <QPropertyAnimation>
 #include <QSqlDatabase>
+#include <QThread>
+#include <QList>
+#include <QUrl>
 
 #include "volumetool.h"
 #include "musiclist.h"
 #include "commonpage.h"
 #include "lrcpage.h"
-
+#include "musicworker.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -57,6 +60,11 @@ public:
     void updateBtformAnimation();
 
     void onMiniMusicQuit();
+
+signals:
+    // 请求工作线程解析歌曲（发送给子线程中的 MusicWorker）
+    void startParseMusics(const QList<QUrl> &urls);
+
 private slots:
     //关闭窗口
     void on_quit_clicked();
@@ -72,6 +80,8 @@ private slots:
     void on_volume_clicked();
 
     void on_addLocal_clicked();
+    // 接收工作线程解析完成的歌曲（本槽函数在主线程执行）
+    void onMusicsParsed(const QList<Music> &musics);
 ////////////////////////////////////////////////////////////////////////////
 /// 播放控制区的槽函数
 ////////////////////////////////////////////////////////////////////////////
@@ -112,6 +122,9 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
 
 private:
+    void startMusicThread(); // 创建并启动线程
+
+private:
     Ui::Widget *ui;
 
     QPoint dragPosition; // 鼠标按下时相对窗口左上角的位置
@@ -133,5 +146,8 @@ private:
     QSqlDatabase sqlite; // 数据库
 
     bool isDrag;    // 是否拖拽标志位
+
+    QThread* workThread = nullptr; // 子线程
+    MusicWorker *musicWorker = nullptr; // 工作对象
 };
 #endif // WIDGET_H

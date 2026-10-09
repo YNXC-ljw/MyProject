@@ -16,6 +16,9 @@ public:
 
     void addMusicsByUrl(const QList<QUrl>& musicUrls);
 
+    // 将工作线程解析好的歌曲去重后放入列表（不再进行元数据解析）
+    void addParsedMusics(const QList<Music> &musics);
+
     Iterator findMusicById(const QString& musicId);
 
     Iterator begin();

@@ -2,6 +2,7 @@
 #include "ui_widget.h"
 #include "btform.h"
 #include "commonpage.h"
+#include "musicworker.h"
 
 #include <QMouseEvent>
 #include <QPushButton>
@@ -11,6 +12,7 @@
 
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QMetaType>
 
 #include <QFileDialog>
 #include <QSqlDatabase>
@@ -42,10 +44,20 @@ Widget::Widget(QWidget *parent)
 
     // 关联信号和槽函数
     connectSignalAndSlots();
+
+    // 启动音乐解析线程
+    startMusicThread();
 }
 
 Widget::~Widget()
 {
+    // 关闭程序前先结束解析线程，避免线程还在运行时就被销毁
+    if(workThread)
+    {
+        workThread->quit();
+        workThread->wait();
+    }
+
     delete ui;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -458,7 +470,7 @@ void Widget::on_volume_clicked()
     volumeTool->show();
 }
 
-//添加本地音乐按钮
+// 添加本地音乐按钮
 void Widget::on_addLocal_clicked()
 {
     QFileDialog fileDialog(this);
@@ -487,17 +499,30 @@ void Widget::on_addLocal_clicked()
         //获取选中的文件
         QList<QUrl> fileUrls = fileDialog.selectedUrls();//fileUrls中存放的是被选中的所有文件的路径
 
-        //将所有音乐添加到音乐列表中进行管理
-        musicList.addMusicsByUrl(fileUrls);//存放的是已经被解析过的music
+        // 把待解析的歌曲路径发送给工作线程
+        emit startParseMusics(fileUrls);
 
-        //要将文件中的音乐上传到本地，那默认的commonPage页面就应该是"本地下载"页面
+        // 先切换到本地音乐页面
         ui->stackedWidget->setCurrentIndex(4);
 
-        ui->localPage->reFrush(musicList);
-
-        ui->localPage->addMusicToPlayList(musicList,playerList);
+        // 不要在这里立即刷新歌曲列表，因为子线程还没有解析完
+        // 解析完成后会由 onMusicsParsed() 统一刷新界面和播放列表
     }
 }
+
+// 接收工作线程解析完成的歌曲（在主线程执行）
+void Widget::onMusicsParsed(const QList<Music> &musics)
+{
+    // 1. 把解析好的歌曲交给 musicList 管理
+    musicList.addParsedMusics(musics);
+
+    // 2. 解析完成后刷新界面和播放列表
+    ui->localPage->reFrush(musicList);
+    ui->localPage->addMusicToPlayList(musicList,playerList);
+
+    qDebug() << "歌曲解析完成，数量：" << musics.size();
+}
+
 //播放歌曲按钮
 void Widget::onPlayMiusic()
 {
@@ -823,5 +848,58 @@ void Widget::onMetaDataAvailableChanged(bool available)
         lrcPage->parseLrcFile(lrcPath);
     }
 }
+//////////////////////////////////////////////////////////////////////////////////////////
+/// 子线程处理耗时任务
+//////////////////////////////////////////////////////////////////////////////////////////
+
+void Widget::startMusicThread()
+{
+    // 注册自定义类型，供跨线程信号槽传递使用
+    qRegisterMetaType<Music>("Music");
+    qRegisterMetaType<QList<Music>>("QList<Music>");
+
+    // 创建线程和工作对象
+    workThread = new QThread(this);
+    musicWorker = new MusicWorker;
+
+    musicWorker->moveToThread(workThread);
+
+    // 线程启动后，工作对象进入事件处理流程
+    connect(workThread, &QThread::started, musicWorker, []()
+    {
+        qDebug() << "音乐解析线程已启动";
+    });
+
+    // 把解析请求发送给工作线程
+    connect(this, &Widget::startParseMusics,musicWorker, &MusicWorker::parseMusics);
+
+    // 解析完成后，把结果交回主线程
+    connect(musicWorker, &MusicWorker::musicsParsed,this, &Widget::onMusicsParsed);
+
+    // 工作结束后退出线程
+    connect(musicWorker, &MusicWorker::workFinished,workThread, &QThread::quit);
+
+    // 线程结束后释放工作对象
+    connect(workThread, &QThread::finished,musicWorker, &QObject::deleteLater);
+
+    // 启动线程
+    workThread->start();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

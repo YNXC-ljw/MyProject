@@ -7,6 +7,7 @@ MusicList::MusicList()
 
 }
 
+#if 0
 void MusicList::addMusicsByUrl(const QList<QUrl> &musicUrls)
 {
 
@@ -62,6 +63,7 @@ void MusicList::addMusicsByUrl(const QList<QUrl> &musicUrls)
         }
     }
 }
+#endif
 
 // 通过ID找到对应歌曲
 Iterator MusicList::findMusicById(const QString& musicId)
@@ -75,6 +77,25 @@ Iterator MusicList::findMusicById(const QString& musicId)
     }
     return end();
 }
+
+// 把工作线程解析好的歌曲去重后放入列表
+// 这个函数只负责去重和存入歌曲列表，不再进行元数据解析
+void MusicList::addParsedMusics(const QList<Music> &musics)
+{
+    for(const Music &music : musics)
+    {
+        QString path = music.getMusicUrl().toLocalFile();
+
+        if(musicPaths.contains(path))
+        {
+            continue;
+        }
+
+        musicPaths.insert(path);
+        musicList.push_back(music);
+    }
+}
+
 ////////////////////////////////////////////////////////////////
 /// 读写数据库
 ////////////////////////////////////////////////////////////////
