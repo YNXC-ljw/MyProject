@@ -510,19 +510,6 @@ void Widget::on_addLocal_clicked()
     }
 }
 
-// 接收工作线程解析完成的歌曲（在主线程执行）
-void Widget::onMusicsParsed(const QList<Music> &musics)
-{
-    // 1. 把解析好的歌曲交给 musicList 管理
-    musicList.addParsedMusics(musics);
-
-    // 2. 解析完成后刷新界面和播放列表
-    ui->localPage->reFrush(musicList);
-    ui->localPage->addMusicToPlayList(musicList,playerList);
-
-    qDebug() << "歌曲解析完成，数量：" << musics.size();
-}
-
 //播放歌曲按钮
 void Widget::onPlayMiusic()
 {
@@ -864,7 +851,7 @@ void Widget::startMusicThread()
 
     musicWorker->moveToThread(workThread);
 
-    // 线程启动后，工作对象进入事件处理流程
+    // 线程启动后,工作对象进入事件处理流程
     connect(workThread, &QThread::started, musicWorker, []()
     {
         qDebug() << "音乐解析线程已启动";
@@ -876,7 +863,7 @@ void Widget::startMusicThread()
     // 解析完成后，把结果交回主线程
     connect(musicWorker, &MusicWorker::musicsParsed,this, &Widget::onMusicsParsed);
 
-    // 工作结束后退出线程
+    // 解析工作结束后退出线程
     connect(musicWorker, &MusicWorker::workFinished,workThread, &QThread::quit);
 
     // 线程结束后释放工作对象
@@ -886,7 +873,18 @@ void Widget::startMusicThread()
     workThread->start();
 }
 
+// (响应子线程解析完成的信号)接收工作线程解析完成的歌曲并刷新到界面上
+void Widget::onMusicsParsed(const QList<Music> &musics)
+{
+    // 1. 把解析好的歌曲交给 musicList 管理
+    musicList.addParsedMusics(musics);
 
+    // 2. 解析完成后刷新界面和播放列表
+    ui->localPage->reFrush(musicList);
+    ui->localPage->addMusicToPlayList(musicList,playerList);
+
+    qDebug() << "歌曲解析完成，数量：" << musics.size();
+}
 
 
 

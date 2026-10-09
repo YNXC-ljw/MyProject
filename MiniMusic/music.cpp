@@ -189,7 +189,7 @@ void Music::parseMediaMetaMusic()
     if(player.isMetaDataAvailable())
     {
         musicName = player.metaData("Title").toString();
-        musicSinger = player.metaData("Auther").toString();
+        musicSinger = player.metaData("Author").toString();
         musicAlbum = player.metaData("AlbumTitle").toString();
         duration = player.metaData("Duration").toLongLong();
 
