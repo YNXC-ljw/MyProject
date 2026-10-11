@@ -104,7 +104,7 @@ AddFriendDialog::AddFriendDialog(QWidget* parent) :QDialog(parent)
     // 5.添加结果显示区域
     initResultArea();
 
-    // 添加测试数据
+    // 添加一些测试数据
 #if TEST_UI
     QIcon avatar(":/resource/image/avatar.jpg");
     for(int i = 1;i <= 20;i++)
