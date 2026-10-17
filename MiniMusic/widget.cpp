@@ -160,7 +160,7 @@ void Widget::initBottom()
     volumeTool = new VolumeTool(this);
 }
 ////////////////////////////////////////////////////////////////////////////////
-/// 其他初始化
+/// 初始化数据库及播放类对象
 ////////////////////////////////////////////////////////////////////////////////
 void Widget::playerInit()
 {
@@ -176,9 +176,9 @@ void Widget::playerInit()
 
     // 4. 设置默认音量
     player->setVolume(20);
-///////////////////////////////////
+/////////////////////////////////////////////////
 /// 关联QMediaPlayer的信号
-///////////////////////////////////
+/////////////////////////////////////////////////
 
     //关联QMediaPlayer::Duration信号
     connect(player,&QMediaPlayer::durationChanged,this,&Widget::onDurationChanged);
@@ -186,13 +186,13 @@ void Widget::playerInit()
     //关联QMediaPlayer::Position信号
     connect(player,&QMediaPlayer::positionChanged,this,&Widget::onPositionChanged);
 
-    //关联播放元数据改变时的信号
+    //关联播放元数据改变时的信号，QMediaPlayer::metaDataAvailableChanged
     connect(player,&QMediaPlayer::metaDataAvailableChanged,this,&Widget::onMetaDataAvailableChanged);
 
-    //当playlist中播放源发生变化时
+    //当playlist中播放源索引发生变化时
     connect(playerList,&QMediaPlaylist::currentIndexChanged,this,&Widget::onCurrentIndexChanged);
 
-    //当播放模式发生改变时
+    //当播放模式发生改变时(已写)
     //connect(playerList,&QMediaPlaylist::playbackModeChanged,this,&Widget::onPlayModelClicked);
     //connect(ui->playModel, &QPushButton::clicked, this, &Widget::onPlayModelClicked);
 }
@@ -226,6 +226,7 @@ void Widget::initSqlite()
                   isLike INTEGER,\
                   isHistory INTEGER)";
 
+    // 创建执行SQL语句的对象
     QSqlQuery query;
     if(!query.exec(sql))
     {
@@ -236,7 +237,7 @@ void Widget::initSqlite()
     qDebug() << "MusicInfo表创建成功!!!";
 }
 
-//将数据库中的歌曲初始化到界面
+//将数据库中的歌曲刷新到界面
 void Widget::initMusicList()
 {
     musicList.readFromDB();
@@ -430,7 +431,7 @@ void Widget::mousePressEvent(QMouseEvent *event)
     if(Qt::LeftButton == event->button())
     {
         isDrag = true;
-        //获取鼠标相对于屏幕左上角的坐标
+        //获取鼠标相对于窗口左上角的坐标
          dragPosition = event->globalPos() - geometry().topLeft();
          return;
     }
