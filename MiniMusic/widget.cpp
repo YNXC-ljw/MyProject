@@ -598,7 +598,7 @@ void Widget::onLrcWordClicked()
 // 将Btform动画与currentCommonPage对应显示(点击哪个BtFrom，动画就显示在哪个BtFrom)
 void Widget::updateBtformAnimation()
 {
-    // 获取currentPage在stackedWidget上的索引
+    // 获取currentCommonPage在stackedWidget上的索引
     int index = ui->stackedWidget->indexOf(currentCommonPage);
     if(-1 == index)
     {
@@ -864,7 +864,7 @@ void Widget::startMusicThread()
     // 解析完成后，把结果交回主线程
     connect(musicWorker, &MusicWorker::musicsParsed,this, &Widget::onMusicsParsed);
 
-    // 解析工作结束后退出线程
+    // 解析工作结束后将线程退出
     connect(musicWorker, &MusicWorker::workFinished,workThread, &QThread::quit);
 
     // 线程结束后释放工作对象
