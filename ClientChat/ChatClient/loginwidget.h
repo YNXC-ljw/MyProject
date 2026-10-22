@@ -8,7 +8,8 @@ class LoginWidget : public QWidget
     Q_OBJECT
 public:
     explicit LoginWidget(QWidget *parent = nullptr);
-
+private:
+    bool isLoginMode = true;
 signals:
 };
 
