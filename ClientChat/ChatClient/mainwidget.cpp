@@ -251,6 +251,20 @@ void MainWidget::initSignalSlot()
         AddFriendDialog* addFriendDialog = new AddFriendDialog(this);
         addFriendDialog->exec();
     });
+
+    //////////////////////////////////////////
+    /// 修改搜索框内容，弹出添加好友对话框
+    //////////////////////////////////////////
+    connect(searchLine,&QLineEdit::textEdited,this,[=](){
+        // 取出搜索框输入内容，设置到新弹框的输入框里面
+        const QString& searchKey = searchLine->text();
+
+        AddFriendDialog* addFriendDialog = new AddFriendDialog(this);
+        addFriendDialog->setSearchKey(searchKey);
+        // 清空主窗口中的文本
+        searchLine->setText("");
+        addFriendDialog->exec();
+    });
 }
 
 /////////////////////////////////////////////////////////////////////////////////

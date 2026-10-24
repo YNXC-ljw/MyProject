@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QWidget>
 #include <QGridLayout>
+#include <QLineEdit>
 
 #include "model/data.h"
 
@@ -36,8 +37,11 @@ public:
     void addResult(const UserInfo& userInfo);
     void clear();
 
+    void setSearchKey(const QString& searchKey);
 private:
     QGridLayout* glayout; // 整个窗口总的网格布局
+
+    QLineEdit* searchEdit;
 
     QWidget* resultContainer; // 放搜索结果的QWidget
 };

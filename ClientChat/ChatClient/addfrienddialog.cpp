@@ -81,7 +81,7 @@ AddFriendDialog::AddFriendDialog(QWidget* parent) :QDialog(parent)
     this->setLayout(glayout);
 
     // 3.创建搜索框
-    QLineEdit* searchEdit = new QLineEdit();
+    searchEdit = new QLineEdit();
     searchEdit->setFixedHeight(50);
     searchEdit->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     QString style = "QLineEdit { border: none; border-radius: 10px; font-size: 16px; background-color: rgb(240,240,240); }";
@@ -164,6 +164,11 @@ void AddFriendDialog::clear()
         // 删除里面的所有 Widget
         delete layoutItem->widget();
     }
+}
+
+void AddFriendDialog::setSearchKey(const QString &searchKey)
+{
+    searchEdit->setText(searchKey);
 }
 
 
