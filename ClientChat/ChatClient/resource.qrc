@@ -20,5 +20,6 @@
         <file>resource/image/check.png</file>
         <file>resource/image/uncheck.png</file>
         <file>resource/image/search.png</file>
+        <file>resource/image/groupAvatar.jpg</file>
     </qresource>
 </RCC>

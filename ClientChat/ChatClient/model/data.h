@@ -8,6 +8,8 @@
 #include <QDateTime>
 #include <QFileInfo>
 
+#include "base.qpb.h"
+
 namespace model
 {
 //////////////////////////////////////////////////
@@ -90,6 +92,19 @@ public:
     QString description = "";         // 用户签名
     QString phone = "";               // 手机号码
     QIcon avatar;                     // 用户头像
+    void load(const bite_im::UserInfo& userInfo)
+    {
+        this->userId = userInfo.userId();
+        this->nickName = userInfo.nickname();
+        this->description = userInfo.description();
+        this->phone = userInfo.phone();
+        if(userInfo.avatar().isEmpty()){
+            // 刚注册的用户使用默认头像(刚注册的用户在服务器中avatar为空)
+            this->avatar = QIcon(":/resource/image/avatar.jpg");
+        }else{
+            this->avatar = makeIcon(userInfo.avatar());
+        }
+  }
 };
 //////////////////////////////////////////////////
 /// 消息信息
@@ -136,6 +151,56 @@ public:
         }
         else{
             return Message();
+        }
+    }
+
+    void load(const bite_im::MessageInfo& messageInfo)
+    {
+        this->messageId = messageInfo.messageId();
+        this->chatSessionId = messageInfo.chatSessionId();
+        this->time = formatTime(messageInfo.timestamp());
+        this->sender.load(messageInfo.sender());
+
+        // 设置消息类型
+        auto type = messageInfo.message().messageType();
+        if(type == bite_im::MessageTypeGadget::MessageType::STRING){
+            this->messageType = TEXT_TYPE;
+            this->content = messageInfo.message().stringMessage().content().toUtf8();
+        }else if(type == bite_im::MessageTypeGadget::MessageType::IMAGE){
+            this->messageType = IMAGE_TYPE;
+            if(messageInfo.message().imageMessage().hasImageContent())
+            {
+                this->content = messageInfo.message().imageMessage().imageContent();
+            }
+            if(messageInfo.message().imageMessage().hasFileId())
+            {
+                this->fileId = messageInfo.message().imageMessage().fileId();
+            }
+        }else if(type == bite_im::MessageTypeGadget::MessageType::FILE){
+            this->messageType = FILE_TYPE;
+            if(messageInfo.message().fileMessage().hasFileContents())
+            {
+                this->content = messageInfo.message().fileMessage().fileContents();
+            }
+            if(messageInfo.message().fileMessage().hasFileId())
+            {
+                this->fileId = messageInfo.message().fileMessage().fileId();
+            }
+            this->fileName = messageInfo.message().fileMessage().fileName();
+        }else if(type == bite_im::MessageTypeGadget::MessageType::SPEECH){
+            this->messageType = SPEECH_TYPE;
+            if(messageInfo.message().speechMessage().hasFileContents())
+            {
+                this->content = messageInfo.message().speechMessage().fileContents();
+            }
+            if(messageInfo.message().speechMessage().hasFileId())
+            {
+                this->fileId = messageInfo.message().speechMessage().fileId();
+            }
+
+        }else{
+            // 错误的消息类型，打印日志
+            LOG() << "错误的消息类型,type = " << type;
         }
     }
 
@@ -222,5 +287,34 @@ public:
     Message lastMessage;                 // 会话最后一条消息
     QIcon avatar;                        // 会话头像
     QString userId = "";                 // 会话
+
+    void load(const bite_im::ChatSessionInfo& chatSessionInfo)
+    {
+        this->chatSessionId = chatSessionInfo.chatSessionId();
+        this->chatSessionName = chatSessionInfo.chatSessionName();
+        if(chatSessionInfo.hasSingleChatFriendId())
+        {
+            this->userId = chatSessionInfo.singleChatFriendId();
+        }
+        if(chatSessionInfo.hasPrevMessage())
+        {
+            this->lastMessage.load(chatSessionInfo.prevMessage());
+        }
+        if(chatSessionInfo.hasAvatar() && !chatSessionInfo.avatar().isEmpty())
+        {
+            // 已有头像，直接设置
+            this->avatar = makeIcon(chatSessionInfo.avatar());
+        }else{
+            // 没有头像，设置默认头像
+            if(userId != "")
+            {
+                // 单聊
+                this->avatar = QIcon(":/resource/image/avatar.jpg");
+            }else{
+                // 群聊
+                this->avatar = QIcon(":/resource/image/groupAvatar.jpg");
+            }
+        }
+    }
 };
 }        // end model
