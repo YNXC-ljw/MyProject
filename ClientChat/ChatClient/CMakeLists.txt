@@ -6,13 +6,18 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+source_group("Source Files" REGULAR_EXPRESSION "\\.(c|cc|cpp|cxx)$")
+source_group("Header Files" REGULAR_EXPRESSION "\\.(h|hh|hpp|hxx)$")
+source_group("Forms" REGULAR_EXPRESSION "\\.ui$")
+source_group("Resources" REGULAR_EXPRESSION "\\.(qrc|png|jpg|jpeg|gif|svg|ico)$")
+
 file(GLOB PB_FILES "./proto/*.proto")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Protobuf)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network WebSockets Protobuf)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -22,6 +27,25 @@ set(PROJECT_SOURCES
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    # Keep generated Protobuf code in a separate library. App-only changes can
+    # then reuse the existing Protobuf archive instead of repacking it.
+    add_library(ChatClientProto SHARED)
+    qt_add_protobuf(ChatClientProto PROTO_FILES ${PB_FILES})
+
+    # user_qtprotoreg.cpp can exceed the section limit of a regular MinGW
+    # COFF object. Qt applies mbig-obj to ChatClientProto, but not to the
+    # automatically-created registration object target.
+    if(MINGW)
+        target_compile_options(ChatClientProto_qtprotoreg PRIVATE "-Wa,-mbig-obj")
+    endif()
+
+    target_include_directories(ChatClientProto PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+    )
+    target_link_libraries(ChatClientProto PUBLIC
+        Qt6::Protobuf
+    )
+
     qt_add_executable(ChatClient
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
@@ -41,8 +65,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         loginwidget.h loginwidget.cpp
         phoneloginwidget.h phoneloginwidget.cpp
         model/datacenter.h model/datacenter.cpp
+        Network/netclient.h Network/netclient.cpp
     )
-qt_add_protobuf(ChatClient PROTO_FILES ${PB_FILES})
 
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET ChatClient APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -62,7 +86,11 @@ else()
     endif()
 endif()
 
-target_link_libraries(ChatClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(ChatClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::Network Qt6::WebSockets Qt6::Protobuf)
+
+if(QT_VERSION_MAJOR GREATER_EQUAL 6)
+    target_link_libraries(ChatClient PRIVATE ChatClientProto)
+endif()
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
