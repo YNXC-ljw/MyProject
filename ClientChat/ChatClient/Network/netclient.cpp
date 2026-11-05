@@ -23,10 +23,13 @@ void NetClient::ping()
         if(httpResp->error() != QNetworkReply::NoError) // 确认网络请求没有出错
         {
             LOG() << "HTTP请求失败!" << httpResp->errorString();
+            httpResp->deleteLater();
             return;
         }
         // 获取响应的body
         QByteArray body = httpResp->readAll();
+        LOG() << "响应内容：" << body;
+        httpResp->deleteLater();
     });
 }
 

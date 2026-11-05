@@ -104,6 +104,14 @@ void DataCenter::saveDataToFile()
 // 加载文件数据
 void DataCenter::loadDataFile()
 {
+    QString filePaths = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/ChatClient.json";
+
+    QFile file(filePaths);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        LOG() << "打开文件失败！" << file.errorString();
+        return;
+    }
 
 }
 
