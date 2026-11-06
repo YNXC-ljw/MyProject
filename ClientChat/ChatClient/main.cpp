@@ -18,10 +18,12 @@ int main(int argc, char *argv[])
     loginWidget->show();
 #endif
 
-    // 临时的测试代码
+#if TEST_NETWORK
+    // network::NetClient netClient(nullptr);
+    // netClient.ping();
     model::DataCenter* dataCenter = model::DataCenter::getInstance();
-    dataCenter->initDataFile();
-    dataCenter->saveDataToFile();
+    dataCenter->ping();
+#endif
 
     return QApplication::exec();
 }

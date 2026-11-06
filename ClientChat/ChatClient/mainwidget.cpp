@@ -7,6 +7,7 @@
 #include "sessiondetailwidget.h"
 #include "groupsessiondetailwidget.h"
 #include "addfrienddialog.h"
+#include "model/datacenter.h"
 
 
 #include <QHBoxLayout>
@@ -207,6 +208,8 @@ void MainWidget::initRightWindow()
 
 void MainWidget::initSignalSlot()
 {
+    model::DataCenter *dataCenter = model::DataCenter::getInstance();
+
     //////////////////////////////////////////
     /// 连接信号槽，处理标签页按钮切换问题
     //////////////////////////////////////////
@@ -264,6 +267,15 @@ void MainWidget::initSignalSlot()
         // 清空主窗口中的文本
         searchLine->setText("");
         addFriendDialog->exec();
+    });
+
+    //////////////////////////////////////////
+    /// 获取个人信息(跟数据打交道)
+    //////////////////////////////////////////
+    // 根据dataCenter获取到具体的网络数据
+    dataCenter->
+    connect(userAvatar,&QPushButton::clicked,this,[=](){
+
     });
 }
 

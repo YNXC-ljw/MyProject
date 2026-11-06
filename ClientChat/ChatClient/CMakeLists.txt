@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
 
+# JOM and some CMake generators cannot reliably create their temporary files
+# below a non-ASCII Windows profile path. Keep build-time temp files ASCII-only.
+if(WIN32)
+    set(QT_BUILD_TEMP_DIR "D:/APP/qt/tools/temp")
+    file(MAKE_DIRECTORY "${QT_BUILD_TEMP_DIR}")
+    set(ENV{TEMP} "${QT_BUILD_TEMP_DIR}")
+    set(ENV{TMP} "${QT_BUILD_TEMP_DIR}")
+endif()
+
 project(ChatClient VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
@@ -15,6 +24,19 @@ file(GLOB PB_FILES "./proto/*.proto")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# MinGW Make cannot reliably parse protoc paths containing the Chinese
+# user-profile directory, so pin the standalone protoc to an ASCII-only path.
+set(QT_PROTOC_EXECUTABLE
+    "D:/APP/qt/tools/protoc-21.11-win64/bin/protoc.exe"
+    CACHE FILEPATH "Path to the standalone protoc executable")
+if(WIN32 AND EXISTS "${QT_PROTOC_EXECUTABLE}" AND NOT TARGET WrapProtoc::WrapProtoc)
+    add_executable(WrapProtoc::WrapProtoc IMPORTED GLOBAL)
+    set_target_properties(WrapProtoc::WrapProtoc PROPERTIES
+        IMPORTED_LOCATION "${QT_PROTOC_EXECUTABLE}"
+        _qt_internal_protobuf_version "3.21.11"
+    )
+endif()
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network WebSockets Protobuf)

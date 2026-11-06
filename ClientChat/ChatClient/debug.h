@@ -8,4 +8,7 @@
 // 如果跳过登录，直接进入主窗口；如果不跳过登录，直接打开登录窗口
 #define TEST_SKIP_LOGIN 1
 
+// 服务器测试代码
+#define TEST_NETWORK 0
+
 #endif // DEBUG_H

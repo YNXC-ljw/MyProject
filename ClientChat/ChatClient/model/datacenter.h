@@ -56,6 +56,15 @@ public:
     void saveDataToFile();
     // 将文件数据加载到内存中
     void loadDataFile();
+    // 获取当前登录会话Id
+    const QString& getLoginSessionId() const
+    {
+        return loginSessionId;
+    }
+    // 测试网络连通性
+    void ping() {netClient.ping();}
+    // 通过网络获取用户信息(该函数只负责把HTTP请求发出去，什么时候回来就不管了，通过槽函数接收返回的消息)
+    void getMyselfAsync();
 signals:
 };
 

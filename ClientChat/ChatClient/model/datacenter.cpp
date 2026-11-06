@@ -33,7 +33,7 @@ DataCenter::~DataCenter()
 
 }
 
-DataCenter::DataCenter()
+DataCenter::DataCenter() :netClient(this)
 {
     // 此处只实例化这几个QHash类型，其他暂时不做处理
     memberList = new QHash<QString,QList<UserInfo>>();
@@ -113,6 +113,12 @@ void DataCenter::loadDataFile()
         return;
     }
 
+}
+
+// 通过网络获取用户信息(该函数只负责把HTTP请求发出去，什么时候回来就不管了，通过槽函数接收返回的消息)
+void DataCenter::getMyselfAsync()
+{
+    netClient.getMyself(loginSessionId);
 }
 
 // end namespace

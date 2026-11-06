@@ -24,7 +24,23 @@ private:
 public:
     NetClient(model::DataCenter* dataCenter);
 
+    // 测试HTTP连通性
     void ping();
+    // 初始化websocket
+    void initWebSocket();
+    // 发送验证身份请求(序列化操作)
+    void sentAuth();
+    // 生成请求Id
+    QString makeRequestId();
+
+    // 封装发送请求逻辑
+    QNetworkReply* sendHttpRequest(const QString& apiPaths,const QByteArray& body);
+    // 封装处理响应的逻辑（包括判定 HTTP 正确性，反序列化，判定业务上的正确性）
+    // 由于不同的api，返回的pb对象结构，不同，为了让一个函数能处理多种不同类型，需要使用模板
+    template <typename T>
+    std::shared_ptr<T> handleHttpResponse(QNetworkReply* httpResp);
+    // 通过这个函数进一步完成网络通信内容
+    void getMyself(const QString& chatSessionId);
 private:
     model::DataCenter* dataCenter;
 
