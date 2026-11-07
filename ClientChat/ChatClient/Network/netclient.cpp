@@ -103,7 +103,7 @@ void NetClient::getMyself(const QString &chatSessionId)
     req.setRequestId(makeRequestId());
     req.setSessionId(chatSessionId);
     QByteArray body = req.serialize(&serializer);
-    LOG() << "[获取个人信息] requestId = " << req.requestId() << ", chatSessionId = " << req.sessionId();
+    LOG() << "[获取个人信息] 发送请求 requestId = " << req.requestId() << ", chatSessionId = " << req.sessionId();
 
     // 2.构造 HTTP 请求，并将请求发出去
     QNetworkReply* httpResp = sendHttpRequest("/service/user/get_user_info",body);
@@ -132,8 +132,24 @@ void NetClient::getMyself(const QString &chatSessionId)
         //     httpResp->deleteLater();
         //     return;
         // }
+        // a) 先处理响应对象
+        bool ok = false;
+        QString reason;
+        auto resp = handleHttpResponse<bite_im::GetUserInfoRsp>(httpResp,&ok,&reason);
 
-        // -05 继续处理后续逻辑......
+        // b) 判定响应是否正确并打印日志
+        if(!ok)
+        {
+            LOG() << "[获取个人信息] 出错！reason = " << reason;
+            return;
+        }
+        // c) 把响应的数据刷新到 dataCenter 中
+        dataCenter->resetMyself(resp);
+
+        // d) 通知调用逻辑，响应已经处理完成
+        emit dataCenter->getMyselfDone();
+        // e) 打印日志
+        LOG() << "[获取个人信息] 处理响应 requestId = " << resp->requestId();
 
     });
 }

@@ -115,10 +115,31 @@ void DataCenter::loadDataFile()
 
 }
 
+UserInfo *DataCenter::getMyself()
+{
+    return myself;
+}
+
 // 通过网络获取用户信息(该函数只负责把HTTP请求发出去，什么时候回来就不管了，通过槽函数接收返回的消息)
 void DataCenter::getMyselfAsync()
 {
     netClient.getMyself(loginSessionId);
+}
+
+// 将通信响应对象信息刷新到 dataCenter 中
+void DataCenter::resetMyself(std::shared_ptr<bite_im::GetUserInfoRsp> resp)
+{
+    if(myself == nullptr)
+    {
+        myself = new UserInfo();
+    }
+    const bite_im::UserInfo &userInfo = resp->userInfo();
+    myself->load(userInfo);
+}
+
+QList<UserInfo>* DataCenter::getFriendList()
+{
+    return friendList;
 }
 
 // end namespace

@@ -88,6 +88,7 @@ private:
     // 标签按钮点击，对应界面显示
     void loadSessionList();
     void loadFriendList();
+    void updateFriendList();
     void loadApplyList();
 };
 #endif // MAINWIDGET_H

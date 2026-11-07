@@ -1,7 +1,7 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#define TEST_UI 1
+#define TEST_UI 0
 
 #define GROUP_SESSION_DETAIL_WIDGET 1
 

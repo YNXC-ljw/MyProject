@@ -9,8 +9,9 @@
 #include "addfrienddialog.h"
 #include "model/datacenter.h"
 
-
 #include <QHBoxLayout>
+
+using namespace model;
 
 MainWidget* MainWidget::instance = nullptr;
 
@@ -90,7 +91,7 @@ void MainWidget::initLeftWindow()
     userAvatar = new QPushButton();
     userAvatar->setFixedSize(45,45);
     userAvatar->setIconSize(QSize(45,45));
-    userAvatar->setIcon(QIcon(":/resource/image/avatar.jpg"));
+    // userAvatar->setIcon(QIcon(":/resource/image/avatar.jpg"));
     userAvatar->setStyleSheet("QPushButton { border : none; background-color: transparent; }");
     layout->addWidget(userAvatar,1,Qt::AlignTop | Qt::AlignHCenter); // 置顶居中
     // 添加会话标签按钮
@@ -273,10 +274,17 @@ void MainWidget::initSignalSlot()
     /// 获取个人信息(跟数据打交道)
     //////////////////////////////////////////
     // 根据dataCenter获取到具体的网络数据
-    dataCenter->
-    connect(userAvatar,&QPushButton::clicked,this,[=](){
-
+    connect(dataCenter,&model::DataCenter::getMyselfDone,this,[=](){
+        // 从 DataCenter 中拿到响应结果的 myself，把头像取出来显示到界面上
+        auto myself = dataCenter->getMyself();
+        userAvatar->setIcon(myself->avatar);
     });
+    dataCenter->getMyselfAsync();
+
+    //////////////////////////////////////////
+    /// 获取好友列表
+    //////////////////////////////////////////
+    loadFriendList();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -322,16 +330,33 @@ void MainWidget::switchTabToApply()
 /////////////////////////////////////////////////////////////////////////////
 /// 处理标签按钮点击后的界面显示
 /////////////////////////////////////////////////////////////////////////////
+// 加载会话列表
 void MainWidget::loadSessionList()
 {
 
 }
 
+// 加载好友列表
 void MainWidget::loadFriendList()
+{
+    // 好友列表数据存储在 dataCenter 中。先判断其中是否有数据
+    // 如果有就从本地加载；如果没有就从服务器中加载
+    DataCenter* dataCenter = DataCenter::getInstance();
+    if(dataCenter->getFriendList() == nullptr)
+    {
+        // 从服务器中拿
+    }else{
+        // 从内存中拿
+        updateFriendList();
+    }
+}
+
+void MainWidget::updateFriendList()
 {
 
 }
 
+// 加载好友申请列表
 void MainWidget::loadApplyList()
 {
 
