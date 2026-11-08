@@ -105,7 +105,7 @@ void NetClient::getMyself(const QString &chatSessionId)
     QByteArray body = req.serialize(&serializer);
     LOG() << "[获取个人信息] 发送请求 requestId = " << req.requestId() << ", chatSessionId = " << req.sessionId();
 
-    // 2.构造 HTTP 请求，并将请求发出去
+    // 2.构造 HTTP 请求，并将请求发出去,通过信号槽异步处理返回的响应
     QNetworkReply* httpResp = sendHttpRequest("/service/user/get_user_info",body);
 
     // 3.连接信号槽，获取响应
@@ -135,7 +135,7 @@ void NetClient::getMyself(const QString &chatSessionId)
         // a) 先处理响应对象
         bool ok = false;
         QString reason;
-        auto resp = handleHttpResponse<bite_im::GetUserInfoRsp>(httpResp,&ok,&reason);
+        auto myselfResp = handleHttpResponse<bite_im::GetUserInfoRsp>(httpResp,&ok,&reason);
 
         // b) 判定响应是否正确并打印日志
         if(!ok)
@@ -144,13 +144,38 @@ void NetClient::getMyself(const QString &chatSessionId)
             return;
         }
         // c) 把响应的数据刷新到 dataCenter 中
-        dataCenter->resetMyself(resp);
+        dataCenter->resetMyself(myselfResp);
 
         // d) 通知调用逻辑，响应已经处理完成
         emit dataCenter->getMyselfDone();
         // e) 打印日志
-        LOG() << "[获取个人信息] 处理响应 requestId = " << resp->requestId();
+        LOG() << "[获取个人信息] 处理响应 requestId = " << myselfResp->requestId();
 
+    });
+}
+
+void NetClient::getFriendList(const QString &chatSessionId)
+{
+    // 1.构造 HTTP 请求 body
+    bite_im::GetFriendListReq req;
+    req.setSessionId(chatSessionId);
+    req.setRequestId(makeRequestId());
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[获取好友列表] requestId = " << req.requestId() << ", chatSessionId = " << req.sessionId();
+
+    // 2.构造 HTTP 请求并将请求发送出去,通过信号槽异步处理返回的响应
+    QNetworkReply* httpResq = sendHttpRequest("/service/friend/get_friend_list",body);
+
+    // 3.连接信号槽异步处理返回的响应
+    connect(httpResq,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        auto friendListResp = handleHttpResponse<bite_im::GetFriendListReq>(httpResq,&ok,&reason);
+
+        if(!ok)
+        {
+
+        }
     });
 }
 

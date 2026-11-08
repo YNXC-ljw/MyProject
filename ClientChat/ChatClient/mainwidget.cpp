@@ -140,7 +140,7 @@ void MainWidget::initMidWindow()
     style += "QPushButton:pressed {background-color: rgb(212,212,213)};";
     addFriendBtn->setStyleSheet(style);
 
-    sessionFriendArea* sessionFriArea = new sessionFriendArea();
+    sessionFriArea = new sessionFriendArea();
 
     // 为了更灵活的控制边距，只影响搜索框按钮这一行，不影响下方列表这一行
     // 创建空白的 widget 填充到布局管理器中.
@@ -345,6 +345,7 @@ void MainWidget::loadFriendList()
     if(dataCenter->getFriendList() == nullptr)
     {
         // 从服务器中拿
+        dataCenter->
     }else{
         // 从内存中拿
         updateFriendList();
@@ -353,7 +354,23 @@ void MainWidget::loadFriendList()
 
 void MainWidget::updateFriendList()
 {
+    // 如果当前标签页不是好友页，不渲染界面
+    if(activeTab != FRIEND_LIST)
+    {
+        return;
+    }
 
+    DataCenter* dataCenter = DataCenter::getInstance();
+    QList<UserInfo>* friendList = dataCenter->getFriendList();
+
+    // 清空上一次打开客户端时残留的列表内容
+    sessionFriArea->clear();
+
+    // 添加friendList中的元素到好友列表界面
+    for(const auto& f : *friendList)
+    {
+        sessionFriArea->addItem(FRIENDITEM_TYPE,f.userId,f.avatar,f.nickName,f.description);
+    }
 }
 
 // 加载好友申请列表

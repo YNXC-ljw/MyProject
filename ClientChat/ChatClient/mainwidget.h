@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include "sessionshowarea.h"
 #include "messageeditarea.h"
+#include "sessionfriendarea.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -59,6 +60,9 @@ private:
     QPushButton* friendTabBtn;
     // 好友申请标签页按钮
     QPushButton* applyTabBtn;
+
+    // 好友会话展示区
+    sessionFriendArea* sessionFriArea;
 
     // 搜索框
     QLineEdit* searchLine;

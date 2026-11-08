@@ -115,6 +115,9 @@ void DataCenter::loadDataFile()
 
 }
 
+//////////////////////////////////////////////////////
+/// 获取个人信息
+//////////////////////////////////////////////////////
 UserInfo *DataCenter::getMyself()
 {
     return myself;
@@ -136,11 +139,25 @@ void DataCenter::resetMyself(std::shared_ptr<bite_im::GetUserInfoRsp> resp)
     const bite_im::UserInfo &userInfo = resp->userInfo();
     myself->load(userInfo);
 }
-
+//////////////////////////////////////////////////////
+/// 获取好友列表
+//////////////////////////////////////////////////////
 QList<UserInfo>* DataCenter::getFriendList()
 {
     return friendList;
 }
+
+void DataCenter::getFriendListAsync()
+{
+    netClient.getFriendList(loginSessionId);
+}
+
+void DataCenter::resetFriendList()
+{
+
+}
+
+
 
 // end namespace
 }

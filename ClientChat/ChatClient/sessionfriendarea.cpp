@@ -54,6 +54,7 @@ sessionFriendArea::sessionFriendArea(QWidget *parent)
 
 }
 
+// 清除列表中的元素
 void sessionFriendArea::clear()
 {
     QLayout* layout = container->layout();

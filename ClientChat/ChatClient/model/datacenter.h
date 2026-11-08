@@ -64,18 +64,22 @@ public:
 
     // 测试网络连通性
     void ping() {netClient.ping();}
+
     // 通过网络获取用户信息(该函数只负责把HTTP请求发出去，什么时候回来就不管了，通过槽函数接收返回的消息)
     void getMyselfAsync();// 异步(从服务器中取出)
     UserInfo* getMyself();// 同步(本地内存中取出)
-
     // 将通信响应对象信息刷新到 dataCenter 中
     void resetMyself(std::shared_ptr<bite_im::GetUserInfoRsp> resp);
 
     // 获取好友列表
-    QList<UserInfo>* getFriendList();
+    QList<UserInfo>* getFriendList();// 通过内存获取
+    void getFriendListAsync();// 通过网络获取
+    // 将通信响应好友列表对象刷新到dataCenter中
+    void resetFriendList();
 signals:
     // 定义处理信号
     void getMyselfDone();
+    void getFriendListDone();
 };
 
 } // end namespace

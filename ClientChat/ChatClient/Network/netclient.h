@@ -74,6 +74,8 @@ public:
     }
     // 通过这个函数进一步完成网络通信内容
     void getMyself(const QString& chatSessionId);
+
+    void getFriendList(const QString& chatSessionId);
 private:
     model::DataCenter* dataCenter;
 

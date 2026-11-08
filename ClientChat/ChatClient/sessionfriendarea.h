@@ -1,4 +1,4 @@
-#ifndef SESSIONFRIENDAREA_H
+    #ifndef SESSIONFRIENDAREA_H
 #define SESSIONFRIENDAREA_H
 
 #include <QWidget>
