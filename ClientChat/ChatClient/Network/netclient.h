@@ -73,9 +73,15 @@ public:
         return respObj;
     }
     // 通过这个函数进一步完成网络通信内容
-    void getMyself(const QString& chatSessionId);
-
-    void getFriendList(const QString& chatSessionId);
+    void getMyself(const QString& loginSessionId);
+    // 获取好友列表
+    void getFriendList(const QString& loginSessionId);
+    // 获取会话列表
+    void getChatSessionList(const QString& loginSessionId);
+    // 获取好友申请列表
+    void getApplyList(const QString& loginSessionId);
+    // 获取选中会话的历史消息
+    void getRecentMessage(const QString& loginSessionId,const QString& chatSessionId);
 private:
     model::DataCenter* dataCenter;
 

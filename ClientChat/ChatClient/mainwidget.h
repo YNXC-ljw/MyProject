@@ -71,6 +71,8 @@ private:
 
     // 会话展示区详情按钮
     QPushButton* extraBtn;
+    // 会话标题
+    QLabel* sessionTitleLabel;
 
     //消息展示区
     SessionShowArea* sessionShowArea;
@@ -91,8 +93,13 @@ private:
     void switchTabToApply();
     // 标签按钮点击，对应界面显示
     void loadSessionList();
+    void updateChatSessionList();
     void loadFriendList();
     void updateFriendList();
     void loadApplyList();
+    void updateApplyList();
+
+    void loadRecentMessage(const QString& chatSessionId);
+    void updateRecentMessage(const QString& chatSessionId);
 };
 #endif // MAINWIDGET_H

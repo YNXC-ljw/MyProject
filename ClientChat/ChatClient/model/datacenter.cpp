@@ -152,9 +152,125 @@ void DataCenter::getFriendListAsync()
     netClient.getFriendList(loginSessionId);
 }
 
-void DataCenter::resetFriendList()
+void DataCenter::resetFriendList(std::shared_ptr<bite_im::GetFriendListRsp> resp)
 {
+    if(friendList == nullptr)
+    {
+        friendList = new QList<UserInfo>();
+    }
 
+    // 清空原本已存在的好友列表
+    friendList->clear();
+
+    // 依此遍历响应 好友列表 并放入到 friendList 中
+    auto& pbFriendList = resp->friendList();
+    for(auto& f : pbFriendList)
+    {
+        UserInfo userInfo;
+        userInfo.load(f);
+        friendList->push_back(userInfo);
+    }
+}
+//////////////////////////////////////////////////////
+/// 获取会话列表
+//////////////////////////////////////////////////////
+QList<chatSessionInfo> *DataCenter::getChatSessionList()
+{
+    return chatSessionList;
+}
+
+void DataCenter::getChatSessionListAsync()
+{
+    return netClient.getChatSessionList(loginSessionId);
+}
+
+void DataCenter::resetChatSessionList(std::shared_ptr<bite_im::GetChatSessionListRsp> resp)
+{
+    if(chatSessionList == nullptr)
+    {
+        chatSessionList = new QList<chatSessionInfo>();
+    }
+    // 清空原有的列表
+    chatSessionList->clear();
+
+    // 依此遍历返回结果中的列表加入到 DataCenter 中
+    auto pbChatSessionList = resp->chatSessionInfoList();
+    for(auto &c : pbChatSessionList)
+    {
+        chatSessionInfo chatSessionInfo;
+        chatSessionInfo.load(c);
+        chatSessionList->push_back(chatSessionInfo);
+    }
+}
+//////////////////////////////////////////////////////
+/// 获取好友申请列表
+//////////////////////////////////////////////////////
+QList<UserInfo> *DataCenter::getApplyList()
+{
+    return applyList;
+}
+
+void DataCenter::getApplyListAsync()
+{
+    netClient.getApplyList(loginSessionId);
+}
+
+void DataCenter::resetApplyList(std::shared_ptr<bite_im::GetPendingFriendEventListRsp> resp)
+{
+    if (applyList == nullptr) {
+        applyList = new QList<UserInfo>();
+    }
+    applyList->clear();
+
+    auto& eventList = resp->event();
+    for (auto& event : eventList) {
+        UserInfo userInfo;
+        userInfo.load(event.sender());
+        applyList->push_back(userInfo);
+    }
+
+}
+
+QList<Message> *DataCenter::getRecentMessageList(const QString &chatSessionId)
+{
+    if(!recentMessages->contains(chatSessionId))
+    {
+        return nullptr;
+    }
+    return &(*recentMessages)[chatSessionId];
+}
+
+void DataCenter::getRecentMessageAsync(const QString &chatSessionId)
+{
+    netClient.getRecentMessage(loginSessionId,chatSessionId);
+}
+
+chatSessionInfo *DataCenter::findSessionById(const QString &chatSessionId)
+{
+    // 为空直接返回空指针
+    if(chatSessionList == nullptr)
+    {
+        return nullptr;
+    }
+    // 遍历会话列表查看是否有这个会话Id，有直接返回，没有再返回空指针
+    for(auto & c : *chatSessionList)
+    {
+        if(c.chatSessionId == chatSessionId)
+        {
+            return &c;
+        }
+    }
+    return nullptr;
+}
+
+QString &DataCenter::getCurrentChatSessionId()
+{
+    return currentChatSessionId;
+}
+
+void DataCenter::setCurrentChatSessionId(const QString &chatSessionId)
+{
+    this->currentChatSessionId = chatSessionId;
 }
 
 

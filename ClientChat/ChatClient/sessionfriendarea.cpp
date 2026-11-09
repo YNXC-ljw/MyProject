@@ -1,6 +1,7 @@
 #include "sessionfriendarea.h"
 
 #include "debug.h"
+#include "mainwidget.h"
 
 #include <QScrollBar>
 #include <QVBoxLayout>
@@ -221,6 +222,10 @@ void SessionItem::active()
 {
     // TODO 点击之后要加载会话的历史消息列表
     LOG() << "点击SessionItem触发的逻辑！chatSessionId=" << chatSessionId;
+
+    // 加载会话历史消息，既会涉及到界面渲染，又会涉及到内存数据操作、还会涉及到网络通信(所以直接在主窗口中进行代码管理)
+    MainWidget* mainWidget = MainWidget::getInstance();
+    mainWidget->loadRecentMessage(chatSessionId);
 }
 
 /// /////////////////////////////////////

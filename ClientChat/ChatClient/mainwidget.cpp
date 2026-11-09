@@ -181,8 +181,8 @@ void MainWidget::initRightWindow()
     hlayout->setContentsMargins(5,0,5,0);
     hlayout->setSpacing(0);
     titleWidget->setLayout(hlayout);
-
-    QLabel* sessionTitleLabel = new QLabel();
+    // 标题
+    sessionTitleLabel = new QLabel();
     sessionTitleLabel->setStyleSheet("QLabel { font-size: 22px;border-bottom: 1px solid rgb(230,230,230);}");
 #if TEST_UI
     // 为了测试界面临时增加的. 实际这里的内容, 应该是使用从服务器获取的数据来设置.
@@ -285,6 +285,16 @@ void MainWidget::initSignalSlot()
     /// 获取好友列表
     //////////////////////////////////////////
     loadFriendList();
+
+    //////////////////////////////////////////
+    /// 获取会话列表
+    //////////////////////////////////////////
+    loadSessionList();
+
+    //////////////////////////////////////////
+    /// 好友申请列表
+    //////////////////////////////////////////
+    loadApplyList();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -333,7 +343,47 @@ void MainWidget::switchTabToApply()
 // 加载会话列表
 void MainWidget::loadSessionList()
 {
+    DataCenter* dataCenter = DataCenter::getInstance();
+    if(dataCenter->getChatSessionList() == nullptr)
+    {
+        // 从服务器获取
+        connect(dataCenter,&DataCenter::getChatSessionListDone,this,&MainWidget::updateChatSessionList,Qt::UniqueConnection);
+        dataCenter->getChatSessionListAsync();
+    }else{
+        // 从内存中获取
+        updateChatSessionList();
+    }
+}
 
+void MainWidget::updateChatSessionList()
+{
+    // 如果当前页面不是会话列表界面，不渲染画面
+    if(activeTab != SESSION_LIST)
+    {
+        return;
+    }
+
+    DataCenter* dataCenter = DataCenter::getInstance();
+    QList<chatSessionInfo>* chatSessionList = dataCenter->getChatSessionList();
+
+    // 清空原先已经存在的会话列表
+    sessionFriArea->clear();
+
+    for(const auto& c : *chatSessionList)
+    {
+        if (c.lastMessage.messageType == TEXT_TYPE) {
+            sessionFriArea->addItem(SESSIONITEM_TYPE, c.chatSessionId, c.avatar, c.chatSessionName, c.lastMessage.content);
+        } else if (c.lastMessage.messageType == IMAGE_TYPE) {
+            sessionFriArea->addItem(SESSIONITEM_TYPE, c.chatSessionId, c.avatar, c.chatSessionName, "[图片]");
+        } else if (c.lastMessage.messageType == FILE_TYPE) {
+            sessionFriArea->addItem(SESSIONITEM_TYPE, c.chatSessionId, c.avatar, c.chatSessionName, "[文件]");
+        } else if (c.lastMessage.messageType == SPEECH_TYPE) {
+            sessionFriArea->addItem(SESSIONITEM_TYPE, c.chatSessionId, c.avatar, c.chatSessionName, "[语音]");
+        } else {
+            LOG() << "错误的消息类型! messageType=" << c.lastMessage.messageType;
+        }
+
+    }
 }
 
 // 加载好友列表
@@ -345,7 +395,8 @@ void MainWidget::loadFriendList()
     if(dataCenter->getFriendList() == nullptr)
     {
         // 从服务器中拿
-        dataCenter->
+        connect(dataCenter,&DataCenter::getFriendListDone,this,&MainWidget::updateFriendList,Qt::UniqueConnection);// 只触发一次
+        dataCenter->getFriendListAsync();
     }else{
         // 从内存中拿
         updateFriendList();
@@ -376,6 +427,93 @@ void MainWidget::updateFriendList()
 // 加载好友申请列表
 void MainWidget::loadApplyList()
 {
+    DataCenter* dataCenter = DataCenter::getInstance();
+    if (dataCenter->getApplyList() != nullptr) {
+        // 本地有数据，直接加载
+        updateApplyList();
+    } else {
+        // 本地没有数据，通过网络加载
+        connect(dataCenter,&DataCenter::getApplyListDone,this,&MainWidget::updateApplyList,Qt::UniqueConnection);
+        dataCenter->getApplyListAsync();
+    }
 
 }
+
+void MainWidget::updateApplyList()
+{
+    if (activeTab != APPLY_LIST) {
+        // 当前标签页不是 "好友申请列表"，界面上不做任何渲染
+        return;
+    }
+    DataCenter* dataCenter = DataCenter::getInstance();
+    QList<UserInfo>* applyList = dataCenter->getApplyList();
+
+    sessionFriArea->clear();
+
+    for (const auto& u : *applyList) {
+        // 直接把这个 UserInfo 对象添加到界面上即可，不涉及到 PB 和 自己的结构之间的转换。
+        // 此处 UserInfo 的 description 不需要填写进来。好友申请列表中，不显示用户的签名的（这个位置被替换成了两个按钮）
+        sessionFriArea->addItem(APPLYITEM_TYPE, u.userId, u.avatar, u.nickName, "");
+    }
+
+}
+
+void MainWidget::loadRecentMessage(const QString &chatSessionId)
+{
+    // 先判断 DataCenter 中是否存在数据，如果存在直接渲染到界面上；如果没有，就从网络中获取
+    DataCenter* dataCenter = DataCenter::getInstance();
+    if(dataCenter->getRecentMessageList(chatSessionId) != nullptr)
+    {
+        // 本地数据刷新界面
+        updateRecentMessage(chatSessionId);
+    }else{
+        // 从服务器拿数据刷新界面
+        dataCenter->getRecentMessageAsync(chatSessionId);
+    }
+}
+
+void MainWidget::updateRecentMessage(const QString &chatSessionId)
+{
+    // 1.拿到对应会话的消息列表
+    DataCenter* dataCenter = DataCenter::getInstance();
+    auto *recentMessageList = dataCenter->getRecentMessageList(chatSessionId);
+
+    // 2.清空原有界面上的消息
+    sessionShowArea->clear();
+
+    // 3.通过消息列表将数据展示到消息展示区(使用头插的方式将数据显示到界面上，让最近的消息展示在最底下)
+    for(int i = recentMessageList->size() - 1;i >= 0;i--)
+    {
+        const Message& message = recentMessageList->at(i);
+        // 两个用户Id不同说明就是左边消息
+        bool isLeft = message.sender.userId != dataCenter->getMyself()->userId;
+        sessionShowArea->addFrontMessageItem(isLeft,message);
+    }
+
+    // 4.设置会话标题
+    chatSessionInfo* chatSessionInfo = dataCenter->findSessionById(chatSessionId);
+    if(chatSessionInfo != nullptr)
+    {
+        // 把会话信息中的会话标题设置到对应位置
+        sessionTitleLabel->setText(chatSessionInfo->chatSessionName);
+    }
+
+    // 5.保存当前选中的会话是哪一个
+    dataCenter->setCurrentChatSessionId(chatSessionId);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

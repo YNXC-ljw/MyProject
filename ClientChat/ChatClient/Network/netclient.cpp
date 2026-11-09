@@ -96,12 +96,12 @@ QNetworkReply *NetClient::sendHttpRequest(const QString &apiPaths, const QByteAr
 }
 
 // 通过这个函数，进一步完成网络通信内容
-void NetClient::getMyself(const QString &chatSessionId)
+void NetClient::getMyself(const QString &loginSessionId)
 {
     // 1.构造出 HTTP 请求 body 部分
     bite_im::GetUserInfoReq req;
     req.setRequestId(makeRequestId());
-    req.setSessionId(chatSessionId);
+    req.setSessionId(loginSessionId);
     QByteArray body = req.serialize(&serializer);
     LOG() << "[获取个人信息] 发送请求 requestId = " << req.requestId() << ", chatSessionId = " << req.sessionId();
 
@@ -154,29 +154,119 @@ void NetClient::getMyself(const QString &chatSessionId)
     });
 }
 
-void NetClient::getFriendList(const QString &chatSessionId)
+void NetClient::getFriendList(const QString &loginSessionId)
 {
     // 1.构造 HTTP 请求 body
     bite_im::GetFriendListReq req;
-    req.setSessionId(chatSessionId);
+    req.setSessionId(loginSessionId);
     req.setRequestId(makeRequestId());
     QByteArray body = req.serialize(&serializer);
-    LOG() << "[获取好友列表] requestId = " << req.requestId() << ", chatSessionId = " << req.sessionId();
+    LOG() << "[获取好友列表] 发送请求 requestId = " << req.requestId() << ", chatSessionId = " << req.sessionId();
 
     // 2.构造 HTTP 请求并将请求发送出去,通过信号槽异步处理返回的响应
-    QNetworkReply* httpResq = sendHttpRequest("/service/friend/get_friend_list",body);
+    QNetworkReply* httpResp = sendHttpRequest("/service/friend/get_friend_list",body);
 
     // 3.连接信号槽异步处理返回的响应
-    connect(httpResq,&QNetworkReply::finished,this,[=](){
+    connect(httpResp,&QNetworkReply::finished,this,[=](){
+        // a) 先处理响应对象
         bool ok = false;
         QString reason;
-        auto friendListResp = handleHttpResponse<bite_im::GetFriendListReq>(httpResq,&ok,&reason);
+        auto friendListResp = handleHttpResponse<bite_im::GetFriendListRsp>(httpResp,&ok,&reason);
 
+        // b) 判断响应是否正确并打印日志
         if(!ok)
         {
-
+            LOG() << "[获取好友列表] 出错! reason = " << reason;
+            return;
         }
+
+        // c) 把响应数据刷到 Datacenter 中
+        dataCenter->resetFriendList(friendListResp);
+
+        // d) 发送信号通知
+        emit dataCenter->getFriendListDone();
+
+        // e) 打印日志
+        LOG() << "[获取好友列表] 处理响应 requestId = " << friendListResp->requestId();
     });
+}
+
+void NetClient::getChatSessionList(const QString &loginSessionId)
+{
+    // 1.构造请求
+    bite_im::GetChatSessionListReq req;
+    req.setSessionId(loginSessionId);
+    req.setRequestId(makeRequestId());
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[获取会话列表] 发送请求 requestId = " << req.requestId() << ", chatSessionId = " << req.sessionId();
+
+    // 2.发送请求并获取响应
+    QNetworkReply* httpResp = sendHttpRequest("/service/friend/get_chat_session_list",body);
+
+    // 3.通过信号槽异步处理返回的响应
+    connect(httpResp,&QNetworkReply::finished,this,[=](){
+        // a) 先处理响应对象
+        bool ok = false;
+        QString reason;
+        auto chatSessionListResp = handleHttpResponse<bite_im::GetChatSessionListRsp>(httpResp,&ok,&reason);
+
+        // b) 判定响应是否正确并打印日志
+        if(!ok)
+        {
+            LOG() << "[获取会话列表] 出错! reason = " << reason;
+            return;
+        }
+
+        // c) 把响应会话列表对象刷新到 DataCenter 中
+        dataCenter->resetChatSessionList(chatSessionListResp);
+
+        // d) 发送信号
+        emit dataCenter->getChatSessionListDone();
+
+        // e) 打印日志
+        LOG() << "[获取会话列表] 处理响应 requestId = " << chatSessionListResp->requestId();
+    });
+}
+
+void NetClient::getApplyList(const QString &loginSessionId)
+{
+    bite_im::GetPendingFriendEventListReq req;
+    req.setRequestId(makeRequestId());
+    req.setSessionId(loginSessionId);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[获取好友申请列表] 发送请求 requestId=" << req.requestId() << ", loginSessionId=" << loginSessionId;
+
+    // 2. 发送 http 请求
+    QNetworkReply* httpResp = sendHttpRequest("/service/friend/get_pending_friend_events", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = handleHttpResponse<bite_im::GetPendingFriendEventListRsp>(httpResp, &ok, &reason);
+
+        // b) 判定结果是否出错
+        if (!ok) {
+            LOG() << "[获取好友申请列表] 失败! reason=" << reason;
+            return;
+        }
+
+        // c) 拿到的数据，写入到 DataCenter 中
+        dataCenter->resetApplyList(pbResp);
+
+        // d) 通知界面，处理完毕
+        emit dataCenter->getApplyListDone();
+
+        // e) 打印日志
+        LOG() << "[获取好友申请列表] 处理响应完成! requestId=" << req.requestId();
+    });
+
+}
+
+void NetClient::getRecentMessage(const QString &loginSessionId, const QString &chatSessionId)
+{
+
 }
 
 

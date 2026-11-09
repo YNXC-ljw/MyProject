@@ -75,11 +75,35 @@ public:
     QList<UserInfo>* getFriendList();// 通过内存获取
     void getFriendListAsync();// 通过网络获取
     // 将通信响应好友列表对象刷新到dataCenter中
-    void resetFriendList();
+    void resetFriendList(std::shared_ptr<bite_im::GetFriendListRsp> resp);
+
+    // 获取会话列表
+    QList<chatSessionInfo>* getChatSessionList();// 通过内存获取
+    void getChatSessionListAsync();// 通过服务器获取
+    // 将通讯响应会话列表对象刷新到 DataCenter 中
+    void resetChatSessionList(std::shared_ptr<bite_im::GetChatSessionListRsp> resp);
+
+    // 获取好友申请列表
+    QList<UserInfo> *getApplyList();
+    void getApplyListAsync();
+    void resetApplyList(std::shared_ptr<bite_im::GetPendingFriendEventListRsp> resp);
+
+    // 获取最近消息列表
+    QList<Message>* getRecentMessageList(const QString& chatSessionId);// 本地获取
+    void getRecentMessageAsync(const QString& chatSessionId);//网络获取
+    // 通过sessionId查找会话信息
+    chatSessionInfo* findSessionById(const QString& chatSessionId);
+
+    // 设置当前被选中的会话是哪个
+    QString& getCurrentChatSessionId();
+    void setCurrentChatSessionId(const QString& chatSessionId);
+
 signals:
     // 定义处理信号
     void getMyselfDone();
     void getFriendListDone();
+    void getChatSessionListDone();
+    void getApplyListDone();
 };
 
 } // end namespace
