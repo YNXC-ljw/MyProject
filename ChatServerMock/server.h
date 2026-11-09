@@ -91,6 +91,12 @@ public:
 
     // 获取个人信息
     QHttpServerResponse getUserInfo(const QHttpServerRequest& req);
+    // 获取好友列表
+    QHttpServerResponse getFriendList(const QHttpServerRequest& req);
+    // 获取会话列表
+    QHttpServerResponse getChatSessionList(const QHttpServerRequest& req);
+    // 获取好友申请列表
+    QHttpServerResponse getApplyList(const QHttpServerRequest& req);
 private:
     static HttpServer* instance;
     HttpServer() {};
