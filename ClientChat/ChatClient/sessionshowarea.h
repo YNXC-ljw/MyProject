@@ -26,6 +26,8 @@ public:
     void addFrontMessageItem(bool isLeft,const Message& message);
     // 清空
     void clear();
+    // 将滚动区滚动到最底下，显示最近一条消息
+    void scrollToEnd();
 private:
     QWidget* container;
 };

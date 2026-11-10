@@ -243,6 +243,9 @@ void FriendItem::active()
 {
     // TODO 点击后，要激活对应的会话列表元素
     LOG() << "点击FriendItem触发的逻辑！userId=" << userId;
+
+    MainWidget* mainWidget = MainWidget::getInstance();
+    mainWidget->switchToSession(userId);
 }
 
 /////////////////////////////////////////

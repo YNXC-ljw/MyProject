@@ -91,8 +91,11 @@ public:
     // 获取最近消息列表
     QList<Message>* getRecentMessageList(const QString& chatSessionId);// 本地获取
     void getRecentMessageAsync(const QString& chatSessionId);//网络获取
+    void resetRecentMessageList(const QString& chatSessionId,std::shared_ptr<bite_im::GetRecentMsgRsp> resp);
     // 通过sessionId查找会话信息
     chatSessionInfo* findSessionById(const QString& chatSessionId);
+    // 通过userId查找会话信息
+    chatSessionInfo* findChatSessionByUserId(const QString& userId);
 
     // 设置当前被选中的会话是哪个
     QString& getCurrentChatSessionId();
@@ -104,6 +107,7 @@ signals:
     void getFriendListDone();
     void getChatSessionListDone();
     void getApplyListDone();
+    void getRecentMessageDone(const QString& chatSessionId);
 };
 
 } // end namespace

@@ -245,6 +245,21 @@ void DataCenter::getRecentMessageAsync(const QString &chatSessionId)
     netClient.getRecentMessage(loginSessionId,chatSessionId);
 }
 
+void DataCenter::resetRecentMessageList(const QString &chatSessionId, std::shared_ptr<bite_im::GetRecentMsgRsp> resp)
+{
+    // 拿到 chatSessionId 对应的消息列表，并清空
+    // 注意此处务必是引用类型，才是修改哈希表内部的内容.
+    QList<Message>& messageList = (*recentMessages)[chatSessionId];
+    messageList.clear();
+
+    // 遍历响应结果的列表
+    for (auto& m : resp->msgList()) {
+        Message message;
+        message.load(m);
+        messageList.push_back(message);
+    }
+}
+
 chatSessionInfo *DataCenter::findSessionById(const QString &chatSessionId)
 {
     // 为空直接返回空指针
@@ -261,6 +276,25 @@ chatSessionInfo *DataCenter::findSessionById(const QString &chatSessionId)
         }
     }
     return nullptr;
+}
+
+chatSessionInfo *DataCenter::findChatSessionByUserId(const QString &userId)
+{
+    // 为空直接返回空指针
+    if(chatSessionList == nullptr)
+    {
+        return nullptr;
+    }
+    // 遍历会话列表查看是否有这个会话Id，有直接返回，没有再返回空指针
+    for(auto & c : *chatSessionList)
+    {
+        if(c.userId == userId)
+        {
+            return &c;
+        }
+    }
+    return nullptr;
+}
 }
 
 QString &DataCenter::getCurrentChatSessionId()

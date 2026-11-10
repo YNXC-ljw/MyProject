@@ -244,29 +244,62 @@ void NetClient::getApplyList(const QString &loginSessionId)
         // a) 解析响应
         bool ok = false;
         QString reason;
-        auto pbResp = handleHttpResponse<bite_im::GetPendingFriendEventListRsp>(httpResp, &ok, &reason);
+        auto recentMessageResp = handleHttpResponse<bite_im::GetPendingFriendEventListRsp>(httpResp, &ok, &reason);
 
         // b) 判定结果是否出错
         if (!ok) {
-            LOG() << "[获取好友申请列表] 失败! reason=" << reason;
+            LOG() << "[获取好友申请列表] 失败! reason = " << reason;
             return;
         }
 
         // c) 拿到的数据，写入到 DataCenter 中
-        dataCenter->resetApplyList(pbResp);
+        dataCenter->resetApplyList(recentMessageResp);
 
         // d) 通知界面，处理完毕
         emit dataCenter->getApplyListDone();
 
         // e) 打印日志
-        LOG() << "[获取好友申请列表] 处理响应完成! requestId=" << req.requestId();
+        LOG() << "[获取好友申请列表] 处理响应完成! requestId=" << recentMessageResp->requestId();
     });
 
 }
 
 void NetClient::getRecentMessage(const QString &loginSessionId, const QString &chatSessionId)
 {
+    // 1.构造HTTP请求body
+    bite_im::GetRecentMsgReq req;
+    req.setChatSessionId(chatSessionId);
+    req.setRequestId(makeRequestId());
+    req.setMsgCount(50);
+    req.setSessionId(loginSessionId);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[获取最近消息] 发送请求 requestId = " << req.requestId() << ", chatSessionId" << req.chatSessionId();
 
+    // 2.发送请求并返回响应
+    QNetworkReply* httpResp = sendHttpRequest("/service/message_storage/get_recent",body);
+
+    // 3.处理服务器返回的响应
+    connect(httpResp,&QNetworkReply::finished,this,[=](){
+        // a) 解析响应，反序列化
+        bool ok = false;
+        QString reason;
+        auto pbResp = handleHttpResponse<bite_im::GetRecentMsgRsp>(httpResp,&ok,&reason);
+
+        // b) 判定响应是否出错
+        if(!ok)
+        {
+            LOG() << "[获取最近消息] 失败！ reason = " << reason;
+        }
+
+        // c) 将反序列化好的数据存到 DataCenter 中
+        dataCenter->resetRecentMessageList(chatSessionId,pbResp);
+
+        // d) 通知界面处理完毕,可以渲染界面
+        emit dataCenter->getRecentMessageDone(chatSessionId);
+
+        // e) 打印日志
+        LOG() << "[获取最近消息] 响应处理完毕！ requestId = " << pbResp->requestId();
+    });
 }
 
 

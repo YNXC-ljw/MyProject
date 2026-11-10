@@ -337,6 +337,18 @@ void MainWidget::switchTabToApply()
     this->loadApplyList();
 
 }
+
+void MainWidget::switchToSession(const QString &userId)
+{
+    // 1.在会话列表中，找到对应的会话元素
+    DataCenter* dataCenter = DataCenter::getInstance();
+    dataCenter->findChatSessionByUserId(userId);
+    // 2.把对应的会话置顶
+
+    // 3.切换到会话列表标签页
+
+    // 4.加载这个会话的历史消息
+}
 /////////////////////////////////////////////////////////////////////////////
 /// 处理标签按钮点击后的界面显示
 /////////////////////////////////////////////////////////////////////////////
@@ -468,6 +480,7 @@ void MainWidget::loadRecentMessage(const QString &chatSessionId)
         updateRecentMessage(chatSessionId);
     }else{
         // 从服务器拿数据刷新界面
+        connect(dataCenter,&DataCenter::getRecentMessageDone,this,&MainWidget::updateRecentMessage,Qt::UniqueConnection);
         dataCenter->getRecentMessageAsync(chatSessionId);
     }
 }
@@ -501,6 +514,8 @@ void MainWidget::updateRecentMessage(const QString &chatSessionId)
     // 5.保存当前选中的会话是哪一个
     dataCenter->setCurrentChatSessionId(chatSessionId);
 
+    // 6.自动把滚动条滚动到末尾，显示最近一条消息界面
+    sessionShowArea->scrollToEnd();
 }
 
 

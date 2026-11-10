@@ -87,10 +87,13 @@ private:
     };
     ActiveTab activeTab = SESSION_LIST;
 
+public:
     // 标签按钮点击，更新按钮状态
     void switchTabToSession();
     void switchTabToFriend();
     void switchTabToApply();
+    // 点击好友切换标签页至会话页
+    void switchToSession(const QString& userId);
     // 标签按钮点击，对应界面显示
     void loadSessionList();
     void updateChatSessionList();
@@ -101,5 +104,6 @@ private:
 
     void loadRecentMessage(const QString& chatSessionId);
     void updateRecentMessage(const QString& chatSessionId);
+
 };
 #endif // MAINWIDGET_H

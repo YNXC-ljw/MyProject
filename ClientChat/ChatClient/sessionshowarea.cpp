@@ -10,6 +10,7 @@
 #include <QFontMetrics>
 #include <QPainter>
 #include <QPainterPath>
+#include <QTimer>
 
 using namespace model;
 
@@ -93,6 +94,27 @@ void SessionShowArea::clear()
     }
 }
 
+void SessionShowArea::scrollToEnd()
+{
+    // 实现思路：
+    // 拿到滚动区域的垂直滚动条
+    // 获取到滚动条的最大值，根据最大值设置滚动条的滚动位置
+    // 为了使滚动效果更佳，能够在界面绘制好之后进行滚动条的设置
+    // 给这里的滚动操作，加上个 "延时"
+    QTimer* timer = new QTimer();
+    connect(timer, &QTimer::timeout, this, [=]() {
+        // 获取到垂直滚动条的最大值
+        int maxValue = this->verticalScrollBar()->maximum();
+        // 设置滚动条的滚动位置
+        this->verticalScrollBar()->setValue(maxValue);
+
+        timer->stop();
+        timer->deleteLater();
+    });
+    timer->start(500);
+
+
+}
 ////////////////////////////////////////////////////
 /// 表示一个消息元素
 /// 这个里面要能同时支持 文本消息 语音消息 图片消息 文件消息
