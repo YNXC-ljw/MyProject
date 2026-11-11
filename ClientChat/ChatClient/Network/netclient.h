@@ -6,10 +6,12 @@
 #include <QObject>
 #include <QProtobufSerializer>
 #include <QNetworkReply>
+#include "../model/data.h"
 
 // 此处为了避免循环包含头文件，就需要前置声明来解决问题
 namespace model{
     class DataCenter;
+    class Data;
 }
 
 namespace network{
@@ -26,12 +28,19 @@ private:
 public:
     NetClient(model::DataCenter* dataCenter);
 
-    // 测试HTTP连通性
-    void ping();
+//////////////////////////////////////////////////////////////////////////////////
+/// WebSocket 服务器相关操作
+//////////////////////////////////////////////////////////////////////////////////
     // 初始化websocket
     void initWebSocket();
     // 发送验证身份请求(序列化操作)
     void sentAuth();
+    void handleWsResponse(const bite_im::NotifyMessage &notifyMessage);
+//////////////////////////////////////////////////////////////////////////////////
+/// HTTP 服务器相关操作
+//////////////////////////////////////////////////////////////////////////////////
+    // 测试HTTP连通性
+    void ping();
     // 生成请求Id
     QString makeRequestId();
 
@@ -82,9 +91,13 @@ public:
     void getApplyList(const QString& loginSessionId);
     // 获取选中会话的历史消息
     void getRecentMessage(const QString& loginSessionId,const QString& chatSessionId);
+
+    // 发送文本消息
+    void sendMessage(const QString& loginSessionId,const QString& chatSessionId,model::MessageType messageType,
+                     const QByteArray& message,const QString& extroInfo);
+
 private:
     model::DataCenter* dataCenter;
-
     // HTTP 客户端
     QNetworkAccessManager httpClient;
     // WebSocket 客户端

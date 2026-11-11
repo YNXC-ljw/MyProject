@@ -2,6 +2,8 @@
 
 #include "debug.h"
 #include "mainwidget.h"
+#include "model/datacenter.h"
+#include "model/data.h"
 
 #include <QScrollBar>
 #include <QVBoxLayout>
@@ -9,6 +11,8 @@
 #include <QLabel>
 #include <QStyleOption>
 #include <QPainter>
+
+using namespace model;
 
 sessionFriendArea::sessionFriendArea(QWidget *parent)
     : QScrollArea{parent}
@@ -87,6 +91,21 @@ void sessionFriendArea::addItem(ItemType itemType,const QString& id,const QIcon 
     }
     container->layout()->addWidget(item);
 
+}
+
+void sessionFriendArea::clickItem(int index)
+{
+    if (index < 0 || index >= container->layout()->count()) {
+        LOG() << "点击元素的下标超出范围！ index=" << index;
+        return;
+    }
+    QLayoutItem* layoutItem = container->layout()->itemAt(index);
+    if (layoutItem == nullptr || layoutItem->widget() == nullptr) {
+        LOG() << "指定的元素不存在！ index=" << index;
+        return;
+    }
+    SessionFriendItem* item = dynamic_cast<SessionFriendItem*>(layoutItem->widget());
+    item->select();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -215,17 +234,55 @@ void SessionFriendItem::active()
 SessionItem::SessionItem(QWidget *owner, const QString &chatSessionId, const QIcon &avatar, const QString &name, const QString &lastMessage)
     :SessionFriendItem(owner,avatar,name,lastMessage),chatSessionId(chatSessionId)
 {
-
+    DataCenter *dataCenter = DataCenter::getInstance();
+    connect(dataCenter,&DataCenter::updateLastMessage,this,&SessionItem::updateLastMessage);
 }
 
 void SessionItem::active()
 {
-    // TODO 点击之后要加载会话的历史消息列表
+    // 点击之后要加载会话的历史消息列表
     LOG() << "点击SessionItem触发的逻辑！chatSessionId=" << chatSessionId;
 
     // 加载会话历史消息，既会涉及到界面渲染，又会涉及到内存数据操作、还会涉及到网络通信(所以直接在主窗口中进行代码管理)
     MainWidget* mainWidget = MainWidget::getInstance();
     mainWidget->loadRecentMessage(chatSessionId);
+}
+void SessionItem::updateLastMessage(const QString &chatSessionId)
+{
+    DataCenter* dataCenter = DataCenter::getInstance();
+    if(this->chatSessionId != chatSessionId)
+    {
+        // 每个会话Item在程序启动时都绑定这个信号槽，但是只有会话Id匹配的才会更新最后一条消息
+        return;
+    }
+
+    QList<Message>* messageList = dataCenter->getRecentMessageList(chatSessionId);
+    if (messageList == nullptr || messageList->size() == 0) {
+        // 当前会话没有任何消息，无需更新
+        return;
+    }
+
+    const Message& lastMessage = messageList->back();
+
+    // 3. 明确显示的文本内容
+    // 由于消息有四种类型.
+    // 文本消息，直接显示消息的内容；图片消息，直接显示 "[图片]"；文件消息，直接显示 "[文件]"；语音消息，直接显示 "[语音]"
+    QString text;
+    if (lastMessage.messageType == TEXT_TYPE) {
+        text = lastMessage.content;
+    } else if (lastMessage.messageType == IMAGE_TYPE) {
+        text = "[图片]";
+    } else if (lastMessage.messageType == FILE_TYPE) {
+        text = "[文件]";
+    } else if (lastMessage.messageType == SPEECH_TYPE) {
+        text = "[语音]";
+    } else {
+        LOG() << "错误的消息类型!";
+        return;
+    }
+
+    // 4.把内容显示到界面上
+    this->messageLabel->setText(text);
 }
 
 /// /////////////////////////////////////

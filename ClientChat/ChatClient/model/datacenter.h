@@ -50,6 +50,9 @@ private:
     network::NetClient netClient;
 
 public:
+    ////////////////////////////////////////////////////////////////////////////
+    /// 辅助函数
+    ////////////////////////////////////////////////////////////////////////////
     // 初始化数据文件
     void initDataFile();
     // 存储数据到文件中
@@ -65,6 +68,9 @@ public:
     // 测试网络连通性
     void ping() {netClient.ping();}
 
+    //////////////////////////////////////////////////////////////////////////////
+    /// 核心函数
+    //////////////////////////////////////////////////////////////////////////////
     // 通过网络获取用户信息(该函数只负责把HTTP请求发出去，什么时候回来就不管了，通过槽函数接收返回的消息)
     void getMyselfAsync();// 异步(从服务器中取出)
     UserInfo* getMyself();// 同步(本地内存中取出)
@@ -92,14 +98,26 @@ public:
     QList<Message>* getRecentMessageList(const QString& chatSessionId);// 本地获取
     void getRecentMessageAsync(const QString& chatSessionId);//网络获取
     void resetRecentMessageList(const QString& chatSessionId,std::shared_ptr<bite_im::GetRecentMsgRsp> resp);
+
+    // 通过网络将文本消息发送出去
+    void sendTextMessageAsync(const QString &chatSessionId,const QString& message);
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// 辅助函数
+    ////////////////////////////////////////////////////////////////////////////
     // 通过sessionId查找会话信息
     chatSessionInfo* findSessionById(const QString& chatSessionId);
     // 通过userId查找会话信息
     chatSessionInfo* findChatSessionByUserId(const QString& userId);
+    // 把指定的会话信息置顶
+    void topChatSessionInfo(chatSessionInfo& chatSessionInfo);
 
     // 设置当前被选中的会话是哪个
     QString& getCurrentChatSessionId();
     void setCurrentChatSessionId(const QString& chatSessionId);
+
+    // 添加message到DataCenter中
+    void addMessage(const Message& message);
 
 signals:
     // 定义处理信号
@@ -108,6 +126,8 @@ signals:
     void getChatSessionListDone();
     void getApplyListDone();
     void getRecentMessageDone(const QString& chatSessionId);
+    void sendMessageDone(MessageType messageType, const QByteArray& message, const QString& extraInfo);
+    void updateLastMessage(const QString& currentChatSessionId);
 };
 
 } // end namespace

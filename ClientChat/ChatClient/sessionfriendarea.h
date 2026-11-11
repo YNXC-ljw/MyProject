@@ -5,8 +5,6 @@
 #include <QScrollArea>
 #include <QLabel>
 
-#include "model/data.h"
-
 /////////////////////////////////////////
 /// 滚动区域中Item的类型
 /////////////////////////////////////////
@@ -33,6 +31,7 @@ public:
     // 往container内部添加Item
     void addItem(ItemType itemType,const QString& id,const QIcon& avatar,const QString &name,const QString& text);
 
+    void clickItem(int index);
 private:
     // 后续往container内部的layout中添加元素，就能触发QScrollArea的滚动效果
     QWidget* container;
@@ -78,6 +77,7 @@ public:
     SessionItem(QWidget* owner,const QString& chatSessionId,const QIcon& avatar,const QString& name,
                 const QString &lastMessage);
     void active() override;
+    void updateLastMessage(const QString& chatSessionId);
 private:
     // 当前会话ID
     QString chatSessionId;

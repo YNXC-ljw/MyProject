@@ -295,6 +295,28 @@ chatSessionInfo *DataCenter::findChatSessionByUserId(const QString &userId)
     }
     return nullptr;
 }
+
+void DataCenter::topChatSessionInfo(chatSessionInfo &chatSessionInfo)
+{
+    if(chatSessionList == nullptr)
+    {
+        return;
+    }
+    // 1.找到元素
+    auto it = chatSessionList->begin();
+    for(;it != chatSessionList->end();it++)
+    {
+        if(it->chatSessionId == chatSessionInfo.chatSessionId)
+        {
+            break;
+        }
+    }
+    // 找到了，就是it
+    // 2.备份并删除
+    class chatSessionInfo backup = chatSessionInfo;
+    chatSessionList->erase(it);
+    // 3.插入
+    chatSessionList->push_front(backup);
 }
 
 QString &DataCenter::getCurrentChatSessionId()
@@ -305,6 +327,17 @@ QString &DataCenter::getCurrentChatSessionId()
 void DataCenter::setCurrentChatSessionId(const QString &chatSessionId)
 {
     this->currentChatSessionId = chatSessionId;
+}
+
+void DataCenter::sendTextMessageAsync(const QString &chatSessionId, const QString &message)
+{
+    netClient.sendMessage(loginSessionId,chatSessionId,MessageType::TEXT_TYPE,message.toUtf8(),""); // 支持多种消息就要将QString转成二进制
+}
+
+void DataCenter::addMessage(const Message &message)
+{
+    QList<Message>& messageList = (*recentMessages)[message.chatSessionId];
+    messageList.push_back(message);
 }
 
 

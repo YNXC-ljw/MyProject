@@ -4,6 +4,7 @@
 #include "../model/data.h"
 #include "../model/datacenter.h"
 
+using namespace model;
 namespace network{
 
 NetClient::NetClient(model::DataCenter *dataCenter)
@@ -13,29 +14,9 @@ NetClient::NetClient(model::DataCenter *dataCenter)
     initWebSocket();
 }
 
-// 检验HTTP连通性
-void NetClient::ping()
-{
-    // 1.制作请求
-    QNetworkRequest httpReq;
-    httpReq.setUrl(HTTP_URL + "/ping");
-
-    // 2.获取响应(响应和请求不同，请求是立即发送的，但是响应回来需要时间 )
-    QNetworkReply* httpResp = httpClient.get(httpReq);
-    connect(httpResp,&QNetworkReply::finished,this,[=](){
-        // 此时说明响应已经回来
-        if(httpResp->error() != QNetworkReply::NoError) // 确认网络请求没有出错
-        {
-            LOG() << "HTTP请求失败!" << httpResp->errorString();
-            httpResp->deleteLater();
-            return;
-        }
-        // 获取响应的body
-        QByteArray body = httpResp->readAll();
-        LOG() << "响应内容：" << body;
-        httpResp->deleteLater();
-    });
-}
+///////////////////////////////////////////////////////////////////////////////////////////
+/// WebSocket 客户端
+///////////////////////////////////////////////////////////////////////////////////////////
 
 // 初始化Websocket
 void NetClient::initWebSocket()
@@ -61,7 +42,9 @@ void NetClient::initWebSocket()
 
     connect(&webSocketClient, &QWebSocket::binaryMessageReceived, this, [=](const QByteArray& byteArray) {
         LOG() << "WebSocket 收到二进制消息！" << byteArray.length();
-        // 后续的内容处理，后面再写
+        bite_im::NotifyMessage notifyMessage;
+        notifyMessage.deserialize(&serializer,byteArray);
+        handleWsResponse(notifyMessage);
     });
 
     // 2.和服务器真正建立连接
@@ -77,6 +60,39 @@ void NetClient::sentAuth()
     QByteArray message = req.serialize(&serializer);
     webSocketClient.sendBinaryMessage(message);
     LOG() << "[websocket身份认证] requestId = " << req.requestId() << ", loginSessionId = " << req.sessionId();
+}
+
+void NetClient::handleWsResponse(const bite_im::NotifyMessage &notifyMessage)
+{
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+/// HTTP 客户端
+///////////////////////////////////////////////////////////////////////////////////////////
+
+// 检验HTTP连通性
+void NetClient::ping()
+{
+    // 1.制作请求
+    QNetworkRequest httpReq;
+    httpReq.setUrl(HTTP_URL + "/ping");
+
+    // 2.获取响应(响应和请求不同，请求是立即发送的，但是响应回来需要时间 )
+    QNetworkReply* httpResp = httpClient.get(httpReq);
+    connect(httpResp,&QNetworkReply::finished,this,[=](){
+        // 此时说明响应已经回来
+        if(httpResp->error() != QNetworkReply::NoError) // 确认网络请求没有出错
+        {
+            LOG() << "HTTP请求失败!" << httpResp->errorString();
+            httpResp->deleteLater();
+            return;
+        }
+        // 获取响应的body
+        QByteArray body = httpResp->readAll();
+        LOG() << "响应内容：" << body;
+        httpResp->deleteLater();
+    });
 }
 
 // 生成唯一Id
@@ -299,6 +315,91 @@ void NetClient::getRecentMessage(const QString &loginSessionId, const QString &c
 
         // e) 打印日志
         LOG() << "[获取最近消息] 响应处理完毕！ requestId = " << pbResp->requestId();
+    });
+}
+
+// 此处的 extraInfo，可以用来传递 "扩展信息"，尤其是对于文件消息来说，通过这个字段表示 "文件名"
+// 其他类型的消息暂时不涉及，就直接设为 ""，如果后续有消息类型需要，都可以给这个参数，灵活的扩充
+
+void NetClient::sendMessage(const QString &loginSessionId, const QString &chatSessionId, MessageType messageType,
+                            const QByteArray &message,const QString& extraInfo)
+{
+    // 1.通过pb构造请求
+    bite_im::NewMessageReq req;
+    req.setChatSessionId(chatSessionId);
+    req.setSessionId(loginSessionId);
+    req.setRequestId(makeRequestId());
+
+    // 构造messageContent
+    bite_im::MessageContent messageContent;
+    if(messageType == MessageType::TEXT_TYPE)
+    {
+        messageContent.setMessageType(bite_im::MessageTypeGadget::MessageType::STRING);
+
+        bite_im::StringMessageInfo stringMessageInfo;
+        stringMessageInfo.setContent(message);
+        messageContent.setStringMessage(stringMessageInfo);
+    }else if(messageType == MessageType::IMAGE_TYPE){
+        messageContent.setMessageType(bite_im::MessageTypeGadget::MessageType::IMAGE);
+
+        bite_im::StringMessageInfo stringMessageInfo;
+        stringMessageInfo.setContent(message);
+        messageContent.setStringMessage(stringMessageInfo);
+    } else if (messageType == MessageType::IMAGE_TYPE) {
+        messageContent.setMessageType(bite_im::MessageTypeGadget::MessageType::IMAGE);
+
+        bite_im::ImageMessageInfo imageMessageInfo;
+        imageMessageInfo.setFileId("");      // fileId 是文件在服务器存储的时候，生成的 id，此时还无法获取到，暂时填成 ""
+        imageMessageInfo.setImageContent(message);
+        messageContent.setImageMessage(imageMessageInfo);
+    } else if (messageType == MessageType::FILE_TYPE) {
+        messageContent.setMessageType(bite_im::MessageTypeGadget::MessageType::FILE);
+
+        bite_im::FileMessageInfo fileMessageInfo;
+        fileMessageInfo.setFileId("");       // fileId 是文件在服务器存储的时候，生成的 id，此时还无法获取到，暂时填成 ""
+        fileMessageInfo.setFileSize(message.size());
+        fileMessageInfo.setFileName(extraInfo);
+        fileMessageInfo.setFileContents(message);
+        messageContent.setFileMessage(fileMessageInfo);
+    } else if (messageType == MessageType::SPEECH_TYPE) {
+        messageContent.setMessageType(bite_im::MessageTypeGadget::MessageType::SPEECH);
+
+        bite_im::SpeechMessageInfo speechMessageInfo;
+        speechMessageInfo.setFileId("");     // fileId 是文件在服务器存储的时候，生成的 id，此时还无法获取到，暂时填成 ""
+        speechMessageInfo.setFileContents(message);
+        messageContent.setSpeechMessage(speechMessageInfo);
+    } else {
+        LOG() << "错误的消息类型! messageType=" << messageType;
+    }
+    req.setMessage(messageContent);
+
+    // 序列化
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[发送消息] 发送请求 requestId = " << req.requestId() << ", loginSessionId = " << req.sessionId() <<
+        ", chatSessionId = " << req.chatSessionId() << ", messageType = " << req.message().messageType();
+    // 2.发送请求并接收返回的响应
+    QNetworkReply* httpResp = sendHttpRequest("/service/message_transmit/new_message",body);
+
+    connect(httpResp,&QNetworkReply::finished,this,[=](){
+        // a) 针对响应结果进行解析
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::NewMessageRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应是否正确
+        if (!ok) {
+            LOG() << "[发送消息] 处理出错! reason=" << reason;
+            return;
+        }
+
+        // c) 此处只是需要记录 "成功失败"，不需要把内容写入到 DataCenter 中。
+
+        // d) 通知调用者，响应处理完毕
+        emit dataCenter->sendMessageDone(messageType, message, extraInfo);
+
+        // e) 打印日志
+        LOG() << "[发送消息] 响应处理完毕! requestId=" << pbResp->requestId();
+
     });
 }
 

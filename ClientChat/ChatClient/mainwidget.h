@@ -105,5 +105,8 @@ public:
     void loadRecentMessage(const QString& chatSessionId);
     void updateRecentMessage(const QString& chatSessionId);
 
+    // 获取messageShowArea
+    SessionShowArea* getSessionShowArea();
+
 };
 #endif // MAINWIDGET_H

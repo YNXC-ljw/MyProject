@@ -190,6 +190,7 @@ void MainWidget::initRightWindow()
 #endif
     hlayout->addWidget(sessionTitleLabel);
 
+    // 扩展按钮
     extraBtn = new QPushButton();
     extraBtn->setFixedSize(30, 30);
     extraBtn->setIconSize(QSize(30, 30));
@@ -342,12 +343,18 @@ void MainWidget::switchToSession(const QString &userId)
 {
     // 1.在会话列表中，找到对应的会话元素
     DataCenter* dataCenter = DataCenter::getInstance();
-    dataCenter->findChatSessionByUserId(userId);
+    chatSessionInfo* chatSessionInfo = dataCenter->findChatSessionByUserId(userId);
+    if(chatSessionInfo == nullptr)
+    {
+        LOG() << "[严重错误] 当前选中的好友会话不存在！";
+        return;
+    }
     // 2.把对应的会话置顶
-
+    dataCenter->topChatSessionInfo(*chatSessionInfo);
     // 3.切换到会话列表标签页
-
-    // 4.加载这个会话的历史消息
+    switchTabToSession();
+    // 4.加载这个会话的历史消息(置顶选中消息)
+    sessionFriArea->clickItem(0);
 }
 /////////////////////////////////////////////////////////////////////////////
 /// 处理标签按钮点击后的界面显示
@@ -516,6 +523,11 @@ void MainWidget::updateRecentMessage(const QString &chatSessionId)
 
     // 6.自动把滚动条滚动到末尾，显示最近一条消息界面
     sessionShowArea->scrollToEnd();
+}
+
+SessionShowArea *MainWidget::getSessionShowArea()
+{
+    return sessionShowArea;
 }
 
 

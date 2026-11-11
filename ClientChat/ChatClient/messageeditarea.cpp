@@ -1,9 +1,15 @@
 #include "messageeditarea.h"
 #include "historymessagewidget.h"
+#include "model/datacenter.h"
+#include "sessionshowarea.h"
+#include "mainwidget.h"
 
 #include <QVBoxLayout>
 #include <QScrollBar>
 #include <QHBoxLayout>
+#include <QMessageBox>
+
+using namespace model;
 
 MessageEditArea::MessageEditArea(QWidget *parent)
     : QWidget{parent}
@@ -76,12 +82,72 @@ MessageEditArea::MessageEditArea(QWidget *parent)
     sendTextBtn->setStyleSheet(style);
     hlayout->addWidget(sendTextBtn);
 
-    // 7.连接信号槽
+    // 7.统一处理信号槽
+    initSignalSlot();
+
+}
+
+void MessageEditArea::initSignalSlot()
+{
+    DataCenter *dataCenter = DataCenter::getInstance();
+    // 显示历史消息窗口
     connect(showHistoryBtn,&QPushButton::clicked,this,[=](){
         HistoryMessageWidget* historyMessageWidget = new HistoryMessageWidget(this);
         historyMessageWidget->exec();
     });
 
+    // 关联"发送文本消息"信号槽
+    connect(sendTextBtn,&QPushButton::clicked,this,&MessageEditArea::sendTextMessage);
+    connect(dataCenter,&DataCenter::sendMessageDone,this,&MessageEditArea::addSelfMessage);
+}
+
+void MessageEditArea::sendTextMessage()
+{
+    // 1.先确认目前是否有会话被选中
+    DataCenter *dataCenter = DataCenter::getInstance();
+    if(dataCenter->getCurrentChatSessionId().isEmpty())
+    {
+        LOG() << "当前未选中任何会话，不会发送任何消息！";
+        // 上述日志，只是在开发阶段能看到，程序发布出去了，此时就无法看到了。
+        // 因此需要让普通用户，也能看到 "提示"
+        QMessageBox::information(this,"提示：","当前未选中会话，不发送任何消息！");
+        return;
+    }
+
+    // 2.获取到输入框的内容，查看有没有内容，有内容可以发送，没有不做任何操作
+    const QString& message = textEdit->toPlainText().trimmed();// 清除输入框前后两头的空白符
+    if(message.isEmpty())
+    {
+        LOG() << "输入框为空!" ;
+        return;
+    }
+
+    // 3.清空输入框中的内容
+    textEdit->clear();
+
+    // 4.通过网络将消息发送出去
+    dataCenter->sendTextMessageAsync(dataCenter->getCurrentChatSessionId(),message);
+}
+
+void MessageEditArea::addSelfMessage(model::MessageType messageType, const QByteArray &content, const QString &extraInfo)
+{
+    DataCenter* dataCenter = DataCenter::getInstance();
+    const QString& currentChatSessionId = dataCenter->getCurrentChatSessionId();
+
+    // 1.构造一个message对象
+    Message message = Message::makeMessage(messageType,currentChatSessionId,*dataCenter->getMyself(),content,extraInfo);
+    dataCenter->addMessage(message);
+
+    // 2.将消息显示到消息展示区
+    MainWidget* mainWidget = MainWidget::getInstance();
+    SessionShowArea* sessionShowArea = mainWidget->getSessionShowArea();
+    sessionShowArea->addMessageItem(false,message);
+
+    // 3.控制消息滚动区显示消息最底部
+    sessionShowArea->scrollToEnd();
+
+    // 4.发送信号通知会话列表，更新最后一条消息
+    emit dataCenter->updateLastMessage(currentChatSessionId);
 }
 
 
