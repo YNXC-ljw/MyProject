@@ -99,6 +99,9 @@ void MessageEditArea::initSignalSlot()
     // 关联"发送文本消息"信号槽
     connect(sendTextBtn,&QPushButton::clicked,this,&MessageEditArea::sendTextMessage);
     connect(dataCenter,&DataCenter::sendMessageDone,this,&MessageEditArea::addSelfMessage);
+
+    // 关联收到消息并展示在消息展示区的信号槽
+    connect(dataCenter,&DataCenter::receiveMessageDone,this,&MessageEditArea::addReceiveMessage);
 }
 
 void MessageEditArea::sendTextMessage()
@@ -148,6 +151,22 @@ void MessageEditArea::addSelfMessage(model::MessageType messageType, const QByte
 
     // 4.发送信号通知会话列表，更新最后一条消息
     emit dataCenter->updateLastMessage(currentChatSessionId);
+}
+
+void MessageEditArea::addReceiveMessage(const Message &message)
+{
+    // 1.通过主界面获取消息展示区
+    MainWidget* mainWidget = MainWidget::getInstance();
+    SessionShowArea* sessionShowArea = mainWidget->getSessionShowArea();
+
+    // 2.将消息添加到消息展示区
+    sessionShowArea->addMessageItem(true,message);
+
+    // 3.控制消息展示区滚动条滚动到最底部
+    sessionShowArea->scrollToEnd();
+
+    // 4.提示一个收到新消息
+
 }
 
 

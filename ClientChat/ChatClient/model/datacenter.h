@@ -59,6 +59,13 @@ public:
     void saveDataToFile();
     // 将文件数据加载到内存中
     void loadDataFile();
+    // 清除当前会话的未读消息数
+    void clearUnReadCount(const QString& chatSessionId);
+    // 增加未读消息数
+    void addUnReadCount(const QString& chatSessionId);
+    // 获取未读消息数
+    int getUnReadCount(const QString& chatSessionId);
+
     // 获取当前登录会话Id
     const QString& getLoginSessionId() const
     {
@@ -96,11 +103,18 @@ public:
 
     // 获取最近消息列表
     QList<Message>* getRecentMessageList(const QString& chatSessionId);// 本地获取
-    void getRecentMessageAsync(const QString& chatSessionId);//网络获取
+    void getRecentMessageAsync(const QString& chatSessionId,bool updateUI);//网络获取
     void resetRecentMessageList(const QString& chatSessionId,std::shared_ptr<bite_im::GetRecentMsgRsp> resp);
 
     // 通过网络将文本消息发送出去
     void sendTextMessageAsync(const QString &chatSessionId,const QString& message);
+
+    // 通过网络请求修改用户昵称
+    void changeNickNameAsync(const QString& nickname);
+    void resetNickName(const QString &nickname);
+    // 通过网络请求修改用户签名
+    void changeDesciptionAsync(const QString& desciption);
+    void resetDescription(const QString& description);
 
     ////////////////////////////////////////////////////////////////////////////
     /// 辅助函数
@@ -126,8 +140,12 @@ signals:
     void getChatSessionListDone();
     void getApplyListDone();
     void getRecentMessageDone(const QString& chatSessionId);
+    void getRecentMessageNoUIDone(const QString& chatSessionId);
     void sendMessageDone(MessageType messageType, const QByteArray& message, const QString& extraInfo);
     void updateLastMessage(const QString& currentChatSessionId);
+    void receiveMessageDone(const Message& message);
+    void changeNickNameDone();
+    void changeDescptionDone();
 };
 
 } // end namespace

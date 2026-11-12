@@ -488,7 +488,7 @@ void MainWidget::loadRecentMessage(const QString &chatSessionId)
     }else{
         // 从服务器拿数据刷新界面
         connect(dataCenter,&DataCenter::getRecentMessageDone,this,&MainWidget::updateRecentMessage,Qt::UniqueConnection);
-        dataCenter->getRecentMessageAsync(chatSessionId);
+        dataCenter->getRecentMessageAsync(chatSessionId,true);
     }
 }
 

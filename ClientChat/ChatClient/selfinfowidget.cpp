@@ -1,8 +1,11 @@
 #include "selfinfowidget.h"
+#include "model/datacenter.h"
 
 #include<QGridLayout>
 
 #include "debug.h"
+
+using namespace model;
 
 SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
 {
@@ -14,7 +17,7 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
     this->move(QCursor::pos());
 
     // 2.创建网格布局管理器
-    QGridLayout* layout = new QGridLayout();
+    layout = new QGridLayout();
     //layout->setSpacing(0); // 默认设置布局管理器内所有控件的水平、垂直间距;也可以分开设置
     layout->setHorizontalSpacing(10);
     layout->setVerticalSpacing(5);
@@ -33,7 +36,6 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
     avatarBtn = new QPushButton();
     avatarBtn->setFixedSize(75,75);
     avatarBtn->setIconSize(QSize(75,75));
-    avatarBtn->setIcon(QIcon(":/resource/image/avatar.jpg"));
     avatarBtn->setStyleSheet("QPusuButton { border: none; background-color: transparent; }");
     layout->addWidget(avatarBtn,0,0,3,1);
 
@@ -182,10 +184,31 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
     nameLabel->setText("可怡宝宝");
     descLabel->setText("可怡宝宝最可爱了");
     phoneLabel->setText("18212345678");
-
+    avatarBtn->setIcon(QIcon(":/resource/image/avatar.jpg"));
 #endif
 
     // 10.连接信号槽
+    initSignalSlots();
+
+    // 点击关闭对话框后要及时释放掉对象内存以免内存泄露
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
+    // 11.将本地数据加载到界面上
+    DataCenter* dataCenter = DataCenter::getInstance();
+    UserInfo* myself = dataCenter->getMyself();
+    if(myself != nullptr)
+    {
+        // 把本地数据加载到个人信息上
+        avatarBtn->setIcon(myself->avatar);
+        idLabel->setText(myself->userId);
+        nameLabel->setText(myself->nickName);
+        descLabel->setText(myself->description);
+        phoneLabel->setText(myself->phone);
+    }
+}
+
+void SelfInfoWidget::initSignalSlots()
+{
     connect(nameModifyBtn,&QPushButton::clicked,this,[=](){
         // 把当前的nameLabel和nameModifyBtn隐藏起来，并将它们移除出布局管理器
         nameLabel->hide();
@@ -238,8 +261,72 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
         layout->addWidget(getVerifyCodeBtn,4,3);
     });
 
-    // 点击关闭对话框后要及时释放掉对象内存以免内存泄露
-    this->setAttribute(Qt::WA_DeleteOnClose);
+    // 修改昵称
+    connect(nameSubmitBtn,&QPushButton::clicked,this,&SelfInfoWidget::clickNameSubmitBtn);
+    // 修改签名
+    connect(descSubmitBtn,&QPushButton::clicked,this,&SelfInfoWidget::clickDescSubmitBtn);
+}
+
+void SelfInfoWidget::clickNameSubmitBtn()
+{
+    // 1.从输入框中拿到昵称内容
+    const QString& nickname = nameEdit->text();
+    if(nickname.isEmpty())
+    {
+        return;
+    }
+    // 2.发送网络请求
+    DataCenter *dataCenter = DataCenter::getInstance();
+    connect(dataCenter,&DataCenter::changeNickNameDone,this,&SelfInfoWidget::onClickNameSubmitBtn);
+    dataCenter->changeNickNameAsync(nickname);
+}
+
+void SelfInfoWidget::onClickNameSubmitBtn()
+{
+    // 对界面控件进行切换．把刚才输入框切换回 label，把提交按钮切换回编辑按钮．
+    // 同时还需要把输入框中的本文设置为 label 中的文本．
+    layout->removeWidget(nameEdit);
+    nameEdit->hide();
+    layout->addWidget(nameLabel, 1, 2);
+    nameLabel->show();
+    nameLabel->setText(nameEdit->text());
+
+    layout->removeWidget(nameSubmitBtn);
+    nameSubmitBtn->hide();
+    layout->addWidget(nameModifyBtn, 1, 3);
+    nameModifyBtn->show();
+
+}
+
+void SelfInfoWidget::clickDescSubmitBtn()
+{
+    // 1.从输入框中拿到昵称内容
+    const QString& description = descEdit->text();
+    if(description.isEmpty())
+    {
+        return;
+    }
+    // 2.发送网络请求
+    DataCenter *dataCenter = DataCenter::getInstance();
+    connect(dataCenter,&DataCenter::changeDescptionDone,this,&SelfInfoWidget::onClickDescSubmitBtn);
+    dataCenter->changeDesciptionAsync(description);
+}
+
+void SelfInfoWidget::onClickDescSubmitBtn()
+{
+    // 切换界面.
+    // 把 label 替换回输入框，把编辑按钮替换回修改按钮
+    layout->removeWidget(descEdit);
+    descEdit->hide();
+    layout->addWidget(descLabel, 2, 2);
+    descLabel->show();
+    descLabel->setText(descEdit->text());
+
+    layout->removeWidget(descSubmitBtn);
+    descSubmitBtn->hide();
+    layout->addWidget(descModifyBtn, 2, 3);
+    descModifyBtn->show();
+
 }
 
 

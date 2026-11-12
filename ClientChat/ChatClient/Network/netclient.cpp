@@ -64,7 +64,59 @@ void NetClient::sentAuth()
 
 void NetClient::handleWsResponse(const bite_im::NotifyMessage &notifyMessage)
 {
+    if(notifyMessage.notifyType() == bite_im::NotifyTypeGadget::NotifyType::CHAT_MESSAGE_NOTIFY)
+    {
+        // 收到消息
+        // 1.把pb中的 MessageInfo 转成自己客户端的 message
+        Message message;
+        message.load(notifyMessage.newMessageInfo().messageInfo());
 
+        // 2.针对自己的message做进一步的处理
+        handleWsMessage(message);
+    }else if(notifyMessage.notifyType() == bite_im::NotifyTypeGadget::NotifyType::CHAT_SESSION_CREATE_NOTIFY){
+        // 创建新会话
+    }else if(notifyMessage.notifyType() == bite_im::NotifyTypeGadget::NotifyType::FRIEND_ADD_APPLY_NOTIFY){
+        // 好友申请通知
+    }else if(notifyMessage.notifyType() == bite_im::NotifyTypeGadget::NotifyType::FRIEND_ADD_PROCESS_NOTIFY){
+        // 添加好友申请处理结果
+    }else if(notifyMessage.notifyType() == bite_im::NotifyTypeGadget::NotifyType::FRIEND_REMOVE_NOTIFY){
+        // 好友删除通知
+    }
+}
+
+void NetClient::handleWsMessage(const model::Message &message)
+{
+    // 这里需要考虑两种情况
+    DataCenter* dataCenter = DataCenter::getInstance();
+    QList<Message>* messageList = dataCenter->getRecentMessageList(message.chatSessionId);
+    if(messageList == nullptr)
+    {
+        // 1.如果当前这个消息所属的会话，没有在本地加载最近消息列表，此时就需要通过网络将整个消息列表加载出来
+        connect(dataCenter,&DataCenter::getRecentMessageNoUIDone,this,&NetClient::receiveMessage,Qt::UniqueConnection);
+        dataCenter->getRecentMessageAsync(message.chatSessionId,false);
+    }else{
+        // 2.如果当前消息所属的会话已经在本地加载最近的消息列表，直接将消息尾插到消息展示区即可
+        messageList->push_back(message);
+        this->receiveMessage(message.chatSessionId);
+    }
+}
+
+void NetClient::receiveMessage(const QString &chatSessionId)
+{
+    // 先判定一下这个会话是否是被选中的会话？
+    // 是，则直接将消息对象尾插到消息展示区，并同步消息列表的消息预览
+    // 否，则只更新会话列表中的消息预览以及未读消息个数
+    if(chatSessionId == dataCenter->getCurrentChatSessionId())
+    {
+        // 是
+        const Message& lastMessage = dataCenter->getRecentMessageList(chatSessionId)->back();
+        emit dataCenter->receiveMessageDone(lastMessage);
+    }else{
+        // 否
+        dataCenter->addUnReadCount(chatSessionId);
+    }
+    // 统一处理消息预览
+    emit dataCenter->updateLastMessage(chatSessionId);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -280,7 +332,7 @@ void NetClient::getApplyList(const QString &loginSessionId)
 
 }
 
-void NetClient::getRecentMessage(const QString &loginSessionId, const QString &chatSessionId)
+void NetClient::getRecentMessage(const QString &loginSessionId, const QString &chatSessionId,bool updateUI)
 {
     // 1.构造HTTP请求body
     bite_im::GetRecentMsgReq req;
@@ -311,7 +363,12 @@ void NetClient::getRecentMessage(const QString &loginSessionId, const QString &c
         dataCenter->resetRecentMessageList(chatSessionId,pbResp);
 
         // d) 通知界面处理完毕,可以渲染界面
-        emit dataCenter->getRecentMessageDone(chatSessionId);
+        if(updateUI)
+        {
+            emit dataCenter->getRecentMessageDone(chatSessionId);
+        }else{
+            emit dataCenter->getRecentMessageNoUIDone(chatSessionId);
+        }
 
         // e) 打印日志
         LOG() << "[获取最近消息] 响应处理完毕！ requestId = " << pbResp->requestId();
@@ -400,6 +457,81 @@ void NetClient::sendMessage(const QString &loginSessionId, const QString &chatSe
         // e) 打印日志
         LOG() << "[发送消息] 响应处理完毕! requestId=" << pbResp->requestId();
 
+    });
+}
+
+void NetClient::changeNickName(const QString& loginSessionId,const QString &nickname)
+{
+    // 1.构造请求体
+    bite_im::SetUserNicknameReq req;
+    req.setNickname(nickname);
+    req.setRequestId(makeRequestId());
+    req.setSessionId(loginSessionId);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[修改用户昵称] 发送请求 requedtId = " << req.requestId() << ", loginSessionId = " << req.sessionId()
+          << ", nickName = " << req.nickname();
+    // 2.发送请求并接收响应
+    QNetworkReply* httpResp = sendHttpRequest("/service/user/set_nickname",body);
+
+    // 3.通过信号槽处理响应结果
+    connect(httpResp,&QNetworkReply::finished,this,[=](){
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::SetUserNicknameRsp>(httpResp, &ok, &reason);
+
+        // b) 判定是否出错
+        if (!ok) {
+            LOG() << "[修改用户昵称] 出错! reason=" << reason;
+            return;
+        }
+
+        // c) 把数据设置到 DataCenter 里面. 这里的处理和前面不太一样.
+        dataCenter->resetNickName(nickname);
+
+        // d) 发送信号, 通知调用者, 这里处理完毕
+        emit dataCenter->changeNickNameDone();
+
+        // e) 打印日志
+        LOG() << "[修改用户昵称] 处理响应完毕! requestId=" << pbResp->requestId();
+    });
+}
+
+void NetClient::changeDescription(const QString &loginSessionId, const QString &description)
+{
+    // 1.构造请求体
+    bite_im::SetUserDescriptionReq req;
+    req.setRequestId(makeRequestId());
+    req.setSessionId(loginSessionId);
+    req.setDescription(description);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[修改用户签名] 发送请求 requestId=" << req.requestId() << ", loginSessionId=" << req.sessionId()
+          << ", desc=" << req.description();
+
+    // 2. 发送 http 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/user/set_description", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::SetUserDescriptionRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应是否成功
+        if (!ok) {
+            LOG() << "[修改用户签名] 响应失败! reason=" << reason;
+            return;
+        }
+
+        // c) 把得到的结果，写入 DataCenter
+        dataCenter->resetDescription(description);
+
+        // d) 通知完成
+        emit dataCenter->changeDescptionDone();
+
+        // e) 打印日志
+        LOG() << "[修改签名] 响应完成! requestId=" << pbResp->requestId();
     });
 }
 

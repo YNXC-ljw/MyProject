@@ -2,7 +2,7 @@
 #include "debug.h"
 #include "userinfowidget.h"
 #include "mainwidget.h"
-
+#include "model/datacenter.h"
 #include <QScrollBar>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -65,6 +65,7 @@ SessionShowArea::SessionShowArea() {
 
 }
 
+// 尾插
 void SessionShowArea::addMessageItem(bool isLeft, const Message &message)
 {
     // 构造MessageItem,添加到布局管理器中
@@ -189,13 +190,23 @@ MessageItem *MessageItem::makeMessageItem(bool isLeft, const Message &message)
         layout->addWidget(contentWidget,1,0);
     }
 
-    // 在消息展示区每一个消息Item中连接信号槽，表示点击Item头像时生成一个模态对话框以展示被点击用户的主页信息
+    // 5.在消息展示区每一个消息Item中连接信号槽，表示点击Item头像时生成一个模态对话框以展示被点击用户的主页信息
     connect(avatarBtn,&QPushButton::clicked,messageItem,[=](){
         MainWidget* mainWidget = MainWidget::getInstance();
         UserInfoWidget* userInfoWidget = new UserInfoWidget(message.sender,mainWidget);
         userInfoWidget->exec();
         // userInfoWidget->show(); // 非模态对话框
     });
+
+    // 6.关联修改用户昵称信号槽
+    if(!isLeft)
+    {
+        DataCenter* dataCenter = DataCenter::getInstance();
+        connect(dataCenter,&DataCenter::changeNickNameDone,messageItem,[=](){
+            nameLabel->setText(dataCenter->getMyself()->nickName + " | " + message.time);
+        });
+    }
+
     return messageItem;
 }
 

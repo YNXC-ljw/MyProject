@@ -247,6 +247,7 @@ void SessionItem::active()
     MainWidget* mainWidget = MainWidget::getInstance();
     mainWidget->loadRecentMessage(chatSessionId);
 }
+// 更新消息预览
 void SessionItem::updateLastMessage(const QString &chatSessionId)
 {
     DataCenter* dataCenter = DataCenter::getInstance();

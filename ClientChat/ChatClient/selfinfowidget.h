@@ -6,13 +6,22 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QLabel>
+#include <QGridLayout>
 
 class SelfInfoWidget : public QDialog
 {
     Q_OBJECT
 public:
     SelfInfoWidget(QWidget* parent);
+
+    void initSignalSlots();
+    void clickNameSubmitBtn();
+    void onClickNameSubmitBtn();
+    void clickDescSubmitBtn();
+    void onClickDescSubmitBtn();
 private:
+    QGridLayout* layout;
+
     QPushButton* avatarBtn;
     QLabel* idTag;              // 显示 "序号"
     QLabel* idLabel;            // 显示 "1234"
@@ -38,7 +47,6 @@ private:
     QLabel* verifyCodeTag;       // 显示 "验证码"
     QLineEdit* verifyCodeEdit;   // 输入验证码
     QPushButton* getVerifyCodeBtn; // 获取验证码按钮
-
 };
 
 #endif // SELFINFOWIDGET_H

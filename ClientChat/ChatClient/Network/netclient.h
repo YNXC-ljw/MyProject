@@ -36,6 +36,8 @@ public:
     // 发送验证身份请求(序列化操作)
     void sentAuth();
     void handleWsResponse(const bite_im::NotifyMessage &notifyMessage);
+    void handleWsMessage(const model::Message& message);
+    void receiveMessage(const QString& chatSessionId);
 //////////////////////////////////////////////////////////////////////////////////
 /// HTTP 服务器相关操作
 //////////////////////////////////////////////////////////////////////////////////
@@ -90,12 +92,16 @@ public:
     // 获取好友申请列表
     void getApplyList(const QString& loginSessionId);
     // 获取选中会话的历史消息
-    void getRecentMessage(const QString& loginSessionId,const QString& chatSessionId);
+    void getRecentMessage(const QString& loginSessionId,const QString& chatSessionId,bool updateUI);
 
     // 发送文本消息
     void sendMessage(const QString& loginSessionId,const QString& chatSessionId,model::MessageType messageType,
                      const QByteArray& message,const QString& extroInfo);
 
+    // 修改用户昵称
+    void changeNickName(const QString& loginSessionId,const QString& nickname);
+    // 修改用户签名
+    void changeDescription(const QString& loginSessionId,const QString& description);
 private:
     model::DataCenter* dataCenter;
     // HTTP 客户端

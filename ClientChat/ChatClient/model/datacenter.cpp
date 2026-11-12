@@ -115,6 +115,25 @@ void DataCenter::loadDataFile()
 
 }
 
+void DataCenter::clearUnReadCount(const QString& chatSessionId)
+{
+    (*unReadMessageCount)[chatSessionId] = 0;
+    saveDataToFile();
+}
+
+void DataCenter::addUnReadCount(const QString& chatSessionId)
+{
+    ++(*unReadMessageCount)[chatSessionId];
+    saveDataToFile();
+}
+
+int DataCenter::getUnReadCount(const QString& chatSessionId)
+{
+    return (*unReadMessageCount)[chatSessionId];
+}
+
+
+
 //////////////////////////////////////////////////////
 /// 获取个人信息
 //////////////////////////////////////////////////////
@@ -240,9 +259,9 @@ QList<Message> *DataCenter::getRecentMessageList(const QString &chatSessionId)
     return &(*recentMessages)[chatSessionId];
 }
 
-void DataCenter::getRecentMessageAsync(const QString &chatSessionId)
+void DataCenter::getRecentMessageAsync(const QString &chatSessionId,bool updateUI)
 {
-    netClient.getRecentMessage(loginSessionId,chatSessionId);
+    netClient.getRecentMessage(loginSessionId,chatSessionId,updateUI);
 }
 
 void DataCenter::resetRecentMessageList(const QString &chatSessionId, std::shared_ptr<bite_im::GetRecentMsgRsp> resp)
@@ -332,6 +351,34 @@ void DataCenter::setCurrentChatSessionId(const QString &chatSessionId)
 void DataCenter::sendTextMessageAsync(const QString &chatSessionId, const QString &message)
 {
     netClient.sendMessage(loginSessionId,chatSessionId,MessageType::TEXT_TYPE,message.toUtf8(),""); // 支持多种消息就要将QString转成二进制
+}
+
+void DataCenter::changeNickNameAsync(const QString &nickname)
+{
+    netClient.changeNickName(loginSessionId,nickname);
+}
+
+void DataCenter::resetNickName(const QString &nickname)
+{
+    if(myself == nullptr)
+    {
+        return;
+    }
+    myself->nickName = nickname;
+}
+
+void DataCenter::changeDesciptionAsync(const QString &description)
+{
+    netClient.changeDescription(loginSessionId,description);
+}
+
+void DataCenter::resetDescription(const QString &description)
+{
+    if(myself == nullptr)
+    {
+        return;
+    }
+    myself->description = description;
 }
 
 void DataCenter::addMessage(const Message &message)
