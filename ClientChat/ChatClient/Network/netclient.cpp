@@ -535,6 +535,89 @@ void NetClient::changeDescription(const QString &loginSessionId, const QString &
     });
 }
 
+void NetClient::getVerifyCode(const QString &phone)
+{
+    // 1.构造请求体
+    bite_im::PhoneVerifyCodeReq req;
+    req.setRequestId(makeRequestId());
+    req.setPhoneNumber(phone);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[获取手机验证码] 发送请求 requestId = " << req.requestId() << ", phone = " << req.phoneNumber();
+
+    // 2.发送请求并接收响应
+    QNetworkReply* httpResp = sendHttpRequest("/service/user/get_phone_verify_code",body);
+
+    // 3.处理响应结果
+    connect(httpResp,&QNetworkReply::finished,this,[=](){
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::PhoneVerifyCodeRsp>(httpResp,&ok,&reason);
+
+        // b) 判定结果是否正确
+        if(!ok)
+        {
+            LOG() << "[获取手机验证码] 响应失败！ reason = "  << reason;
+        }
+
+        // c) 将数据写回dataCenter
+        dataCenter->resetVerifyCodeId(pbResp->verifyCodeId());
+
+        // d) 发送信号通知接收完毕
+        emit dataCenter->getVerifyCodeDone();
+
+        // e) 打印日志
+        LOG() << "[获取手机验证码] 响应完成 requestId = " << pbResp->requestId();
+    });
+}
+
+void NetClient::changePhone(const QString &loginSessionId, const QString &phone, const QString &verifyCodeId, const QString &verifyCode)
+{
+    // 1.构造请求体
+    bite_im::SetUserPhoneNumberReq req;
+    req.setRequestId(makeRequestId());
+    req.setPhoneVerifyCodeId(verifyCodeId);
+    req.setPhoneVerifyCode(verifyCode);
+    req.setSessionId(loginSessionId);
+    req.setPhoneNumber(phone);
+    LOG() << "[修改手机号码] 发送请求 requestId = " << req.requestId() << ", loginSessionId = " << req.sessionId() <<
+        ", phone = " << req.phoneNumber() << ", verifyCodeId = " << req.phoneVerifyCodeId() << ", verifyCode = " << req.phoneVerifyCode();
+
+    QByteArray body = req.serialize(&serializer);
+
+    // 2.发送请求并接收响应
+    QNetworkReply* httpResp = sendHttpRequest("/service/user/set_phone",body);
+
+    // 3.处理响应结果
+    connect(httpResp,&QNetworkReply::finished,this,[=](){
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = handleHttpResponse<bite_im::SetUserPhoneNumberRsp>(httpResp,&ok,&reason);
+
+        // b) 判定响应是否正确
+        if(!ok)
+        {
+            LOG() << "[修改手机号码] 响应失败！ reason = " << reason;
+        }
+
+        // c) 将数据写回dataCenter中
+        dataCenter->resetPhoneNumber(phone);
+
+        // d) 通知修改完毕
+        emit dataCenter->changePhoneNumberDone();
+
+        // e) 打印日志
+        LOG() << "[修改手机号码] 响应完成 requestId = " << pbResp->requestId();
+
+    });
+}
+
+void NetClient::changeAvatar(const QString &loginSessionId, const QByteArray &imageBytes)
+{
+
+}
+
 
 
 } // end namespace

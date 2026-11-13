@@ -2,6 +2,8 @@
 #include "model/datacenter.h"
 
 #include<QGridLayout>
+#include <QFileDialog>
+#include <QTimer>
 
 #include "debug.h"
 
@@ -265,6 +267,12 @@ void SelfInfoWidget::initSignalSlots()
     connect(nameSubmitBtn,&QPushButton::clicked,this,&SelfInfoWidget::clickNameSubmitBtn);
     // 修改签名
     connect(descSubmitBtn,&QPushButton::clicked,this,&SelfInfoWidget::clickDescSubmitBtn);
+    // 修改手机号
+    connect(phoneSubmitBtn,&QPushButton::clicked,this,&SelfInfoWidget::clickPhoneSubmitBtn);
+    // 获取验证码
+    connect(getVerifyCodeBtn,&QPushButton::clicked,this,&SelfInfoWidget::clickVerifyCodeBtn);
+    // 修改头像
+    connect(avatarBtn,&QPushButton::clicked,this,&SelfInfoWidget::clickAvatarBtn);
 }
 
 void SelfInfoWidget::clickNameSubmitBtn()
@@ -327,6 +335,113 @@ void SelfInfoWidget::onClickDescSubmitBtn()
     layout->addWidget(descModifyBtn, 2, 3);
     descModifyBtn->show();
 
+}
+
+void SelfInfoWidget::clickPhoneSubmitBtn()
+{
+    // 1.先确认验证码是否已经收到
+    DataCenter* dataCenter = DataCenter::getInstance();
+    QString verifyCodeId = dataCenter->getVerifyCodeId();
+    if(verifyCodeId.isEmpty())
+    {
+        LOG() << "服务器尚未返回验证码，请稍候重试！";
+        return;
+    }
+    // 如果当前已经拿到 verifyCodeId，就可以清空 DataCenter 中存储的值，确保下次点击提交按钮的时候，上述逻辑仍然有效
+    dataCenter->resetVerifyCodeId("");
+
+    // 2. 获取到用户输入的验证码
+    const QString& verifyCode = verifyCodeEdit->text();
+    if (verifyCode.isEmpty()) {
+        // Toast::showMessage("验证码不能为空！");
+        return;
+    }
+    verifyCodeEdit->setText("");
+
+    // 3.发送请求
+    connect(dataCenter,&DataCenter::changePhoneNumberDone,this,&SelfInfoWidget::onClickPhoneSubmitBtn);
+    dataCenter->changePhoneAsync(newPhone,verifyCodeId,verifyCode);
+
+    //4. 让验证码按钮的倒计时停止，把 leftTime 设为 1，就可以停止了
+    time = 1;
+}
+
+void SelfInfoWidget::onClickPhoneSubmitBtn()
+{
+    // 清除验证码相关控件并还原界面
+    layout->removeWidget(verifyCodeEdit);
+    layout->removeWidget(verifyCodeTag);
+    layout->removeWidget(getVerifyCodeBtn);
+    layout->removeWidget(phoneEdit);
+    layout->removeWidget(phoneSubmitBtn);
+    verifyCodeTag->hide();
+    verifyCodeEdit->hide();
+    getVerifyCodeBtn->hide();
+    phoneEdit->hide();
+    phoneSubmitBtn->hide();
+
+    layout->addWidget(phoneLabel, 3, 2);
+    phoneLabel->show();
+    layout->addWidget(phoneModifyBtn, 3, 3);
+    phoneModifyBtn->show();
+    phoneLabel->setText(newPhone);
+}
+
+void SelfInfoWidget::clickVerifyCodeBtn()
+{
+    // 1.获取到输入框中的手机号
+    const QString& phone = phoneEdit->text();
+    if(phone.isEmpty())
+    {
+        return;
+    }
+    // 2.通过网络给服务器发送请求
+    DataCenter* dataCenter = DataCenter::getInstance();
+    connect(dataCenter,&DataCenter::getVerifyCodeDone,this,[=](){
+       // 不需要做任何处理，只需要提示一下验证码已经发送
+
+    });
+    dataCenter->getVerifyCodeAsync(phone);
+
+    // 3.先将需要修改的目标手机号存起来
+    // 后续修改的手机号就不从输入框中读取(以免获取验证码期间又修改),直接读取该变量
+    this->newPhone = phone;
+
+    // 4.禁用发送验证码按钮，设置倒计时
+    getVerifyCodeBtn->setEnabled(false);
+
+    time = 60;
+    QTimer* timer = new QTimer(this);
+    connect(timer,&QTimer::timeout,this,[=](){
+        if(time <= 1)
+        {
+            // 倒计时结束
+            getVerifyCodeBtn->setEnabled(true);
+            getVerifyCodeBtn->setText("获取验证码");
+            timer->stop();
+            timer->deleteLater();
+            return;
+        }
+        getVerifyCodeBtn->setText(QString::number(--time) + "s");
+    });
+    timer->start(1000);
+}
+
+void SelfInfoWidget::clickAvatarBtn()
+{
+    // 1.选择弹出的对话框文件
+    QString filter = "Image Files (*.jpg *.png *.jpeg)";
+    QString imagePath = QFileDialog::getOpenFileName(this,"选择头像",QDir::homePath(),filter);
+    if(imagePath.isEmpty())
+    {
+        LOG() << "用户未选择头像!";
+        return;
+    }
+
+    QByteArray imageBytes = readFiletoQByteArray(imagePath);
+    // 2.发送请求
+    DataCenter* dataCenter = DataCenter::getInstance();
+    dataCenter->changeAvatarAsync(imageBytes);
 }
 
 

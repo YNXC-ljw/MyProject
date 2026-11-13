@@ -20,7 +20,7 @@ private:
 
     // 列出 DataCenter 中要组织的所有数据
 
-    // 客户端登录到服务器的会话id
+    // 客户端登录到服务器的 id
     QString loginSessionId = "";
     // 当前用户信息
     UserInfo* myself = nullptr;
@@ -115,6 +115,15 @@ public:
     // 通过网络请求修改用户签名
     void changeDesciptionAsync(const QString& desciption);
     void resetDescription(const QString& description);
+    // 获取验证码
+    void getVerifyCodeAsync(const QString& phone);
+    void resetVerifyCodeId(const QString& verifyCodeId);
+    const QString& getVerifyCodeId();
+    // 修改手机号
+    void changePhoneAsync(const QString& phone,const QString& verifyCodeId,const QString& verifyCode);
+    void resetPhoneNumber(const QString& phone);
+    // 修改用户头像
+    void changeAvatarAsync(const QByteArray& imageBytes);
 
     ////////////////////////////////////////////////////////////////////////////
     /// 辅助函数
@@ -146,6 +155,8 @@ signals:
     void receiveMessageDone(const Message& message);
     void changeNickNameDone();
     void changeDescptionDone();
+    void changePhoneNumberDone();
+    void getVerifyCodeDone();
 };
 
 } // end namespace

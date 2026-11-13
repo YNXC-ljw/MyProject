@@ -249,7 +249,9 @@ void DataCenter::resetApplyList(std::shared_ptr<bite_im::GetPendingFriendEventLi
     }
 
 }
-
+//////////////////////////////////////////////////////
+/// 获取最近消息列表
+//////////////////////////////////////////////////////
 QList<Message> *DataCenter::getRecentMessageList(const QString &chatSessionId)
 {
     if(!recentMessages->contains(chatSessionId))
@@ -278,7 +280,84 @@ void DataCenter::resetRecentMessageList(const QString &chatSessionId, std::share
         messageList.push_back(message);
     }
 }
+//////////////////////////////////////////////////////
+/// 发送文本消息
+//////////////////////////////////////////////////////
+void DataCenter::sendTextMessageAsync(const QString &chatSessionId, const QString &message)
+{
+    netClient.sendMessage(loginSessionId,chatSessionId,MessageType::TEXT_TYPE,message.toUtf8(),""); // 支持多种消息就要将QString转成二进制
+}
+//////////////////////////////////////////////////////
+/// 修改昵称
+//////////////////////////////////////////////////////
+void DataCenter::changeNickNameAsync(const QString &nickname)
+{
+    netClient.changeNickName(loginSessionId,nickname);
+}
 
+void DataCenter::resetNickName(const QString &nickname)
+{
+    if(myself == nullptr)
+    {
+        return;
+    }
+    myself->nickName = nickname;
+}
+//////////////////////////////////////////////////////
+/// 修改个签
+//////////////////////////////////////////////////////
+void DataCenter::changeDesciptionAsync(const QString &description)
+{
+    netClient.changeDescription(loginSessionId,description);
+}
+
+void DataCenter::resetDescription(const QString &description)
+{
+    if(myself == nullptr)
+    {
+        return;
+    }
+    myself->description = description;
+}
+
+void DataCenter::getVerifyCodeAsync(const QString &phone)
+{
+    // 这个操作，不需要传入 loginSessionId
+    // 后续还需要实现通过手机验证码登录，登录的时候，没有 loginSessionId
+    netClient.getVerifyCode(phone);
+}
+
+void DataCenter::resetVerifyCodeId(const QString &verifyCodeId)
+{
+    this->currentVerifyCodeId = verifyCodeId;
+}
+
+const QString& DataCenter::getVerifyCodeId()
+{
+    return currentVerifyCodeId;
+}
+
+void DataCenter::changePhoneAsync(const QString &phone, const QString &verifyCodeId, const QString &verifyCode)
+{
+    netClient.changePhone(loginSessionId,phone,verifyCodeId,verifyCode);
+}
+
+void DataCenter::resetPhoneNumber(const QString &phone)
+{
+    if(myself == nullptr)
+    {
+        return;
+    }
+    myself->phone = phone;
+}
+
+void DataCenter::changeAvatarAsync(const QByteArray &imageBytes)
+{
+    netClient.changeAvatar(loginSessionId,imageBytes);
+}
+////////////////////////////////////////////////////////////////////////////
+/// 辅助函数
+////////////////////////////////////////////////////////////////////////////
 chatSessionInfo *DataCenter::findSessionById(const QString &chatSessionId)
 {
     // 为空直接返回空指针
@@ -347,46 +426,11 @@ void DataCenter::setCurrentChatSessionId(const QString &chatSessionId)
 {
     this->currentChatSessionId = chatSessionId;
 }
-
-void DataCenter::sendTextMessageAsync(const QString &chatSessionId, const QString &message)
-{
-    netClient.sendMessage(loginSessionId,chatSessionId,MessageType::TEXT_TYPE,message.toUtf8(),""); // 支持多种消息就要将QString转成二进制
-}
-
-void DataCenter::changeNickNameAsync(const QString &nickname)
-{
-    netClient.changeNickName(loginSessionId,nickname);
-}
-
-void DataCenter::resetNickName(const QString &nickname)
-{
-    if(myself == nullptr)
-    {
-        return;
-    }
-    myself->nickName = nickname;
-}
-
-void DataCenter::changeDesciptionAsync(const QString &description)
-{
-    netClient.changeDescription(loginSessionId,description);
-}
-
-void DataCenter::resetDescription(const QString &description)
-{
-    if(myself == nullptr)
-    {
-        return;
-    }
-    myself->description = description;
-}
-
 void DataCenter::addMessage(const Message &message)
 {
     QList<Message>& messageList = (*recentMessages)[message.chatSessionId];
     messageList.push_back(message);
 }
-
 
 
 // end namespace

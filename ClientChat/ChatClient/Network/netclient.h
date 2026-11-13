@@ -102,6 +102,13 @@ public:
     void changeNickName(const QString& loginSessionId,const QString& nickname);
     // 修改用户签名
     void changeDescription(const QString& loginSessionId,const QString& description);
+    // 获取短信验证码
+    void getVerifyCode(const QString& phone);
+    // 修改手机号码
+    void changePhone(const QString& loginSessionId,const QString& phone,const QString& verifyCodeId,const QString& verifyCode);
+    // 修改头像
+    void changeAvatar(const QString& loginSessionId,const QByteArray& imageBytes);
+
 private:
     model::DataCenter* dataCenter;
     // HTTP 客户端

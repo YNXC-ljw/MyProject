@@ -19,6 +19,10 @@ public:
     void onClickNameSubmitBtn();
     void clickDescSubmitBtn();
     void onClickDescSubmitBtn();
+    void clickPhoneSubmitBtn();
+    void onClickPhoneSubmitBtn();
+    void clickVerifyCodeBtn();
+    void clickAvatarBtn();
 private:
     QGridLayout* layout;
 
@@ -47,6 +51,10 @@ private:
     QLabel* verifyCodeTag;       // 显示 "验证码"
     QLineEdit* verifyCodeEdit;   // 输入验证码
     QPushButton* getVerifyCodeBtn; // 获取验证码按钮
+
+    QString newPhone; // 保存即将要修改的目标手机号
+
+    int time = 60;
 };
 
 #endif // SELFINFOWIDGET_H
