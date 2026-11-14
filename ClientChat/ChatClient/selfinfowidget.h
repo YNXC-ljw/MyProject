@@ -23,6 +23,7 @@ public:
     void onClickPhoneSubmitBtn();
     void clickVerifyCodeBtn();
     void clickAvatarBtn();
+    void onClickAvatarBtn();
 private:
     QGridLayout* layout;
 

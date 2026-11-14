@@ -615,6 +615,78 @@ void NetClient::changePhone(const QString &loginSessionId, const QString &phone,
 
 void NetClient::changeAvatar(const QString &loginSessionId, const QByteArray &imageBytes)
 {
+    // 1. 构造请求 body
+    bite_im::SetUserAvatarReq req;
+    req.setRequestId(makeRequestId());
+    req.setSessionId(loginSessionId);
+    req.setAvatar(imageBytes);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[修改头像] 发送请求 requestId=" << req.requestId() << ", loginSessionId=" << req.sessionId();
+
+    // 2. 发送 HTTP 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/user/set_avatar", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::SetUserAvatarRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应结果是否正确
+        if (!ok) {
+            LOG() << "[修改头像] 响应出错! reason=" << reason;
+            return;
+        }
+
+        // c) 把数据设置到 DataCenter 中
+        dataCenter->resetAvatar(imageBytes);
+
+        // d) 发送信号
+        emit dataCenter->changeAvatarDone();
+
+        // e) 打印日志
+        LOG() << "[修改头像] 响应完成 requestId=" << pbResp->requestId();
+    });
+
+}
+
+void NetClient::deleteFriend(const QString &loginSessionId, const QString &userId)
+{
+    // 1. 构造请求 body
+    bite_im::FriendRemoveReq req;
+    req.setRequestId(makeRequestId());
+    req.setSessionId(loginSessionId);
+    req.setPeerId(userId);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[删除好友] 发送请求 requestId=" << req.requestId() << ", loginSessionId=" << req.sessionId()
+          << ", peerId=" << req.peerId();
+
+    // 2. 发送 HTTP 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/friend/remove_friend", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::FriendRemoveRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应结果
+        if (!ok) {
+            LOG() << "[删除好友] 响应失败! reason=" << reason;
+            return;
+        }
+
+        // c) 把结果写入 DataCenter. 把该删除的用户，从好友列表中，删除掉.
+        dataCenter->removeFriend(userId);
+
+        // d) 发送信号通知处理完毕
+        emit dataCenter->deleteFriendDone();
+
+        // e) 打印日志
+        LOG() << "[删除好友] 响应完成 requestId = " << pbResp->requestId();
+    });
 
 }
 

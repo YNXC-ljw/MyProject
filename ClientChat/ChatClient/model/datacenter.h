@@ -124,6 +124,11 @@ public:
     void resetPhoneNumber(const QString& phone);
     // 修改用户头像
     void changeAvatarAsync(const QByteArray& imageBytes);
+    void resetAvatar(const QByteArray& imageBytes);
+
+    // 删除好友
+    void deleteFriendAsync(const QString& userId);
+    void removeFriend(const QString& userId);
 
     ////////////////////////////////////////////////////////////////////////////
     /// 辅助函数
@@ -134,6 +139,9 @@ public:
     chatSessionInfo* findChatSessionByUserId(const QString& userId);
     // 把指定的会话信息置顶
     void topChatSessionInfo(chatSessionInfo& chatSessionInfo);
+
+    // 通过userId找好友
+    UserInfo* findFriendById(const QString& userId);
 
     // 设置当前被选中的会话是哪个
     QString& getCurrentChatSessionId();
@@ -157,6 +165,9 @@ signals:
     void changeDescptionDone();
     void changePhoneNumberDone();
     void getVerifyCodeDone();
+    void changeAvatarDone();
+    void deleteFriendDone();
+    void clearCurrentSession();
 };
 
 } // end namespace

@@ -351,9 +351,63 @@ void DataCenter::resetPhoneNumber(const QString &phone)
     myself->phone = phone;
 }
 
+//////////////////////////////////////////////////////
+/// 修改头像
+//////////////////////////////////////////////////////
 void DataCenter::changeAvatarAsync(const QByteArray &imageBytes)
 {
     netClient.changeAvatar(loginSessionId,imageBytes);
+}
+
+void DataCenter::resetAvatar(const QByteArray &imageBytes)
+{
+    if(myself == nullptr)
+    {
+        return;
+    }
+    myself->avatar = makeIcon(imageBytes);
+}
+
+void DataCenter::deleteFriendAsync(const QString &userId)
+{
+    netClient.deleteFriend(loginSessionId,userId);
+}
+
+void DataCenter::removeFriend(const QString &userId)
+{
+    if(friendList == nullptr)
+    {
+        return;
+    }
+    friendList->removeIf([=](const UserInfo& userInfo){
+        // 相当于遍历该QList，如果是要删除的就返回true
+        return userInfo.userId == userId;
+    });
+
+    // 删除好友也要将对应的会话也给删除掉
+    // 删除会话操作，客户端和服务器分别都会删除
+    if(chatSessionList == nullptr)
+    {
+        return;
+    }
+    chatSessionList->removeIf([=](const chatSessionInfo& chatSessionInfo){
+        if(chatSessionInfo.userId == "")
+        {
+            // 群聊，返回false
+            return false;
+        }
+        if(chatSessionInfo.userId == userId)
+        {
+            // 如果此时删除的会话正好是用户选中的会话，就要把整个会话的内容都清空(包括会话标题和消息列表等)
+            if(chatSessionInfo.chatSessionId == this->currentChatSessionId)
+            {
+                emit clearCurrentSession();
+            }
+            return true;
+        }
+
+        return false;
+    });
 }
 ////////////////////////////////////////////////////////////////////////////
 /// 辅助函数
@@ -415,6 +469,20 @@ void DataCenter::topChatSessionInfo(chatSessionInfo &chatSessionInfo)
     chatSessionList->erase(it);
     // 3.插入
     chatSessionList->push_front(backup);
+}
+
+UserInfo *DataCenter::findFriendById(const QString &userId)
+{
+    if(friendList == nullptr)
+    {
+        return nullptr;
+    }
+    for(auto& f : *friendList)
+    {
+        if(f.userId == userId)
+            return &f;
+    }
+    return nullptr;
 }
 
 QString &DataCenter::getCurrentChatSessionId()

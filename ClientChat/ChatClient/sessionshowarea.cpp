@@ -205,6 +205,11 @@ MessageItem *MessageItem::makeMessageItem(bool isLeft, const Message &message)
         connect(dataCenter,&DataCenter::changeNickNameDone,messageItem,[=](){
             nameLabel->setText(dataCenter->getMyself()->nickName + " | " + message.time);
         });
+
+        // 修改头像
+        connect(dataCenter,&DataCenter::changeAvatarDone,messageItem,[=](){
+            avatarBtn->setIcon(dataCenter->getMyself()->avatar);
+        });
     }
 
     return messageItem;

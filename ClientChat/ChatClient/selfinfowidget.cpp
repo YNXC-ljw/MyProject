@@ -441,7 +441,15 @@ void SelfInfoWidget::clickAvatarBtn()
     QByteArray imageBytes = readFiletoQByteArray(imagePath);
     // 2.发送请求
     DataCenter* dataCenter = DataCenter::getInstance();
+    connect(dataCenter,&DataCenter::changeAvatarDone,this,&SelfInfoWidget::onClickAvatarBtn);
     dataCenter->changeAvatarAsync(imageBytes);
+}
+
+void SelfInfoWidget::onClickAvatarBtn()
+{
+    // 把设置的头像更新到界面上
+    DataCenter* dataCenter = DataCenter::getInstance();
+    avatarBtn->setIcon(dataCenter->getMyself()->avatar);
 }
 
 

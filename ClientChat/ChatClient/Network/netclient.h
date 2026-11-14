@@ -109,6 +109,9 @@ public:
     // 修改头像
     void changeAvatar(const QString& loginSessionId,const QByteArray& imageBytes);
 
+    // 删除好友
+    void deleteFriend(const QString&loginSessionId,const QString& userId);
+
 private:
     model::DataCenter* dataCenter;
     // HTTP 客户端

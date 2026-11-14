@@ -1,7 +1,11 @@
 #include "userinfowidget.h"
 
+#include "model/datacenter.h"
 #include <QGridLayout>
+#include <QMessageBox>
+#include "mainwidget.h"
 
+using namespace model;
 
 UserInfoWidget::UserInfoWidget(const UserInfo& userInfo,QWidget* parent)
     :QDialog(parent)
@@ -75,7 +79,7 @@ UserInfoWidget::UserInfoWidget(const UserInfo& userInfo,QWidget* parent)
 
     // 7. 添加功能按钮
     applyBtn = new QPushButton();
-    applyBtn->setText("申请好友");
+    applyBtn->setText("添加好友");
     applyBtn->setFixedSize(80, 30);
     applyBtn->setStyleSheet(btnStyle);
 
@@ -105,6 +109,56 @@ UserInfoWidget::UserInfoWidget(const UserInfo& userInfo,QWidget* parent)
     layout->addWidget(sendMessageBtn, 3, 1);
     layout->addWidget(deleteFriendBtn, 3, 2);
 
+    // 9.初始化按钮禁用
+    // 如果userInfo中的userId与dataCenter中的friendList都不匹配，那就说明不是好友关系
+    DataCenter* dataCenter = DataCenter::getInstance();
+    auto* myFriend = dataCenter->findFriendById(this->userInfo.userId);
+    if(myFriend == nullptr)
+    {
+        // 不是好友,禁用发送消息和删除好友按钮
+        sendMessageBtn->setEnabled(false);
+        deleteFriendBtn->setEnabled(false);
+    }else{
+        // 是好友，禁用添加好友按钮
+        applyBtn->setEnabled(false);
+    }
+
+    // 10.初始化信号槽
+    initSignalSlots();
+
+}
+
+void UserInfoWidget::initSignalSlots()
+{
+    // 点击发送消息按钮
+    connect(sendMessageBtn,&QPushButton::clicked,this,[=](){
+        MainWidget* mainWidget = MainWidget::getInstance();
+        mainWidget->switchToSession(userInfo.userId);
+
+        // 关闭现窗口
+        this->close();
+    });
+
+    // 点击删除好友按钮
+    connect(deleteFriendBtn,&QPushButton::clicked,this,&UserInfoWidget::onClickDeleteFriendBtn);
+}
+
+void UserInfoWidget::onClickDeleteFriendBtn()
+{
+    // 1.弹出对话框，确认是否要删除好友
+    auto result = QMessageBox::warning(this,"确认删除","确认删除当前好友?",QMessageBox::Ok | QMessageBox::Cancel);
+    if(result != QMessageBox::Ok)
+    {
+        LOG() << "取消删除好友!";
+        return;
+    }
+
+    // 2.发送网络请求删除好友
+    DataCenter* dataCenter = DataCenter::getInstance();
+    dataCenter->deleteFriendAsync(userInfo.userId);
+
+    // 3.关闭现窗口
+    this->close();
 }
 
 

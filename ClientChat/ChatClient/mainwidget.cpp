@@ -296,6 +296,30 @@ void MainWidget::initSignalSlot()
     /// 好友申请列表
     //////////////////////////////////////////
     loadApplyList();
+
+    //////////////////////////////////////////
+    /// 处理头像修改
+    //////////////////////////////////////////
+    connect(dataCenter,&DataCenter::changeAvatarDone,this,[=](){
+        this->userAvatar->setIcon(dataCenter->getMyself()->avatar);
+    });
+
+    //////////////////////////////////////////
+    /// 处理删除好友
+    //////////////////////////////////////////
+    connect(dataCenter,&DataCenter::deleteFriendDone,this,[=](){
+        // 前面已经通过网络将好友及会话列表中的元素删除了，所以此时直接调用更新界面的函数来更新解即可
+        this->updateFriendList();
+        this->updateChatSessionList();
+        LOG() << "删除好友完成！";
+    });
+
+    connect(dataCenter,&DataCenter::clearCurrentSession,this,[=](){
+        sessionTitleLabel->setText("");
+        sessionShowArea->clear();
+        dataCenter->setCurrentChatSessionId("");
+        LOG() << "清空当前会话完成！";
+    });
 }
 
 /////////////////////////////////////////////////////////////////////////////////
