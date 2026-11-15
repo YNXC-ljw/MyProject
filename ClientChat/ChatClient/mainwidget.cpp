@@ -233,11 +233,15 @@ void MainWidget::initSignalSlot()
     //////////////////////////////////////////
     connect(extraBtn,&QPushButton::clicked,this,[=](){
 
-#if GROUP_SESSION_DETAIL_WIDGET
-        bool isSingleChat = false;
-#else
-        bool isSingleChat = true;
-#endif
+// #if GROUP_SESSION_DETAIL_WIDGET
+//         bool isSingleChat = false;
+// #else
+//         bool isSingleChat = true;
+// #endif
+
+        // 获取当前会话详细信息，如果为""则说明是群聊，否则是单聊
+        chatSessionInfo* chatSessionInfo = dataCenter->findSessionById(dataCenter->getCurrentChatSessionId());
+
         if(isSingleChat){
             // 单聊窗口
             SessionDetailWidget* sessionDetailWidget = new SessionDetailWidget(this);
@@ -319,6 +323,44 @@ void MainWidget::initSignalSlot()
         sessionShowArea->clear();
         dataCenter->setCurrentChatSessionId("");
         LOG() << "清空当前会话完成！";
+    });
+
+    //////////////////////////////////////////
+    /// 处理添加好友申请(由于添加好友可在多处发生，所以统一在主窗口处理信号)
+    //////////////////////////////////////////
+    connect(dataCenter,&DataCenter::addFriendApplyDone,this,[=](){
+
+    });
+
+    //////////////////////////////////////////
+    /// 处理添加好友申请的数据推送
+    //////////////////////////////////////////
+    connect(dataCenter,&DataCenter::receiveFriendApplyDone,this,[=](){
+        this->updateApplyList();
+    });
+
+    //////////////////////////////////////////
+    /// 处理统一好友申请，更新好友申请列表和好友列表
+    //////////////////////////////////////////
+    // 同意
+    connect(dataCenter,&DataCenter::acceptFriendApplyDone,this,[=](){
+        this->updateApplyList();
+        this->updateFriendList();
+    });
+    // 拒绝
+    connect(dataCenter,&DataCenter::rejectFriendApplyDone,this,[=](){
+        this->updateApplyList();
+    });
+    // Websocket 推送到对端
+    connect(dataCenter,&DataCenter::acceptFriendProcessDone,this,[=](const QString& nickName,bool agree){
+        if(agree)
+        {
+            // 同意
+            this->updateFriendList();
+        }else{
+            // 不同意
+
+        }
     });
 }
 

@@ -141,6 +141,8 @@ void UserInfoWidget::initSignalSlots()
 
     // 点击删除好友按钮
     connect(deleteFriendBtn,&QPushButton::clicked,this,&UserInfoWidget::onClickDeleteFriendBtn);
+    // 点击添加好友按钮
+    connect(applyBtn,&QPushButton::clicked,this,&UserInfoWidget::onClickApplyBtn);
 }
 
 void UserInfoWidget::onClickDeleteFriendBtn()
@@ -158,6 +160,15 @@ void UserInfoWidget::onClickDeleteFriendBtn()
     dataCenter->deleteFriendAsync(userInfo.userId);
 
     // 3.关闭现窗口
+    this->close();
+}
+
+void UserInfoWidget::onClickApplyBtn()
+{
+    // 1.发送好友申请
+    DataCenter* dataCenter = DataCenter::getInstance();
+    dataCenter->addFriendApplyAsync(userInfo.userId);
+    // 2.关闭窗口
     this->close();
 }
 

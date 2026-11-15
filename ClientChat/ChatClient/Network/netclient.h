@@ -38,6 +38,9 @@ public:
     void handleWsResponse(const bite_im::NotifyMessage &notifyMessage);
     void handleWsMessage(const model::Message& message);
     void receiveMessage(const QString& chatSessionId);
+    void handleWsDeleteFriend(const QString& userId);
+    void handleWsAddFriendApply(const model::UserInfo& userInfo);
+    void handleWsAcceptFriendApply(const model::UserInfo& userInfo,bool agree);
 //////////////////////////////////////////////////////////////////////////////////
 /// HTTP 服务器相关操作
 //////////////////////////////////////////////////////////////////////////////////
@@ -110,8 +113,13 @@ public:
     void changeAvatar(const QString& loginSessionId,const QByteArray& imageBytes);
 
     // 删除好友
-    void deleteFriend(const QString&loginSessionId,const QString& userId);
-
+    void deleteFriend(const QString& loginSessionId,const QString& userId);
+    // 添加好友
+    void addFriendApply(const QString& loginSessionId,const QString& userId);
+    // 同意好友申请
+    void acceptFriendApply(const QString& loginSessionId,const QString& userId);
+    // 拒绝好友申请
+    void rejectFriendApply(const QString& loginSessionId,const QString& userId);
 private:
     model::DataCenter* dataCenter;
     // HTTP 客户端

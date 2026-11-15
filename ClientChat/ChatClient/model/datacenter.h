@@ -130,6 +130,15 @@ public:
     void deleteFriendAsync(const QString& userId);
     void removeFriend(const QString& userId);
 
+    // 发送好友申请
+    void addFriendApplyAsync(const QString& userId);
+    // 同意好友申请
+    void acceptFriendApplyAsync(const QString& userId);
+    UserInfo removeFromApplyList(const QString& userId);
+    // 拒绝好友申请
+    void rejectFriendApplyAsync(const QString& userId);
+
+
     ////////////////////////////////////////////////////////////////////////////
     /// 辅助函数
     ////////////////////////////////////////////////////////////////////////////
@@ -168,6 +177,11 @@ signals:
     void changeAvatarDone();
     void deleteFriendDone();
     void clearCurrentSession();
+    void addFriendApplyDone();
+    void receiveFriendApplyDone();
+    void acceptFriendApplyDone();
+    void acceptFriendProcessDone(const QString& nickName,bool agree);
+    void rejectFriendApplyDone();
 };
 
 } // end namespace

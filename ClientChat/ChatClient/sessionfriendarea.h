@@ -110,8 +110,10 @@ public:
     ApplyItem(QWidget* owner,const QString& userId,const QIcon& avatar,const QString& name);
     void active() override;
 
+    void onClickAcceptBtn();
+    void onClickRejectBtn();
 private:
-    QString userId;
+    QString userId; // 申请人的Id
 };
 
 #endif // SESSIONFRIENDAREA_H

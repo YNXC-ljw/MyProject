@@ -18,6 +18,7 @@ public:
     void initSignalSlots();
 
     void onClickDeleteFriendBtn();
+    void onClickApplyBtn();
 private:
     const UserInfo& userInfo;
 

@@ -321,19 +321,38 @@ ApplyItem::ApplyItem(QWidget *owner, const QString &userId, const QIcon &avatar,
 
     // 2.添加同意/拒绝按钮
     QPushButton* acceptBtn = new QPushButton();
+    acceptBtn->setStyleSheet("QPushButton { background-color: green; }");
     acceptBtn->setText("同意");
     QPushButton* rejectBtn = new QPushButton();
+    rejectBtn->setStyleSheet("QPushButton { background-color: red; }");
     rejectBtn->setText("拒绝");
     // 3.添加到布局管理器中
     layout->addWidget(acceptBtn,1,2,1,1);
     layout->addWidget(rejectBtn,1,3,1,1);
 
+    // 4.添加信号槽
+    connect(acceptBtn,&QPushButton::clicked,this,&ApplyItem::onClickAcceptBtn);
+    connect(rejectBtn,&QPushButton::clicked,this,&ApplyItem::onClickRejectBtn);
 }
 
 void ApplyItem::active()
 {
     // 这个函数本身不需要实现任何内容
     LOG() << "点击ApplyItem触发的逻辑！userId=" << userId;
+}
+
+void ApplyItem::onClickAcceptBtn()
+{
+    // 发送请求告诉服务器，我同意好友申请
+    DataCenter* dataCenter = DataCenter::getInstance();
+    dataCenter->acceptFriendApplyAsync(userId);
+}
+
+void ApplyItem::onClickRejectBtn()
+{
+    // 发送请求并告诉服务器，我拒绝好友申请
+    DataCenter* dataCenter = DataCenter::getInstance();
+    dataCenter->rejectFriendApplyAsync(userId);
 }
 
 

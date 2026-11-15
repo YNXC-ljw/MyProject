@@ -77,10 +77,19 @@ void NetClient::handleWsResponse(const bite_im::NotifyMessage &notifyMessage)
         // 创建新会话
     }else if(notifyMessage.notifyType() == bite_im::NotifyTypeGadget::NotifyType::FRIEND_ADD_APPLY_NOTIFY){
         // 好友申请通知
+        UserInfo userInfo;
+        userInfo.load(notifyMessage.friendAddApply().userInfo());
+        handleWsAddFriendApply(userInfo);
     }else if(notifyMessage.notifyType() == bite_im::NotifyTypeGadget::NotifyType::FRIEND_ADD_PROCESS_NOTIFY){
         // 添加好友申请处理结果
+        UserInfo userInfo;
+        userInfo.load(notifyMessage.friendProcessResult().userInfo());
+        bool agree = notifyMessage.friendProcessResult().agree();
+        handleWsAcceptFriendApply(userInfo,agree);
     }else if(notifyMessage.notifyType() == bite_im::NotifyTypeGadget::NotifyType::FRIEND_REMOVE_NOTIFY){
         // 好友删除通知
+        const QString& userId = notifyMessage.friendRemove().userId();
+        handleWsDeleteFriend(userId);
     }
 }
 
@@ -117,6 +126,51 @@ void NetClient::receiveMessage(const QString &chatSessionId)
     }
     // 统一处理消息预览
     emit dataCenter->updateLastMessage(chatSessionId);
+}
+
+void NetClient::handleWsDeleteFriend(const QString &userId)
+{
+    // 1.将dataCenter中的对应好友数据删除
+    dataCenter->deleteFriendAsync(userId);
+
+    // 2.通知界面更新(好友列表/会话列表)
+    emit dataCenter->deleteFriendDone();
+}
+
+void NetClient::handleWsAddFriendApply(const model::UserInfo &userInfo)
+{
+    // 1.将好友申请消息放到DataCenter中的applyList
+    QList<UserInfo>* applyList = dataCenter->getApplyList();
+    if(applyList == nullptr)
+    {
+        LOG() << "客户端没有加载到好友申请列表！";
+        return;
+    }
+    // 2.将申请元素依次头插并渲染界面
+    applyList->push_front(userInfo);
+    // 3.通知界面更新
+    emit dataCenter->receiveFriendApplyDone();
+}
+
+void NetClient::handleWsAcceptFriendApply(const model::UserInfo &userInfo, bool agree)
+{
+    if(agree)
+    {
+        QList<UserInfo>* friendList = dataCenter->getFriendList();
+        if(friendList == nullptr)
+        {
+            LOG() << "客户端没有加载好友列表";
+            return;
+        }
+        friendList->push_front(userInfo);
+
+        // 好友列表更新了就要通知更新界面
+        emit dataCenter->acceptFriendProcessDone(userInfo.nickName,agree);
+
+    }else{
+        // 未同意好友申请
+        emit dataCenter->acceptFriendProcessDone(userInfo.nickName,agree);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -688,6 +742,125 @@ void NetClient::deleteFriend(const QString &loginSessionId, const QString &userI
         LOG() << "[删除好友] 响应完成 requestId = " << pbResp->requestId();
     });
 
+}
+
+void NetClient::addFriendApply(const QString &loginSessionId, const QString &userId)
+{
+    // 1. 构造请求 body
+    bite_im::FriendAddReq req;
+    req.setRequestId(makeRequestId());
+    req.setSessionId(loginSessionId);
+    req.setRespondentId(userId);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[添加好友申请] 发送请求 requestId=" << req.requestId() << ", loginSessionId=" << req.sessionId()
+          << ", userId=" << userId;
+
+    // 2. 发送 HTTP 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/friend/add_friend_apply", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::FriendAddRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应是否正确
+        if (!ok) {
+            LOG() << "[添加好友申请] 响应失败! reason=" << reason;
+            return;
+        }
+
+        // c) 记录结果到 DataCenter，此处不需要记录任何数据
+
+        // d) 发送信号，通知调用者
+        emit dataCenter->addFriendApplyDone();
+
+        // e) 打印日志
+        LOG() << "[发送好友申请] 响应完成 requestId = " << pbResp->requestId();
+    });
+
+}
+
+void NetClient::acceptFriendApply(const QString &loginSessionId, const QString &userId)
+{
+    bite_im::FriendAddProcessReq req;
+    req.setRequestId(makeRequestId());
+    req.setAgree(true);
+    req.setApplyUserId(userId);
+    req.setSessionId(loginSessionId);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[同意好友申请] 发送请求 requestId=" << req.requestId() << ", loginSessionId=" << req.sessionId()
+          << ", userId=" << req.applyUserId();
+
+    // 2. 发送 HTTP 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/friend/add_friend_process", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::FriendAddProcessRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应结果是否正确
+        if (!ok) {
+            LOG() << "[同意好友申请] 处理失败! reason=" << reason;
+            return;
+        }
+
+        // c) 此处做一个好友列表的更新
+        //    一个是把数据从好友申请列表中，删除掉
+        //    另一个是把好友申请列表中的这个数据添加到好友列表中。
+        UserInfo applyUser = dataCenter->removeFromApplyList(userId);
+        QList<UserInfo>* friendList = dataCenter->getFriendList();
+        friendList->push_front(applyUser);
+
+        // d) 发送信号通知更新界面
+        emit dataCenter->acceptFriendApplyDone();
+
+        // e) 打印日志
+        LOG() << "[同意好友申请] 响应完成 requestId = " << pbResp->requestId();
+    });
+
+}
+
+void NetClient::rejectFriendApply(const QString &loginSessionId, const QString &userId)
+{
+    bite_im::FriendAddProcessReq req;
+    req.setRequestId(makeRequestId());
+    req.setAgree(false);
+    req.setApplyUserId(userId);
+    req.setSessionId(loginSessionId);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[拒绝好友申请] 发送请求 requestId=" << req.requestId() << ", loginSessionId=" << req.sessionId()
+          << ", userId=" << req.applyUserId();
+
+    // 2. 发送 HTTP 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/friend/add_friend_process", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::FriendAddProcessRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应结果是否正确
+        if (!ok) {
+            LOG() << "[拒绝好友申请] 处理失败! reason=" << reason;
+            return;
+        }
+
+        // c) 此处不需要更新好友列表
+        dataCenter->removeFromApplyList(userId);
+
+        // d) 发送信号通知更新界面
+        emit dataCenter->rejectFriendApplyDone();
+
+        // e) 打印日志
+        LOG() << "[拒绝好友申请] 响应完成 requestId = " << pbResp->requestId();
+    });
 }
 
 

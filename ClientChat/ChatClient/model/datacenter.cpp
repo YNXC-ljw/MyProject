@@ -409,6 +409,40 @@ void DataCenter::removeFriend(const QString &userId)
         return false;
     });
 }
+
+void DataCenter::addFriendApplyAsync(const QString &userId)
+{
+    netClient.addFriendApply(loginSessionId,userId);
+}
+
+void DataCenter::acceptFriendApplyAsync(const QString &userId)
+{
+    netClient.acceptFriendApply(loginSessionId,userId);
+}
+
+UserInfo DataCenter::removeFromApplyList(const QString &userId)
+{
+    if(applyList == nullptr)
+    {
+        return UserInfo();
+    }
+    for(auto it = applyList->begin();it != applyList->end();it++)
+    {
+        // 找到那个要删除的对象并复制一份返回
+        if(it->userId == userId)
+        {
+            UserInfo deleteUser = *it;
+            applyList->erase(it);
+            return deleteUser;
+        }
+    }
+    return UserInfo();
+}
+
+void DataCenter::rejectFriendApplyAsync(const QString &userId)
+{
+    netClient.rejectFriendApply(loginSessionId,userId);
+}
 ////////////////////////////////////////////////////////////////////////////
 /// 辅助函数
 ////////////////////////////////////////////////////////////////////////////
