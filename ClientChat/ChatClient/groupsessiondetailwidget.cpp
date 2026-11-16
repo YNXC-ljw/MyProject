@@ -2,11 +2,14 @@
 
 #include "sessiondetailwidget.h"
 #include "debug.h"
+#include "model/datacenter.h"
 
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QPushButton>
+
+using namespace model;
 
 GroupSessionDetailWidget::GroupSessionDetailWidget(QWidget* parent) :QDialog(parent)
 {
@@ -107,8 +110,17 @@ GroupSessionDetailWidget::GroupSessionDetailWidget(QWidget* parent) :QDialog(par
     }
 
 #endif
+    // 8.从服务器中加载数据
+    initData();
 
 }
+
+void GroupSessionDetailWidget::initData()
+{
+    DataCenter* dataCenter = DataCenter::getInstance();
+
+}
+
 
 // 添加每一个"群成员"的函数
 void GroupSessionDetailWidget::addMenber(AvatarItem *avatarItem)

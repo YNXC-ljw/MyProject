@@ -52,10 +52,14 @@ class ChooseFriendDialog : public QDialog
 {
     Q_OBJECT
 public:
-    ChooseFriendDialog(QWidget* parent);
+    ChooseFriendDialog(QWidget* parent,const QString& userId);
 
     void initLeft(QHBoxLayout* layout);
     void initRight(QHBoxLayout* layout);
+    void initData();
+
+    QList<QString> selectedMemberUserId();
+    void onClickOkBtn();
 
     void addFriendItem(const QString& userId, const QIcon& avatar,const QString& name,bool checked);
     void addSelectedFriend(const QString& userId, const QIcon& avatar,const QString& name);
@@ -66,6 +70,9 @@ private:
     QWidget* selectedContainer;
     // 保存左侧全部好友列表的 QWidget
     QWidget* totalContainer;
+
+    // 标记当前选中窗口属于哪个用户
+    QString userId;
 };
 
 #endif // CHOOSEFRIENDDIALOG_H

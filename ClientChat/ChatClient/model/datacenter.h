@@ -138,6 +138,8 @@ public:
     // 拒绝好友申请
     void rejectFriendApplyAsync(const QString& userId);
 
+    // 创建群聊
+    void createGroupSessionAsync(const QList<QString>& userIdList);
 
     ////////////////////////////////////////////////////////////////////////////
     /// 辅助函数
@@ -182,6 +184,8 @@ signals:
     void acceptFriendApplyDone();
     void acceptFriendProcessDone(const QString& nickName,bool agree);
     void rejectFriendApplyDone();
+    void createGroupSessionDone();
+    void receiveCreateSessionDone();
 };
 
 } // end namespace

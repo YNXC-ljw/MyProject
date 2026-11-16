@@ -41,6 +41,7 @@ public:
     void handleWsDeleteFriend(const QString& userId);
     void handleWsAddFriendApply(const model::UserInfo& userInfo);
     void handleWsAcceptFriendApply(const model::UserInfo& userInfo,bool agree);
+    void handleWsSessionCreate(const model::chatSessionInfo& chatSessionInfo);
 //////////////////////////////////////////////////////////////////////////////////
 /// HTTP 服务器相关操作
 //////////////////////////////////////////////////////////////////////////////////
@@ -120,6 +121,8 @@ public:
     void acceptFriendApply(const QString& loginSessionId,const QString& userId);
     // 拒绝好友申请
     void rejectFriendApply(const QString& loginSessionId,const QString& userId);
+    // 创建群聊
+    void createGroupSession(const QString& loginSessionId,const QList<QString>& userIdList);
 private:
     model::DataCenter* dataCenter;
     // HTTP 客户端

@@ -241,15 +241,25 @@ void MainWidget::initSignalSlot()
 
         // 获取当前会话详细信息，如果为""则说明是群聊，否则是单聊
         chatSessionInfo* chatSessionInfo = dataCenter->findSessionById(dataCenter->getCurrentChatSessionId());
-
-        if(isSingleChat){
-            // 单聊窗口
-            SessionDetailWidget* sessionDetailWidget = new SessionDetailWidget(this);
-            sessionDetailWidget->exec();
-        }else{
-            // 群聊窗口
+        if(chatSessionInfo == nullptr)
+        {
+            LOG() << "当前会话不存在，无法弹出会话详情对话框！";
+            return;
+        }
+        if(chatSessionInfo->userId == "")
+        {
+            // 群聊
             GroupSessionDetailWidget* groupSessionDetialWidget = new GroupSessionDetailWidget(this);
             groupSessionDetialWidget->exec();
+        }else{
+            // 单聊
+            UserInfo* userInfo = dataCenter->findFriendById(chatSessionInfo->userId);
+            if(userInfo == nullptr)
+            {
+                LOG() << "单聊会话对应的用户不存在，无法弹出会话详情窗口!";
+            }
+            SessionDetailWidget* sessionDetailWidget = new SessionDetailWidget(this,*userInfo);
+            sessionDetailWidget->exec();
         }
     });
 
@@ -361,6 +371,20 @@ void MainWidget::initSignalSlot()
             // 不同意
 
         }
+    });
+
+    //////////////////////////////////////////
+    /// 处理创建群聊的信号响应
+    //////////////////////////////////////////
+    connect(dataCenter,&DataCenter::createGroupSessionDone,this,[=](){
+        LOG() << "群聊创建成功!";
+    });
+
+    //////////////////////////////////////////
+    /// 处理创建会话的推送数据
+    //////////////////////////////////////////
+    connect(dataCenter,&DataCenter::receiveCreateSessionDone,this,[=](){
+        this->updateChatSessionList();
     });
 }
 

@@ -4,6 +4,9 @@
 #include <QDialog>
 #include <QWidget>
 #include <QLabel>
+#include "model/data.h"
+
+using model::UserInfo;
 
 ////////////////////////////////////////////////
 /// 表示整个"单聊会话详情"窗口
@@ -12,8 +15,10 @@ class SessionDetailWidget : public QDialog
 {
     Q_OBJECT
 public:
-    SessionDetailWidget(QWidget* parent);
-
+    SessionDetailWidget(QWidget* parent,const UserInfo& userInfo);
+    void onClickDeleteFriendBtn();
+private:
+    UserInfo userInfo;
     QPushButton* deleteFriendBtn;
 };
 

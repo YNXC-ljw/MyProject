@@ -7,6 +7,8 @@
 #include <QPainter>
 
 #include "debug.h"
+#include "model/datacenter.h"
+using namespace model;
 
 /////////////////////////////////////////////
 /// 选择好友窗口中的一个 元素/好友项
@@ -96,7 +98,7 @@ void ChooseFriendItem::leaveEvent(QEvent *event)
 /// 选择好友的窗口
 /////////////////////////////////////////////
 
-ChooseFriendDialog::ChooseFriendDialog(QWidget* parent) :QDialog(parent)
+ChooseFriendDialog::ChooseFriendDialog(QWidget* parent,const QString& userId) :QDialog(parent),userId(userId)
 {
     // 1.设置窗口基本属性
     this->setWindowTitle("选择好友");
@@ -116,6 +118,10 @@ ChooseFriendDialog::ChooseFriendDialog(QWidget* parent) :QDialog(parent)
 
     // 4.设置右窗口
     initRight(layout);
+
+    // 5.将好友列表数据加载到窗口中
+    initData();
+
 }
 
     void ChooseFriendDialog::initLeft(QHBoxLayout *layout)
@@ -222,8 +228,84 @@ void ChooseFriendDialog::initRight(QHBoxLayout *layout)
     }
 #endif
 
+    // 8.添加信号槽,处理"完成"和"取消"操作
+    connect(okBtn,&QPushButton::clicked,this,&ChooseFriendDialog::onClickOkBtn);
+    connect(cancelBtn,&QPushButton::clicked,this,[=](){
+        // 直接将窗口关闭即可
+        this->close();
+    });
+
 }
 
+void ChooseFriendDialog::initData()
+{
+    // 1.先获取好友列表
+    DataCenter *dataCenter = DataCenter::getInstance();
+    QList<UserInfo>* friendList = dataCenter->getFriendList();
+    if(friendList == nullptr)
+    {
+        LOG() << "好友列表不存在或为空!";
+        return;
+    }
+    // 2.遍历好友列表将列表中的用户信息渲染到界面上
+    for(auto& f : *friendList)
+    {
+        // 当前窗口用户必须是被选中状态
+        if(f.userId == this->userId)
+        {
+            addSelectedFriend(f.userId,f.avatar,f.nickName);
+            this->addFriendItem(f.userId,f.avatar,f.nickName,true);
+        }else{
+            this->addFriendItem(f.userId,f.avatar,f.nickName,false);
+        }
+    }
+}
+
+QList<QString> ChooseFriendDialog::selectedMemberUserId()
+{
+    QList<QString> result;
+    // 1.把自己的userId添加到列表中
+    DataCenter* dataCenter = DataCenter::getInstance();
+    UserInfo* userInfo = dataCenter->getMyself();
+    if(userInfo == nullptr)
+    {
+        LOG() << "个人信息加载失败！";
+        return result;
+    }
+    result.push_back(userInfo->userId);
+
+    // 2.遍历
+    QVBoxLayout* layout = dynamic_cast<QVBoxLayout*>(selectedContainer->layout());
+    for(int i = 0;i < layout->count();i++)
+    {
+        auto* item = layout->itemAt(i);
+        if(item == nullptr || item->widget() == nullptr)
+        {
+            continue;
+        }
+        auto* chooseFriendItem = dynamic_cast<ChooseFriendItem*>(item->widget());
+        result.push_back(chooseFriendItem->getUserId());
+    }
+    return result;
+}
+
+void ChooseFriendDialog::onClickOkBtn()
+{
+    // 1.根据选中的好友列表，获取到所有被选中的成员的userId
+    QList<QString> userIdList = selectedMemberUserId();
+    if(userIdList.count() < 3)
+    {
+        LOG() << "群聊成员不足3人，无法创建群聊！";
+        return;
+    }
+
+    // 2.发送请求创建群聊
+    DataCenter* dataCenter = DataCenter::getInstance();
+    dataCenter->createGroupSessionAsync(userIdList);
+
+    // 3.关闭当前窗口
+    this->close();
+}
 void ChooseFriendDialog::addFriendItem(const QString& userId, const QIcon &avatar, const QString &name, bool checked)
 {
     ChooseFriendItem* chooseFriendItem = new ChooseFriendItem(this,userId,avatar,name,checked);

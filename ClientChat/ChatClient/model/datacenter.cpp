@@ -443,6 +443,11 @@ void DataCenter::rejectFriendApplyAsync(const QString &userId)
 {
     netClient.rejectFriendApply(loginSessionId,userId);
 }
+
+void DataCenter::createGroupSessionAsync(const QList<QString> &userIdList)
+{
+    netClient.createGroupSession(loginSessionId,userIdList);
+}
 ////////////////////////////////////////////////////////////////////////////
 /// 辅助函数
 ////////////////////////////////////////////////////////////////////////////

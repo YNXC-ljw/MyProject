@@ -2,16 +2,20 @@
 
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QMessageBox>
 
 #include "debug.h"
 #include "choosefrienddialog.h"
+#include "model/datacenter.h"
+
+using model::DataCenter;
 
 ////////////////////////////////////////////////
 /// 表示整个"单聊会话详情"窗口
 ////////////////////////////////////////////////
 
-SessionDetailWidget::SessionDetailWidget(QWidget* parent)
-    :QDialog(parent)
+SessionDetailWidget::SessionDetailWidget(QWidget* parent,const UserInfo& userInfo)
+    :QDialog(parent),userInfo(userInfo)
 {
     // 1.设置一些基本属性
     this->setWindowTitle("会话详情");
@@ -37,6 +41,8 @@ SessionDetailWidget::SessionDetailWidget(QWidget* parent)
     layout->addWidget(currentUser,0,1);
 
 #endif
+    AvatarItem* currentUser = new AvatarItem(userInfo.avatar,userInfo.nickName);
+    layout->addWidget(currentUser,0,1);
 
     // 5.添加"删除好友"按钮
     deleteFriendBtn = new QPushButton();
@@ -49,9 +55,25 @@ SessionDetailWidget::SessionDetailWidget(QWidget* parent)
 
     // 6.连接信号槽处理添加按钮信号
     connect(createGroupBtn->getAvatarBtn(),&QPushButton::clicked,this,[=](){
-        ChooseFriendDialog* chooseFriendDialog = new ChooseFriendDialog(this);
+        ChooseFriendDialog* chooseFriendDialog = new ChooseFriendDialog(this,userInfo.userId);
         chooseFriendDialog->exec();
     });
+
+    connect(deleteFriendBtn,&QPushButton::clicked,this,&SessionDetailWidget::onClickDeleteFriendBtn);
+}
+
+void SessionDetailWidget::onClickDeleteFriendBtn()
+{
+    // 1.弹出对话框
+    auto result = QMessageBox::warning(this,"确认删除","确认删除该好友?",QMessageBox::Ok | QMessageBox::Cancel);
+    if(result != QMessageBox::Ok)
+    {
+        LOG() << "用户取消了好友删除";
+        return;
+    }
+    // 2.发送好友删除的请求
+    DataCenter* dataCenter = DataCenter::getInstance();
+    dataCenter->deleteFriendAsync(userInfo.userId);
 }
 
 ////////////////////////////////////////////////

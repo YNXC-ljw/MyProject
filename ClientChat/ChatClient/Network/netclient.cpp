@@ -75,6 +75,9 @@ void NetClient::handleWsResponse(const bite_im::NotifyMessage &notifyMessage)
         handleWsMessage(message);
     }else if(notifyMessage.notifyType() == bite_im::NotifyTypeGadget::NotifyType::CHAT_SESSION_CREATE_NOTIFY){
         // 创建新会话
+        chatSessionInfo chaSessionInfo;
+        chaSessionInfo.load(notifyMessage.newChatSessionInfo().chatSessionInfo());
+        handleWsSessionCreate(chaSessionInfo);
     }else if(notifyMessage.notifyType() == bite_im::NotifyTypeGadget::NotifyType::FRIEND_ADD_APPLY_NOTIFY){
         // 好友申请通知
         UserInfo userInfo;
@@ -171,6 +174,21 @@ void NetClient::handleWsAcceptFriendApply(const model::UserInfo &userInfo, bool 
         // 未同意好友申请
         emit dataCenter->acceptFriendProcessDone(userInfo.nickName,agree);
     }
+}
+
+void NetClient::handleWsSessionCreate(const model::chatSessionInfo &chatSessionInfo)
+{
+    // 把这个 ChatSessionInfo 添加到chatSessionList就可以
+    QList<model::chatSessionInfo>* chatSessionList = dataCenter->getChatSessionList();
+    if(chatSessionList == nullptr)
+    {
+        LOG() << "客户端没有加载会话列表";
+        return;
+    }
+    // 新的会话元素添加到会话列表头部
+    chatSessionList->push_front(chatSessionInfo);
+    // 发送信号通知界面更新
+    emit dataCenter->receiveCreateSessionDone();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -861,6 +879,46 @@ void NetClient::rejectFriendApply(const QString &loginSessionId, const QString &
         // e) 打印日志
         LOG() << "[拒绝好友申请] 响应完成 requestId = " << pbResp->requestId();
     });
+}
+
+void NetClient::createGroupSession(const QString &loginSessionId, const QList<QString> &userIdList)
+{
+    // 1. 构造请求 body
+    bite_im::ChatSessionCreateReq req;
+    req.setRequestId(makeRequestId());
+    req.setSessionId(loginSessionId);
+    req.setChatSessionName("新的群聊");
+    req.setMemberIdList(userIdList);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[创建群聊会话] 发送请求 requestId = " << req.requestId() << ", loginSessionId = " << loginSessionId
+          << ", userIdList = " << userIdList;
+
+    // 2. 发送 HTTP 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/friend/create_chat_session", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::ChatSessionCreateRsp>(httpResp, &ok, &reason);
+
+        // b) 判定结果是否正确
+        if (!ok) {
+            LOG() << "[创建群聊会话] 响应失败! reason=" << reason;
+            return;
+        }
+
+        // c) 往 DataCenter 存储数据. 由于此处创建好的会话, 是 websocket 推送过来的.
+        // 在在这里无需更新 DataCenter. 后续通过 websocket 的逻辑来更新即可.
+
+        // d) 通知调用者, 响应处理完毕了
+        emit dataCenter->createGroupSessionDone();
+
+        // e) 打印日志
+        LOG() << "[创建群聊会话] 响应完成 requestId = " << pbResp->requestId();
+    });
+
 }
 
 

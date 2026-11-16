@@ -14,6 +14,7 @@ public:
     GroupSessionDetailWidget(QWidget* parent);
 
     void addMenber(AvatarItem* avatarItem);
+    void initData();
 private:
     QGridLayout* glayout;
 
