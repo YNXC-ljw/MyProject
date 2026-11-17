@@ -921,6 +921,161 @@ void NetClient::createGroupSession(const QString &loginSessionId, const QList<QS
 
 }
 
+void NetClient::getGroupSessionMemberList(const QString &loginSessionId, const QString &chatSessionId)
+{
+    // 构造请求体
+    bite_im::GetChatSessionMemberReq req;
+    req.setRequestId(makeRequestId());
+    req.setSessionId(loginSessionId);
+    req.setChatSessionId(chatSessionId);
+    LOG() << "[获取成员列表] 发送请求 requestId = " << req.requestId() << ", loginSessionId = " << req.sessionId()
+          << ", chatSessionId = " << req.chatSessionId();
+    QByteArray body = req.serialize(&serializer);
+
+    // 发送请求并返回响应
+    QNetworkReply* httpResp = sendHttpRequest("/service/friend/get_chat_session_member",body);
+
+    // 处理响应结果
+    connect(httpResp,&QNetworkReply::finished,this,[=](){
+        // 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = handleHttpResponse<bite_im::GetChatSessionMemberRsp>(httpResp,&ok,&reason);
+
+        // 判定响应是否正确
+        if(!ok)
+        {
+            LOG() << "[获取成员列表] 响应出错 reason = " << reason;
+            return;
+        }
+
+        // 将数据写回dataCenter
+        dataCenter->resetGroupMemberList(chatSessionId,pbResp->memberInfoList());
+        // 发送信号表示处理完毕
+        emit dataCenter->getGroupMemberListDone(chatSessionId);
+        //打印日志
+        LOG() << "[获取成员列表] 响应完成 requestId = " << pbResp->requestId();
+    });
+}
+
+void NetClient::serachFriend(const QString &loginSessionId, const QString &text)
+{
+    // 构造请求体
+    bite_im::FriendSearchReq req;
+    req.setRequestId(makeRequestId());
+    req.setSearchKey(text);
+    req.setSessionId(loginSessionId);
+    LOG() << "[搜索用户列表] 发送请求 requesteId = " << req.requestId() << ", loginSessionId = " << req.sessionId()
+          << ", searchKey = " << req.searchKey();
+    QByteArray body = req.serialize(&serializer);
+
+    // 发送请求并接收响应
+    QNetworkReply* httpResp = sendHttpRequest("/service/friend/search_friend",body);
+
+    // 处理响应结果
+    connect(httpResp,&QNetworkReply::finished,this,[=](){
+        // 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = handleHttpResponse<bite_im::FriendSearchRsp>(httpResp,&ok,&reason);
+
+        // 判定响应是否正确
+        if(!ok)
+        {
+            LOG() << "[搜索用户列表] 请求出错 reason = " << reason;
+            return;
+        }
+
+        // 将数据写回dataCenter
+        dataCenter->resetSearchFriendResult(pbResp->userInfo());
+        // 发送信号表示响应完成
+        emit dataCenter->searchFriendDone();
+        // 打印日志
+        LOG() << "[搜索用户列表] 响应完成 requestId = " << pbResp->requestId();
+    });
+}
+
+void NetClient::searchMessageList(const QString &loginSessionId, const QString& chatSessionId, const QString &searchKey)
+{
+    // 1. 构造请求 body
+    bite_im::MsgSearchReq req;
+    req.setRequestId(makeRequestId());
+    req.setSessionId(loginSessionId);
+    req.setChatSessionId(chatSessionId);
+    req.setSearchKey(searchKey);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[按关键词搜索历史消息] 发送请求 requestId=" << req.requestId() << ", loginSessionId=" << req.sessionId()
+          << ", chatSessionId=" << req.chatSessionId() << ", searchKey=" << searchKey;
+
+    // 2. 发送 HTTP 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/message_storage/search_history", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::MsgSearchRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应是否正确
+        if (!ok) {
+            LOG() << "[按关键词搜索历史消息] 响应失败! reason=" << reason;
+            return;
+        }
+
+        // c) 把响应结果写入到 DataCenter
+        dataCenter->resetSearchMessageResult(pbResp->msgList());
+
+        // d) 发送信号
+        emit dataCenter->searchMessageResultDone();
+
+        // e) 打印日志
+        LOG() << "[按关键词搜索历史消息] 响应完成 requestId = " << pbResp->requestId();
+    });
+
+}
+
+void NetClient::searchMessageListByTime(const QString &loginSessionId, const QString &chatSessionId, const QDateTime &beginTime, const QDateTime &endTime)
+{
+    // 1. 构造请求 body
+    bite_im::GetHistoryMsgReq req;
+    req.setRequestId(makeRequestId());
+    req.setSessionId(loginSessionId);
+    req.setChatSessionId(chatSessionId);
+    req.setStartTime(beginTime.toSecsSinceEpoch());
+    req.setOverTime(endTime.toSecsSinceEpoch());
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[按时间搜索历史消息] 发送请求 requestId=" << req.requestId() << ", loginSessionId=" << loginSessionId
+          << ", chatSessionId=" << chatSessionId << ", begTime=" << beginTime << ", endTime=" << endTime;
+
+    // 2. 发送 HTTP 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/message_storage/get_history", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::GetHistoryMsgRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应结果是否正确
+        if (!ok) {
+            LOG() << "[按时间搜索历史消息] 响应失败! reason=" << reason;
+            return;
+        }
+
+        // c)将数据写回DataCenter
+        dataCenter->resetSearchMessageResult(pbResp->msgList());
+
+        // d)发送信号
+        emit dataCenter->searchMessageResultDone();
+
+        // e)打印日志
+        LOG() << "[按时间搜索历史消息] 响应完成 requestId = " << pbResp->requestId();
+    });
+
+}
+
 
 
 } // end namespace

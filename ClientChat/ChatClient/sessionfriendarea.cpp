@@ -116,7 +116,7 @@ SessionFriendItem::SessionFriendItem(QWidget *owner, const QIcon &avatar, const 
     :owner(owner)
 {
     this->setFixedHeight(70);
-    this->setStyleSheet("QWidget { background-color: rgb(238,238,240)};");
+    this->setStyleSheet("QWidget { background-color: rgb(238,238,240)}");
     
     // 创建网格布局管理器
     QGridLayout* layout = new QGridLayout();

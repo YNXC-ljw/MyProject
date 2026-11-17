@@ -448,6 +448,91 @@ void DataCenter::createGroupSessionAsync(const QList<QString> &userIdList)
 {
     netClient.createGroupSession(loginSessionId,userIdList);
 }
+
+void DataCenter::getGroupSessionMemberListAsync(const QString &chatSessionId)
+{
+    netClient.getGroupSessionMemberList(loginSessionId,chatSessionId);
+}
+
+void DataCenter::resetGroupMemberList(const QString &chatSessionId,const QList<bite_im::UserInfo> &memberList)
+{
+    // 拿到 hash 中的QList再将数据往里插入
+    QList<UserInfo>& currentMemberList = (*this->memberList)[chatSessionId];
+    currentMemberList.clear();
+
+    for(const auto& m : memberList)
+    {
+        UserInfo userInfo;
+        userInfo.load(m);
+        currentMemberList.push_back(userInfo);
+    }
+}
+
+QList<UserInfo> *DataCenter::getgroupSessionMemberList(const QString& chatSessionId)
+{
+    if(!this->memberList->contains(chatSessionId))
+    {
+        return nullptr;
+    }
+    return &(*this->memberList)[chatSessionId];
+}
+
+void DataCenter::searchFriendAsync(const QString &text)
+{
+    netClient.serachFriend(loginSessionId,text);
+}
+
+void DataCenter::resetSearchFriendResult(const QList<bite_im::UserInfo> &searchResult)
+{
+    if(searchFriendResult == nullptr)
+    {
+        searchFriendResult = new QList<UserInfo>();
+    }
+    searchFriendResult->clear();
+
+    for(const auto& f : searchResult)
+    {
+        UserInfo userInfo;
+        userInfo.load(f);
+        searchFriendResult->push_back(userInfo);
+    }
+}
+
+QList<UserInfo> *DataCenter::getSearchResultList()
+{
+    return searchFriendResult;
+}
+
+void DataCenter::searchMessageListAsync(const QString &searchKey)
+{
+    netClient.searchMessageList(loginSessionId,this->currentChatSessionId,searchKey);
+}
+
+void DataCenter::searchMessageListByTimeAsync(const QDateTime &beginTime, const QDateTime &endTime)
+{
+    netClient.searchMessageListByTime(loginSessionId,this->currentChatSessionId,beginTime,endTime);
+}
+
+void DataCenter::resetSearchMessageResult(const QList<bite_im::MessageInfo> &messageList)
+{
+    if(searchMessageResult == nullptr)
+    {
+        this->searchMessageResult = new QList<Message>();
+    }
+    searchMessageResult->clear();
+
+    for(const auto& s : messageList)
+    {
+        Message message;
+        message.load(s);
+        searchMessageResult->push_back(message);
+    }
+}
+
+QList<Message> *DataCenter::getSearchMessageResult()
+{
+    return searchMessageResult;
+}
 ////////////////////////////////////////////////////////////////////////////
 /// 辅助函数
 ////////////////////////////////////////////////////////////////////////////

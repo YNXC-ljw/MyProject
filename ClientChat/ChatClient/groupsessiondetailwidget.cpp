@@ -74,7 +74,7 @@ GroupSessionDetailWidget::GroupSessionDetailWidget(QWidget* parent) :QDialog(par
     vlayout->addLayout(hlayout);
 
     // 6.2 创建真实群聊名字的 label
-    QLabel* groupNameLabel = new QLabel();
+    groupNameLabel = new QLabel();
     groupNameLabel->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
     groupNameLabel->setFixedHeight(50);
     groupNameLabel->setStyleSheet("QLabel { font-size: 18px; }");
@@ -85,7 +85,7 @@ GroupSessionDetailWidget::GroupSessionDetailWidget(QWidget* parent) :QDialog(par
     modifyBtn->setFixedSize(30, 30);
     modifyBtn->setIconSize(QSize(20, 20));
     modifyBtn->setIcon(QIcon(":/resource/image/modify.png"));
-    modifyBtn->setStyleSheet("QPushButton { border: none; background-color: transparent; } QPushButton:pressed { background-color: rgb(230,230,230);");
+    modifyBtn->setStyleSheet("QPushButton { border: none; background-color: transparent; } QPushButton:pressed { background-color: rgb(230,230,230);}");
     hlayout->addWidget(modifyBtn,0,Qt::AlignRight | Qt::AlignVCenter);
 
     // 7. 退出群聊按钮
@@ -118,12 +118,35 @@ GroupSessionDetailWidget::GroupSessionDetailWidget(QWidget* parent) :QDialog(par
 void GroupSessionDetailWidget::initData()
 {
     DataCenter* dataCenter = DataCenter::getInstance();
+    connect(dataCenter,&DataCenter::getGroupMemberListDone,this,&GroupSessionDetailWidget::initMemberList);
+    dataCenter->getGroupSessionMemberListAsync(dataCenter->getCurrentChatSessionId());
+    // 由于主窗口点击会话详情按钮已经处理过对应详情窗口会话的判空，所以此时就不需要判空了
+}
 
+// 根据拿到的成员列表，将列表元素渲染到界面上
+void GroupSessionDetailWidget::initMemberList(const QString& chatSessionId)
+{
+    DataCenter* dataCenter = DataCenter::getInstance();
+    QList<UserInfo>* memberList = dataCenter->getgroupSessionMemberList(chatSessionId);
+    // 判空
+    if(memberList == nullptr)
+    {
+        LOG() << "加载的成员列表为空！";
+        return;
+    }
+    // 遍历列表
+    for(auto& m : *memberList)
+    {
+        AvatarItem *avatarItem = new AvatarItem(m.avatar,m.nickName);
+        this->addMember(avatarItem);
+    }
+    // 设置群聊名称
+    groupNameLabel->setText("新的群聊");
 }
 
 
 // 添加每一个"群成员"的函数
-void GroupSessionDetailWidget::addMenber(AvatarItem *avatarItem)
+void GroupSessionDetailWidget::addMember(AvatarItem *avatarItem)
 {
     avatarItem->setMinimumSize(0, 0);          // 先取消原来的最小尺寸限制
     avatarItem->setFixedSize(70, 85);          // 设置适合当前网格的大小（可自己调）

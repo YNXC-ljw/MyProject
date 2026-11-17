@@ -8,6 +8,9 @@
 #include <QLabel>
 
 #include "debug.h"
+#include "model/datacenter.h"
+
+using namespace model;
 
 //////////////////////////////////////////////////////////
 /// 表示一个好友搜索的结果
@@ -47,10 +50,10 @@ FriendResultItem::FriendResultItem(const UserInfo &userInfo) :userInfo(userInfo)
     descLabel->setText(userInfo.description);
     
     // 6. 创建添加好友按钮
-    QPushButton* addBtn = new QPushButton();
+    addBtn = new QPushButton();
     addBtn->setFixedSize(100, 40);
     addBtn->setText("添加好友");
-    QString btnStyle = "QPushButton { border: none; background-color: rgb(137, 217, 97); color: rgb(255, 255, 255); border-radius: 10px;";
+    QString btnStyle = "QPushButton { border: none; background-color: rgb(137, 217, 97); color: rgb(255,255,255); border-radius: 10px;}";
     btnStyle += "QPushButton:pressed { background-color: rgb(200, 200, 200); }";
     addBtn->setStyleSheet(btnStyle);
     
@@ -60,6 +63,18 @@ FriendResultItem::FriendResultItem(const UserInfo &userInfo) :userInfo(userInfo)
     layout->addWidget(descLabel, 1, 1);
     layout->addWidget(addBtn, 0, 2, 2, 1);
     
+    // 8.连接信号槽
+    connect(addBtn,&QPushButton::clicked,this,[=](){
+        // 1.调用添加好友逻辑
+        DataCenter* dataCenter = DataCenter::getInstance();
+        // 申请好友的逻辑已经处理完成，所以此时只需要直接调用即可
+        dataCenter->addFriendApplyAsync(this->userInfo.userId);
+
+        // 2.禁用申请按钮
+        addBtn->setEnabled(false);
+        addBtn->setText("已申请");
+        addBtn->setStyleSheet("QPushButton { border: none; background-color: rgb(137, 217, 97); color: rgb(255,255,255); border-radius: 10px;QPushButton:pressed { background-color: rgb(200, 200, 200); };}");
+    });
 }
 
 //////////////////////////////////////////////////////////
@@ -118,6 +133,8 @@ AddFriendDialog::AddFriendDialog(QWidget* parent) :QDialog(parent)
         this->addResult(*userInfo);
     }
 #endif
+    // 6.连接信号槽
+    connect(searchBtn,&QPushButton::clicked,this,&AddFriendDialog::onClickSearchBtn);
 }
 
 void AddFriendDialog::initResultArea()
@@ -169,6 +186,41 @@ void AddFriendDialog::clear()
 void AddFriendDialog::setSearchKey(const QString &searchKey)
 {
     searchEdit->setText(searchKey);
+}
+
+void AddFriendDialog::onClickSearchBtn()
+{
+    // 1.拿到输入框中的内容
+    const QString& text = searchEdit->text();
+    if(text.isEmpty())
+    {
+        LOG() << "输入框没有输入任何内容!";
+        return;
+    }
+
+    // 2.给服务器发送请求
+    DataCenter* dataCenter = DataCenter::getInstance();
+    connect(dataCenter,&DataCenter::searchFriendDone,this,&AddFriendDialog::searchFriendDone,Qt::UniqueConnection);
+    dataCenter->searchFriendAsync(text);
+}
+
+void AddFriendDialog::searchFriendDone()
+{
+    // 获取搜索列表
+    DataCenter* dataCenter = DataCenter::getInstance();
+    QList<UserInfo>* resultList = dataCenter->getSearchResultList();
+    if(resultList == nullptr)
+    {
+        return;
+    }
+
+    // 清空上一回搜索界面的结果
+    this->clear();
+    // 遍历获取的列表并将其中的元素渲染到界面上
+    for(const auto& r : *resultList)
+    {
+        this->addResult(r);
+    }
 }
 
 

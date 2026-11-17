@@ -13,10 +13,13 @@ class GroupSessionDetailWidget : public QDialog
 public:
     GroupSessionDetailWidget(QWidget* parent);
 
-    void addMenber(AvatarItem* avatarItem);
+    void addMember(AvatarItem* avatarItem);
     void initData();
+    void initMemberList(const QString& chatSessionId);
 private:
     QGridLayout* glayout;
+
+    QLabel* groupNameLabel; // 群聊名称
 
     // 表示当前要添加的 AvatarItem 所处的行和列
     // 由于整个界面上存在 "+" 这个按钮，占据了 (0, 0) 这个位置，所以第一个 AvatarItem 就要从 (0, 1) 开始了

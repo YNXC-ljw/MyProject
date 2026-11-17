@@ -38,7 +38,7 @@ SelfInfoWidget::SelfInfoWidget(QWidget* parent) : QDialog(parent)
     avatarBtn = new QPushButton();
     avatarBtn->setFixedSize(75,75);
     avatarBtn->setIconSize(QSize(75,75));
-    avatarBtn->setStyleSheet("QPusuButton { border: none; background-color: transparent; }");
+    avatarBtn->setStyleSheet("QPushButton { border: none; background-color: transparent; }");
     layout->addWidget(avatarBtn,0,0,3,1);
 
     // 4.添加用户id显示

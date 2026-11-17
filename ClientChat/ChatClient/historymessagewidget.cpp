@@ -1,14 +1,12 @@
 #include "historymessagewidget.h"
 
 #include <QGridLayout>
-#include <QRadioButton>
-#include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
 #include <QDateTimeEdit>
 #include <QScrollArea>
 #include <QScrollBar>
-
+#include "model/datacenter.h"
 #include "debug.h"
 
 using namespace model;
@@ -95,8 +93,8 @@ HistoryMessageWidget::HistoryMessageWidget(QWidget* parent) :QDialog(parent)
     this->setLayout(layout);
 
     // 3.创建单选按钮
-    QRadioButton* keyRadioBtn = new QRadioButton();
-    QRadioButton* timeRadioBtn = new QRadioButton();
+    keyRadioBtn = new QRadioButton();
+    timeRadioBtn = new QRadioButton();
     keyRadioBtn->setText("按关键词搜索");
     timeRadioBtn->setText("按时间搜索");
     keyRadioBtn->setStyleSheet("QRadioButton::indicator:checked { background-color: rgb(231,231,231);border-radius: 8px; }");
@@ -107,7 +105,7 @@ HistoryMessageWidget::HistoryMessageWidget(QWidget* parent) :QDialog(parent)
     layout->addWidget(timeRadioBtn,0,2,1,2);
 
     // 4.创建搜索框
-    QLineEdit* searchEdit = new QLineEdit();
+    searchEdit = new QLineEdit();
     searchEdit->setFixedHeight(50);
     searchEdit->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     searchEdit->setPlaceholderText("请输入搜索的关键词");
@@ -121,7 +119,7 @@ HistoryMessageWidget::HistoryMessageWidget(QWidget* parent) :QDialog(parent)
     searchBtn->setIconSize(QSize(30,30));
     searchBtn->setIcon(QIcon(":/resource/image/search.png"));
     QString style = "QPushButton { border:none; border-radius: 5px; background-color: rgb(240,240,240); }";
-    style += "QPushButton:pressed { backgorund-color: rgb(220,220,220);}";
+    style += "QPushButton:pressed { background-color: rgb(220,220,220);}";
     searchBtn->setStyleSheet(style);
     layout->addWidget(searchBtn,1,8,1,1);
 
@@ -130,8 +128,8 @@ HistoryMessageWidget::HistoryMessageWidget(QWidget* parent) :QDialog(parent)
     begTag->setText("开始时间");
     QLabel* endTag = new QLabel();
     endTag->setText("结束时间");
-    QDateTimeEdit* begTimeEdit = new QDateTimeEdit();
-    QDateTimeEdit* endTimeEdit = new QDateTimeEdit();
+    begTimeEdit = new QDateTimeEdit();
+    endTimeEdit = new QDateTimeEdit();
     begTimeEdit->setFixedHeight(50);
     endTimeEdit->setFixedHeight(50);
     begTag->hide();
@@ -175,6 +173,8 @@ HistoryMessageWidget::HistoryMessageWidget(QWidget* parent) :QDialog(parent)
         endTimeEdit->show();
     });
 
+    connect(searchBtn,&QPushButton::clicked,this,&HistoryMessageWidget::onClickSearchBtn);
+
     // 构造临时数据
 #if TEST_UI
     for(int i = 0;i < 30;i++)
@@ -217,6 +217,53 @@ void HistoryMessageWidget::clear()
         // 不是空直接删除
         layout->removeWidget(widget);
         widget->deleteLater();
+    }
+}
+
+void HistoryMessageWidget::onClickSearchBtn()
+{
+    DataCenter* dataCenter = DataCenter::getInstance();
+    connect(dataCenter,&DataCenter::searchMessageResultDone,this,&HistoryMessageWidget::getSearchMessageDone,Qt::UniqueConnection);
+    // 根据单选框的选情况，执行不同的逻辑
+    if(keyRadioBtn->isChecked())
+    {
+        // 按照关键词搜索
+        const QString& text = searchEdit->text();
+        if(text.isEmpty())
+        {
+            LOG() << "输入框内容为空！";
+            return;
+        }
+        dataCenter->searchMessageListAsync(text);
+    }else{
+        // 按照时间搜索
+        auto beginTime = begTimeEdit->dateTime();
+        auto endTime = endTimeEdit->dateTime();
+        if(beginTime >= endTime)
+        {
+            return;
+        }
+        dataCenter->searchMessageListByTimeAsync(beginTime,endTime);
+    }
+}
+
+void HistoryMessageWidget::getSearchMessageDone()
+{
+    // 1.从dataCenter获取消息搜索列表
+    DataCenter* dataCenter = DataCenter::getInstance();
+    QList<Message>* searchMessageList = dataCenter->getSearchMessageResult();
+    if(searchMessageList == nullptr)
+    {
+        LOG() << "当前搜索消息列表为空！";
+        return;
+    }
+
+    // 2.将列表中的消息渲染到界面上
+    this->clear();
+
+    for(const Message& m : *searchMessageList)
+    {
+        this->addHistoryMessage(m);
     }
 }
 

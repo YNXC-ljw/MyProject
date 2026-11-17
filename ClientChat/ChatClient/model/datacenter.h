@@ -140,6 +140,21 @@ public:
 
     // 创建群聊
     void createGroupSessionAsync(const QList<QString>& userIdList);
+    // 获取当前会话成员列表
+    void getGroupSessionMemberListAsync(const QString& chatSessionId);
+    void resetGroupMemberList(const QString& chatSessionId,const QList<bite_im::UserInfo>& memberList);
+    QList<UserInfo>* getgroupSessionMemberList(const QString& chatSessionId);
+
+    // 搜索好友
+    void searchFriendAsync(const QString& text);
+    void resetSearchFriendResult(const QList<bite_im::UserInfo>& searchResult);
+    QList<UserInfo>* getSearchResultList();
+
+    // 搜索历史消息
+    void searchMessageListAsync(const QString& searchKey);
+    void searchMessageListByTimeAsync(const QDateTime& beginTime,const QDateTime& endTime);
+    void resetSearchMessageResult(const QList<bite_im::MessageInfo>& messageList);
+    QList<Message>* getSearchMessageResult();
 
     ////////////////////////////////////////////////////////////////////////////
     /// 辅助函数
@@ -186,6 +201,9 @@ signals:
     void rejectFriendApplyDone();
     void createGroupSessionDone();
     void receiveCreateSessionDone();
+    void getGroupMemberListDone(const QString& chatSessionId);
+    void searchFriendDone();
+    void searchMessageResultDone();
 };
 
 } // end namespace

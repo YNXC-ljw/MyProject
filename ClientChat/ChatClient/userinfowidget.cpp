@@ -28,7 +28,7 @@ UserInfoWidget::UserInfoWidget(const UserInfo& userInfo,QWidget* parent)
 
 
     QString labelStyle = "QLabel { font-weight: 800; padding-left: 20px; }";
-    QString btnStyle = "QPushButton { border: 1px solid rdb(100,100,100); border-radius: 5px; background-color: rgb(240,240,240); }";
+    QString btnStyle = "QPushButton { border: 1px solid rgb(100,100,100); border-radius: 5px; background-color: rgb(240,240,240); }";
     btnStyle += "QPushButton:pressed { background-color: rgb(205,205,205); }";
 
     int height = 30;

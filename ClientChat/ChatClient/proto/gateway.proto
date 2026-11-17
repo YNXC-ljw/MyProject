@@ -32,7 +32,7 @@ message ClientAuthenticationReq {
         删除好友                        /service/friend/remove_friend
         搜索用户                        /service/friend/search_friend
         获取指定用户的消息会话列表       /service/friend/get_chat_session_list
-        创建消息会话                    /service/friend/create_chat_session
+        创建消息会话                     /service/friend/create_chat_session
         获取消息会话成员列表             /service/friend/get_chat_session_member
         获取待处理好友申请事件列表       /service/friend/get_pending_friend_events
 

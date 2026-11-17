@@ -113,16 +113,24 @@ public:
     // 修改头像
     void changeAvatar(const QString& loginSessionId,const QByteArray& imageBytes);
 
-    // 删除好友
+    // 发送请求删除好友
     void deleteFriend(const QString& loginSessionId,const QString& userId);
-    // 添加好友
+    // 发送请求添加好友
     void addFriendApply(const QString& loginSessionId,const QString& userId);
-    // 同意好友申请
+    // 发送请求同意好友申请
     void acceptFriendApply(const QString& loginSessionId,const QString& userId);
     // 拒绝好友申请
     void rejectFriendApply(const QString& loginSessionId,const QString& userId);
-    // 创建群聊
+    // 发送请求创建群聊
     void createGroupSession(const QString& loginSessionId,const QList<QString>& userIdList);
+    // 获取群聊成员列表
+    void getGroupSessionMemberList(const QString& loginSessionId,const QString& chatSessionId);
+
+    // 搜索好友
+    void serachFriend(const QString& loginSessionId,const QString& text);
+    // 搜索历史消息
+    void searchMessageList(const QString& loginSessionId,const QString& chatSessionId,const QString& searchKey);
+    void searchMessageListByTime(const QString& loginSessionId,const QString& chatSessionId,const QDateTime& beginTime,const QDateTime& endTime);
 private:
     model::DataCenter* dataCenter;
     // HTTP 客户端

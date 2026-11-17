@@ -20,6 +20,7 @@ public:
     FriendResultItem(const UserInfo& userInfo);
 private:
     const UserInfo& userInfo;
+    QPushButton* addBtn;
 };
 
 //////////////////////////////////////////////////////////
@@ -38,6 +39,8 @@ public:
     void clear();
 
     void setSearchKey(const QString& searchKey);
+    void onClickSearchBtn();
+    void searchFriendDone();
 private:
     QGridLayout* glayout; // 整个窗口总的网格布局
 
