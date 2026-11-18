@@ -88,6 +88,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         phoneloginwidget.h phoneloginwidget.cpp
         model/datacenter.h model/datacenter.cpp
         Network/netclient.h Network/netclient.cpp
+        verifycodewidget.h verifycodewidget.cpp
     )
 
 # Define target properties for Android with Qt 6 as:
