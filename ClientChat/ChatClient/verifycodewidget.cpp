@@ -23,13 +23,13 @@ QString VerifyCodeWidget::generatorVerifyCode()
 bool VerifyCodeWidget::cheakVerifyCode(const QString &verifyCode)
 {
     // 比较验证码时需忽略大小写
-    return this->verifyCode.compare(verifyCode,Qt::CaseSensitive) == 0;
+    return this->verifyCode.compare(verifyCode,Qt::CaseInsensitive) == 0;
 }
 
 void VerifyCodeWidget::refrushVerifyCode()
 {
     // 每调用一次该函数就重新生成一次验证码
-    generatorVerifyCode();
+    verifyCode = generatorVerifyCode();
 
     // 通过该函数触发重绘事件
     this->update();
@@ -38,8 +38,9 @@ void VerifyCodeWidget::refrushVerifyCode()
 void VerifyCodeWidget::paintEvent(QPaintEvent *event)
 {
     (void)event;
-    const int width = 180;
-    const int height = 80;
+    QRect rc = this->rect();
+    int w = rc.width();
+    int h = rc.height();
 
     QPainter painter(this);
     QPen pen;
@@ -47,36 +48,49 @@ void VerifyCodeWidget::paintEvent(QPaintEvent *event)
     painter.setFont(font);
 
     // 随机噪点
-    for(int i = 0; i < 100; i++)
+    for(int i = 0; i < 50; i++)
     {
-        pen = QPen(QColor(randomGenerator.generate() % 256,randomGenerator.generate() % 256,randomGenerator.generate() % 256));
-        pen.setWidth(2); // 加粗噪点，不然看不见
+        pen = QPen(QColor(randomGenerator.generate() % 256,
+                          randomGenerator.generate() % 256,
+                          randomGenerator.generate() % 256));
+        pen.setWidth(1);
         painter.setPen(pen);
-        painter.drawPoint(randomGenerator.generate() % width,randomGenerator.generate() % height);
+        painter.drawPoint(randomGenerator.generate() % w,
+                          randomGenerator.generate() % h);
     }
 
     // 随机干扰线
     for(int i = 0; i < 5; i++)
     {
-        pen = QPen(QColor(randomGenerator.generate() % 256,randomGenerator.generate() % 256,randomGenerator.generate() % 256));
+        pen = QPen(QColor(randomGenerator.generate() % 256,
+                          randomGenerator.generate() % 256,
+                          randomGenerator.generate() % 256));
         pen.setWidth(1);
         painter.setPen(pen);
-        painter.drawLine(randomGenerator.generate() % width,randomGenerator.generate() % height,randomGenerator.generate() % width,QRandomGenerator::global()->generate() % height);
+        painter.drawLine(randomGenerator.generate() % w,
+                         randomGenerator.generate() % h,
+                         randomGenerator.generate() % w,
+                         randomGenerator.generate() % h);
     }
 
     // 绘制验证码文字（重点修复drawText）
+    int charWidth = 100/4;
     for(int i = 0; i < verifyCode.size(); i++)
     {
-        pen = QPen(QColor(randomGenerator.generate() % 256,randomGenerator.generate() % 256,randomGenerator.generate() % 256));
+        pen = QPen(QColor(randomGenerator.generate() % 200,
+                          randomGenerator.generate() % 200,
+                          randomGenerator.generate() % 200));
+        pen.setWidth(2);
         painter.setPen(pen);
-        // x基准，y基准 + 小随机偏移，文字框30*30
-        int x = 5 + 20 * i;
-        int y = 15 + QRandomGenerator::global()->generate() % 10;
-        painter.drawText(x, y, 30, 30, Qt::AlignCenter, verifyCode[i]);
+        int x = i * charWidth;
+        // y只小幅上下浮动，范围很小，不会飘得乱七八糟
+        int y = 4 + randomGenerator.generate() % 6;
+        painter.drawText(x, y, charWidth, 20, Qt::AlignCenter, verifyCode[i]);
     }
 }
 
 void VerifyCodeWidget::mousePressEvent(QMouseEvent *event)
 {
+    (void) event;
     this->refrushVerifyCode();
 }

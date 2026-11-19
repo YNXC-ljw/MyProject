@@ -11,7 +11,7 @@ NetClient::NetClient(model::DataCenter *dataCenter)
     :dataCenter(dataCenter)
 {
     // 程序启动即调用
-    initWebSocket();
+    // initWebSocket();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -1072,6 +1072,168 @@ void NetClient::searchMessageListByTime(const QString &loginSessionId, const QSt
 
         // e)打印日志
         LOG() << "[按时间搜索历史消息] 响应完成 requestId = " << pbResp->requestId();
+    });
+
+}
+
+void NetClient::userLogin(const QString &username, const QString &password)
+{
+    // 1. 构造请求 body
+    bite_im::UserLoginReq req;
+    req.setRequestId(makeRequestId());
+    req.setNickname(username);
+    req.setPassword(password);
+    req.setVerifyCodeId("");
+    req.setVerifyCode("");
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[用户名登录] 发送请求 requestId=" << req.requestId() << ", username=" << req.nickname() << ", password=" << req.password();
+
+    // 2. 发送 HTTP 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/user/username_login", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应内容
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::UserLoginRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应结果是否正确
+        if (!ok) {
+            LOG() << "[用户名登录] 处理失败 reason=" << reason;
+            emit dataCenter->userLoginDone(false,reason);
+            return;
+        }
+
+        // c) 记录一下当前返回的数据
+        dataCenter->resetLoginSessionId(pbResp->loginSessionId());
+
+        // d) 发送信号，通知调用者，处理完毕了.
+        emit dataCenter->userLoginDone(true,"");
+
+        // e) 打印日志
+        LOG() << "[用户名登录] 处理响应 requestId = " << pbResp->requestId();
+    });
+
+}
+
+void NetClient::userRegister(const QString &username, const QString &password)
+{
+    // 1.构造请求体
+    bite_im::UserRegisterReq req;
+    req.setRequestId(makeRequestId());
+    req.setNickname(username);
+    req.setPassword(password);
+    req.setVerifyCode("");
+    req.setVerifyCodeId("");
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[用户名注册] 发送请求 requestId = " << req.requestId() << ", username = " << req.nickname() << ", password = " << req.password();
+
+    // 2.发送请求并接收响应
+    QNetworkReply* httpResp = sendHttpRequest("/service/user/username_register",body);
+
+    // 3.处理响应结果
+    connect(httpResp,&QNetworkReply::finished,this,[=](){
+        // a)解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::UserRegisterRsp>(httpResp,&ok,&reason);
+
+        // b)判定响应是否正确
+        if(!ok)
+        {
+            LOG() << "[用户名注册] 处理失败 reason = " << reason;
+            emit dataCenter->userRegisterDone(false, reason);
+            return;
+        }
+
+        // c) 把返回的数据保存到 DataCenter 中
+        // 对于注册来说，不需要保存任何信息，直接跳过这个环节.
+
+        // d) 通知调用者响应处理完成
+        emit dataCenter->userRegisterDone(true, "");
+
+        // e) 打印日志
+        LOG() << "[用户名注册] 响应完成 requestId=" << pbResp->requestId();
+    });
+}
+
+void NetClient::phoneLogin(const QString &phone, const QString& verifyCodeId,const QString &verifyCode)
+{
+    bite_im::PhoneLoginReq req;
+    req.setRequestId(makeRequestId());
+    req.setPhoneNumber(phone);
+    req.setVerifyCodeId(verifyCodeId);
+    req.setVerifyCode(verifyCode);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[手机号登录] 发送请求 requestId=" << req.requestId() << ", phone=" << req.phoneNumber()
+          << ", verifyCodeId=" << req.verifyCodeId() << ", verifyCode=" << req.verifyCode();
+
+    // 2. 发送 HTTP 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/user/phone_login", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::PhoneLoginRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应是否成功
+        if (!ok) {
+            LOG() << "[手机号登录] 响应出错! reason=" << reason;
+            emit dataCenter->phoneLoginDone(false, reason);
+            return;
+        }
+
+        // c) 把响应结果记录到 DataCenter
+        dataCenter->resetLoginSessionId(pbResp->loginSessionId());
+
+        // d) 发送信号
+        emit dataCenter->phoneLoginDone(true, "");
+
+        // e) 打印日志
+        LOG() << "[手机号登录] 响应完毕 requestId=" << pbResp->requestId();
+    });
+
+}
+
+void NetClient::phoneRegister(const QString &phone, const QString &verifyCodeId, const QString &verifyCode)
+{
+    // 1. 构造请求 body
+    bite_im::PhoneRegisterReq req;
+    req.setRequestId(makeRequestId());
+    req.setPhoneNumber(phone);
+    req.setVerifyCodeId(verifyCodeId);
+    req.setVerifyCode(verifyCode);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[手机号注册] 发送请求 requestId=" << req.requestId() << ", phone=" << req.phoneNumber()
+          << ", verifyCodeId=" << req.verifyCodeId() << ", verifyCode=" << req.verifyCode();
+
+    // 2. 发送 HTTP 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/user/phone_register", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::PhoneRegisterRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应是否成功
+        if (!ok) {
+            LOG() << "[手机号注册] 响应失败! reason=" << reason;
+            emit dataCenter->phoneRegisterDone(false, reason);
+            return;
+        }
+
+        // c) 让 DataCenter 记录结果，注册操作不需要记录
+
+        // d)发送信号
+        emit dataCenter->phoneRegisterDone(true, "");
+
+        // e) 打印日志
+        LOG() << "[手机号注册] 响应完成 requestId=" << pbResp->requestId();
     });
 
 }

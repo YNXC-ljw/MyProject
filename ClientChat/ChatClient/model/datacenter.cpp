@@ -16,6 +16,11 @@ DataCenter *DataCenter::getInstance()
     return instance;
 }
 
+void DataCenter::initWebSocket()
+{
+    netClient.initWebSocket();
+}
+
 DataCenter::~DataCenter()
 {
     // 释放所有的成员
@@ -532,6 +537,34 @@ void DataCenter::resetSearchMessageResult(const QList<bite_im::MessageInfo> &mes
 QList<Message> *DataCenter::getSearchMessageResult()
 {
     return searchMessageResult;
+}
+
+void DataCenter::userLoginAsync(const QString &username, const QString &password)
+{
+    netClient.userLogin(username,password);
+}
+
+void DataCenter::resetLoginSessionId(const QString &loginSessionId)
+{
+    this->loginSessionId = loginSessionId;
+
+    // 一旦重新登录，登录会话id改变，就需要重新保存到硬盘上
+    saveDataToFile();
+}
+
+void DataCenter::userRegisterAsync(const QString &username, const QString &password)
+{
+    netClient.userRegister(username,password);
+}
+
+void DataCenter::phoneLoginAsync(const QString &phone,const QString &verifyCode)
+{
+    netClient.phoneLogin(phone,this->currentVerifyCodeId,verifyCode);
+}
+
+void DataCenter::phoneRegisterAsync(const QString &phone, const QString &verifyCode)
+{
+    netClient.phoneRegister(phone,this->currentVerifyCodeId,verifyCode);
 }
 ////////////////////////////////////////////////////////////////////////////
 /// 辅助函数

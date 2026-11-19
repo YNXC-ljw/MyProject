@@ -131,6 +131,12 @@ public:
     // 搜索历史消息
     void searchMessageList(const QString& loginSessionId,const QString& chatSessionId,const QString& searchKey);
     void searchMessageListByTime(const QString& loginSessionId,const QString& chatSessionId,const QDateTime& beginTime,const QDateTime& endTime);
+
+    // 登录注册
+    void userLogin(const QString& username,const QString& password);
+    void userRegister(const QString& username,const QString& password);
+    void phoneLogin(const QString& phone,const QString& verifyCodeId,const QString& verifyCode);
+    void phoneRegister(const QString& phone,const QString& verifyCodeId,const QString& verifyCode);
 private:
     model::DataCenter* dataCenter;
     // HTTP 客户端

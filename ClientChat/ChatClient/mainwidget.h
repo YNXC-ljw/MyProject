@@ -41,6 +41,8 @@ private:
 
     // 初始化信号与槽
     void initSignalSlot();
+    // 初始化Websocket
+    void initWebSocket();
 
     ///////////////////////////////////
     /// 窗口各部分所用对象

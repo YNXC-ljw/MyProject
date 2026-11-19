@@ -12,6 +12,7 @@ class DataCenter : public QObject
     Q_OBJECT
 public:
     static DataCenter* getInstance();
+    void initWebSocket();
 
     ~DataCenter();
 private:
@@ -156,6 +157,15 @@ public:
     void resetSearchMessageResult(const QList<bite_im::MessageInfo>& messageList);
     QList<Message>* getSearchMessageResult();
 
+    // 用户名登录注册
+    void userLoginAsync(const QString& username,const QString& password);
+    void resetLoginSessionId(const QString& loginSessionId);
+    void userRegisterAsync(const QString& username,const QString& password);
+    // 手机号登录注册
+    void phoneLoginAsync(const QString& phone,const QString& verifyCode);
+    void phoneRegisterAsync(const QString& phone,const QString& verifyCode);
+
+
     ////////////////////////////////////////////////////////////////////////////
     /// 辅助函数
     ////////////////////////////////////////////////////////////////////////////
@@ -204,6 +214,10 @@ signals:
     void getGroupMemberListDone(const QString& chatSessionId);
     void searchFriendDone();
     void searchMessageResultDone();
+    void userLoginDone(bool ok,const QString& reason);
+    void userRegisterDone(bool ok,const QString& reason);
+    void phoneLoginDone(bool ok,const QString& reason);
+    void phoneRegisterDone(bool ok,const QString& reason);
 };
 
 } // end namespace

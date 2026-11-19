@@ -46,6 +46,8 @@ MainWidget::MainWidget(QWidget *parent)
     initRightWindow();
     // 初始化信号槽
     initSignalSlot();
+    // 初始化Websocket
+    initWebSocket();
 }
 
 MainWidget::~MainWidget()
@@ -386,6 +388,12 @@ void MainWidget::initSignalSlot()
     connect(dataCenter,&DataCenter::receiveCreateSessionDone,this,[=](){
         this->updateChatSessionList();
     });
+}
+
+void MainWidget::initWebSocket()
+{
+    DataCenter* dataCenter = DataCenter::getInstance();
+    dataCenter->initWebSocket();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
