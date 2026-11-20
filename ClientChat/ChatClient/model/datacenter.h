@@ -109,6 +109,7 @@ public:
 
     // 通过网络将文本消息发送出去
     void sendTextMessageAsync(const QString &chatSessionId,const QString& message);
+    void sendImageMessageAsync(const QByteArray& fileContent,const QString& chatSessionId);
 
     // 通过网络请求修改用户昵称
     void changeNickNameAsync(const QString& nickname);
@@ -166,6 +167,9 @@ public:
     void phoneRegisterAsync(const QString& phone,const QString& verifyCode);
 
 
+    // 获取单个文件
+    void getSingleFileAsync(const QString& fileId);
+
     ////////////////////////////////////////////////////////////////////////////
     /// 辅助函数
     ////////////////////////////////////////////////////////////////////////////
@@ -218,6 +222,7 @@ signals:
     void userRegisterDone(bool ok,const QString& reason);
     void phoneLoginDone(bool ok,const QString& reason);
     void phoneRegisterDone(bool ok,const QString& reason);
+    void getSingleFileDone(const QString& fileId,const QByteArray& fileContent);
 };
 
 } // end namespace

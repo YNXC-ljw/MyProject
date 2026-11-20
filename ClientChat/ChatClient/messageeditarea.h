@@ -17,6 +17,9 @@ public:
     void addSelfMessage(model::MessageType messageType, const QByteArray& message, const QString& extraInfo);
 
     void addReceiveMessage(const model::Message& message);
+
+public slots:
+    void onClickSendImageBtn();
 private:
     QPushButton* sendImageBtn;
     QPushButton* sendFileBtn;

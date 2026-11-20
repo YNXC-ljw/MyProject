@@ -4,7 +4,7 @@
 #include <QScrollArea>
 #include <QWidget>
 #include <QLabel>
-
+#include <QPushButton>
 
 #include "model/data.h"
 
@@ -49,7 +49,7 @@ public:
     // 添加工厂函数
     static QWidget* makeTextMessageItem(bool isLeft,const QString& text);
     static QWidget* makeFileMessageItem();
-    static QWidget* makeImageMessageItem();
+    static QWidget* makeImageMessageItem(bool isLeft,const QString& fileId,const QByteArray& content);
     static QWidget* makeSpeechMessageItem();
 
 private:
@@ -68,6 +68,23 @@ public:
     void paintEvent(QPaintEvent* event) override;
 private:
     QLabel* label;
+    bool isLeft;
+};
+////////////////////////////////////////////////////
+/// 创建类表示“图片消息”正文部分
+////////////////////////////////////////////////////
+class MessageImageLabel : public QWidget{
+    Q_OBJECT
+public:
+    MessageImageLabel(const QString& fileId,const QByteArray& content,bool isLeft);
+
+    void updateUI(const QString& fileId,const QByteArray& content);
+    void paintEvent(QPaintEvent* event) override;
+private:
+    QPushButton* imageBtn;
+
+    QString fileId; // 该图片在服务器上对应的文件 id
+    QByteArray content; // 图片的二进制消息
     bool isLeft;
 };
 

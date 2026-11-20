@@ -292,6 +292,11 @@ void DataCenter::sendTextMessageAsync(const QString &chatSessionId, const QStrin
 {
     netClient.sendMessage(loginSessionId,chatSessionId,MessageType::TEXT_TYPE,message.toUtf8(),""); // 支持多种消息就要将QString转成二进制
 }
+
+void DataCenter::sendImageMessageAsync(const QByteArray &fileContent, const QString &chatSessionId)
+{
+    netClient.sendMessage(loginSessionId,chatSessionId,MessageType::IMAGE_TYPE,fileContent,"");
+}
 //////////////////////////////////////////////////////
 /// 修改昵称
 //////////////////////////////////////////////////////
@@ -565,6 +570,11 @@ void DataCenter::phoneLoginAsync(const QString &phone,const QString &verifyCode)
 void DataCenter::phoneRegisterAsync(const QString &phone, const QString &verifyCode)
 {
     netClient.phoneRegister(phone,this->currentVerifyCodeId,verifyCode);
+}
+
+void DataCenter::getSingleFileAsync(const QString &fileId)
+{
+    netClient.getSingleFile(loginSessionId,fileId);
 }
 ////////////////////////////////////////////////////////////////////////////
 /// 辅助函数

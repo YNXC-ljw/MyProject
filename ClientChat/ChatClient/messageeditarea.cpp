@@ -8,6 +8,7 @@
 #include <QScrollBar>
 #include <QHBoxLayout>
 #include <QMessageBox>
+#include <QFileDialog>
 
 using namespace model;
 
@@ -106,6 +107,9 @@ void MessageEditArea::initSignalSlot()
 
     // 关联收到消息并展示在消息展示区的信号槽
     connect(dataCenter,&DataCenter::receiveMessageDone,this,&MessageEditArea::addReceiveMessage);
+
+    // 关联"发送图片"按钮信号槽
+    connect(sendImageBtn,&QPushButton::clicked,this,&MessageEditArea::onClickSendImageBtn);
 }
 
 void MessageEditArea::sendTextMessage()
@@ -171,6 +175,27 @@ void MessageEditArea::addReceiveMessage(const Message &message)
 
     // 4.提示一个收到新消息
 
+}
+
+void MessageEditArea::onClickSendImageBtn()
+{
+    DataCenter* dataCenter = DataCenter::getInstance();
+    // 1.判定当前是否选中会话
+    if(dataCenter->getCurrentChatSessionId().isEmpty())
+    {
+        LOG() << "当前未选中会话！";
+        return;
+    }
+
+    // 2.打开文件对话框选择文件
+    QString filter = "Image Files (*.jpg *.png *.jpeg)";
+    QString filePaths = QFileDialog::getOpenFileName(this,"选择图片",QDir::homePath(),filter);
+
+    // 3.读取图片内容
+    QByteArray fileContent = readFiletoQByteArray(filePaths);
+
+    // 4.发送网络请求
+    dataCenter->sendImageMessageAsync(fileContent,dataCenter->getCurrentChatSessionId());
 }
 
 

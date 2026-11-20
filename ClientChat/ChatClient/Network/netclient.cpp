@@ -1238,6 +1238,45 @@ void NetClient::phoneRegister(const QString &phone, const QString &verifyCodeId,
 
 }
 
+void NetClient::getSingleFile(const QString &loginSessionId, const QString &fileId)
+{
+    // 1. 构造请求 body
+    bite_im::GetSingleFileReq req;
+    req.setRequestId(makeRequestId());
+    req.setSessionId(loginSessionId);
+    req.setFileId(fileId);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[获取文件内容] 发送请求 requestId=" << req.requestId() << ", fileId=" << fileId;
+
+    // 2. 发送 HTTP 请求
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/file/get_single_file", body);
+
+    // 3. 处理响应
+    connect(httpResp, &QNetworkReply::finished, this, [=]() {
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::GetSingleFileRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应结果
+        if (!ok) {
+            LOG() << "[获取文件内容] 响应失败 reason=" << reason;
+            return;
+        }
+
+        // c) 响应结果保存下来．之前都是把结果保存到 DataCenter 的．
+        // 这里涉及到的文件可能会很多．不使用 DataCenter 保存．
+        // 直接通过信号把文件数据，投送到调用者的位置上．
+
+        // d) 发送信号
+        emit dataCenter->getSingleFileDone(fileId, pbResp->fileData().fileContent());
+
+        // e)打印日志
+        LOG() << "[获取文件内容] 响应完成 requestId = " << pbResp->requestId();
+    });
+
+}
+
 
 
 } // end namespace

@@ -137,6 +137,9 @@ public:
     void userRegister(const QString& username,const QString& password);
     void phoneLogin(const QString& phone,const QString& verifyCodeId,const QString& verifyCode);
     void phoneRegister(const QString& phone,const QString& verifyCodeId,const QString& verifyCode);
+
+    // 获取单个文件
+    void getSingleFile(const QString& loginSessionId,const QString& fileId);
 private:
     model::DataCenter* dataCenter;
     // HTTP 客户端
