@@ -21,7 +21,7 @@
         <file>resource/image/uncheck.png</file>
         <file>resource/image/search.png</file>
         <file>resource/image/groupAvatar.jpg</file>
-        <file>resource/text.txt</file>
         <file>resource/image/defaultImage.png</file>
+        <file>resource/file/test.txt</file>
     </qresource>
 </RCC>

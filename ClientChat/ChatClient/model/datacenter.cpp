@@ -297,6 +297,11 @@ void DataCenter::sendImageMessageAsync(const QByteArray &fileContent, const QStr
 {
     netClient.sendMessage(loginSessionId,chatSessionId,MessageType::IMAGE_TYPE,fileContent,"");
 }
+
+void DataCenter::sendFileMessageAsync(const QString &chatSessionId, const QString &fileName, const QByteArray &content)
+{
+    netClient.sendMessage(loginSessionId,chatSessionId,MessageType::FILE_TYPE,content,fileName);
+}
 //////////////////////////////////////////////////////
 /// 修改昵称
 //////////////////////////////////////////////////////

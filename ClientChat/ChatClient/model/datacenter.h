@@ -107,9 +107,10 @@ public:
     void getRecentMessageAsync(const QString& chatSessionId,bool updateUI);//网络获取
     void resetRecentMessageList(const QString& chatSessionId,std::shared_ptr<bite_im::GetRecentMsgRsp> resp);
 
-    // 通过网络将文本消息发送出去
+    // 通过网络将消息发送出去
     void sendTextMessageAsync(const QString &chatSessionId,const QString& message);
     void sendImageMessageAsync(const QByteArray& fileContent,const QString& chatSessionId);
+    void sendFileMessageAsync(const QString& chatSessionId, const QString& fileName, const QByteArray& content);
 
     // 通过网络请求修改用户昵称
     void changeNickNameAsync(const QString& nickname);

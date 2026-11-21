@@ -20,6 +20,7 @@ public:
 
 public slots:
     void onClickSendImageBtn();
+    void onClickSendFileBtn();
 private:
     QPushButton* sendImageBtn;
     QPushButton* sendFileBtn;

@@ -11,6 +11,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QTimer>
+#include <QFileDialog>
 
 using namespace model;
 
@@ -171,7 +172,7 @@ MessageItem *MessageItem::makeMessageItem(bool isLeft, const Message &message)
         contentWidget = makeTextMessageItem(isLeft,message.content);
         break;
     case FILE_TYPE:
-        contentWidget = makeFileMessageItem();
+        contentWidget = makeFileMessageItem(isLeft,message);
         break;
     case IMAGE_TYPE:
         contentWidget = makeImageMessageItem(isLeft,message.fileId,message.content);
@@ -217,13 +218,15 @@ MessageItem *MessageItem::makeMessageItem(bool isLeft, const Message &message)
 
 QWidget *MessageItem::makeTextMessageItem(bool isLeft, const QString &text)
 {
-    MessageContentLabel* messageContentLabel = new MessageContentLabel(text,isLeft);
+    MessageContentLabel* messageContentLabel = new MessageContentLabel(text,isLeft,MessageType::TEXT_TYPE,"",QByteArray());
     return messageContentLabel;
 }
 
-QWidget *MessageItem::makeFileMessageItem()
+// 文件消息可以直接复用文本消息的结构
+QWidget *MessageItem::makeFileMessageItem(bool isLeft,const Message& message)
 {
-    return nullptr;
+    MessageContentLabel* messageContentLabel = new MessageContentLabel(" [文件] " + message.fileName,isLeft,message.messageType,message.fileId,message.content);
+    return messageContentLabel;
 }
 
 QWidget *MessageItem::makeImageMessageItem(bool isLeft,const QString& fileId,const QByteArray& content)
@@ -239,10 +242,11 @@ QWidget *MessageItem::makeSpeechMessageItem()
 }
 
 ////////////////////////////////////////////////////
-/// 创建类表示“文本消息”正文部分
+/// 创建类表示“文本消息”和“文件消息”正文部分
 ////////////////////////////////////////////////////
-MessageContentLabel::MessageContentLabel(const QString &text, bool isLeft)
-    :isLeft(isLeft)
+MessageContentLabel::MessageContentLabel(const QString &text, bool isLeft,model::MessageType messageType,const QString& fileId,
+                    const QByteArray& content)
+    :isLeft(isLeft),messageType(messageType),fileId(fileId),content(content)
 {
     // 设置SizePolicy
     this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
@@ -257,6 +261,20 @@ MessageContentLabel::MessageContentLabel(const QString &text, bool isLeft)
     this->label->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     this->label->setWordWrap(true); // 文本自动换行
     this->setStyleSheet("QLabel { padding: 0 10px; line-height: 1.2; background-color: transparent; }");
+
+    // 构造时如果是文本消息直接到此为止
+    if(messageType == model::TEXT_TYPE)
+    {
+        return;
+    }
+
+    // 到此就是文件消息，如果content为空，则需要通过fileId从网络中获取
+    if(this->content.isEmpty())
+    {
+        DataCenter* dataCenter = DataCenter::getInstance();
+        connect(dataCenter,&DataCenter::getSingleFileDone,this,&MessageContentLabel::updateUI);
+        dataCenter->getSingleFileAsync(this->fileId);
+    }
 }
 
 // 这个函数会在该空间被显示的时候自动调用到
@@ -332,6 +350,50 @@ void MessageContentLabel::paintEvent(QPaintEvent *event)
     // 注意高度要涵盖之前名字和时间的 label 的高度，以及留点冗余空间。
     parent->setFixedHeight(height + 50);
 
+}
+
+void MessageContentLabel::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton)
+    {
+        if(this->messageType == FILE_TYPE)
+        {
+            // 触发另存为
+            if(!getSingleFileDone)
+            {
+                LOG() << "文件未加载完毕！";
+                return;
+            }
+            saveCurrentFile(this->content);
+        }else{
+            // 其他消息,不作处理
+        }
+    }
+}
+
+void MessageContentLabel::updateUI(const QString &fileId, const QByteArray &content)
+{
+    if(fileId != this->fileId)
+    {
+        return;
+    }
+    // 对上了，显示内容
+    this->content = content;
+    this->getSingleFileDone = true;
+
+    this->update();
+}
+
+void MessageContentLabel::saveCurrentFile(const QByteArray &content)
+{
+    // 弹出对话框，选择文件路径
+    const QString& filePaths = QFileDialog::getSaveFileName(this,"另存为",QDir::homePath(),"*");
+    if(filePaths.isEmpty())
+    {
+        LOG() << "用户取消了文件另存为!";
+        return;
+    }
+    writeFileFromQByteArray(filePaths,content);
 }
 ////////////////////////////////////////////////////
 /// 创建类表示“图片消息”正文部分

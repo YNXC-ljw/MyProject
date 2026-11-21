@@ -38,8 +38,8 @@ if(WIN32 AND EXISTS "${QT_PROTOC_EXECUTABLE}" AND NOT TARGET WrapProtoc::WrapPro
     )
 endif()
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network WebSockets Protobuf)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Multimedia)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network WebSockets Protobuf Multimedia)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -89,6 +89,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         model/datacenter.h model/datacenter.cpp
         Network/netclient.h Network/netclient.cpp
         verifycodewidget.h verifycodewidget.cpp
+        resource/file/test.txt
+        soundrecorder.h soundrecorder.cpp
     )
 
 # Define target properties for Android with Qt 6 as:
@@ -109,7 +111,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(ChatClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::Network Qt6::WebSockets Qt6::Protobuf)
+target_link_libraries(ChatClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::Network Qt6::WebSockets Qt6::Protobuf Qt6::Multimedia)
 
 if(QT_VERSION_MAJOR GREATER_EQUAL 6)
     target_link_libraries(ChatClient PRIVATE ChatClientProto)

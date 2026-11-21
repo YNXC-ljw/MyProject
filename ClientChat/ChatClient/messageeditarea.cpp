@@ -110,6 +110,8 @@ void MessageEditArea::initSignalSlot()
 
     // 关联"发送图片"按钮信号槽
     connect(sendImageBtn,&QPushButton::clicked,this,&MessageEditArea::onClickSendImageBtn);
+    // 关联"发送文件"按钮信号槽
+    connect(sendFileBtn,&QPushButton::clicked,this,&MessageEditArea::onClickSendFileBtn);
 }
 
 void MessageEditArea::sendTextMessage()
@@ -190,12 +192,47 @@ void MessageEditArea::onClickSendImageBtn()
     // 2.打开文件对话框选择文件
     QString filter = "Image Files (*.jpg *.png *.jpeg)";
     QString filePaths = QFileDialog::getOpenFileName(this,"选择图片",QDir::homePath(),filter);
+    if(filePaths.isEmpty())
+    {
+        LOG() << "用户已关闭文件对话框！";
+        return;
+    }
 
     // 3.读取图片内容
     QByteArray fileContent = readFiletoQByteArray(filePaths);
 
     // 4.发送网络请求
     dataCenter->sendImageMessageAsync(fileContent,dataCenter->getCurrentChatSessionId());
+}
+
+void MessageEditArea::onClickSendFileBtn()
+{
+    DataCenter* dataCenter = DataCenter::getInstance();
+    // 1.判定此时是否已经选中会话
+    if(dataCenter->getCurrentChatSessionId().isEmpty())
+    {
+        LOG() << "当前未选中会话！";
+        return;
+    }
+
+    // 2.打开文件对话框选择文件
+    QString filter = "*";
+    QString filePaths = QFileDialog::getOpenFileName(this,"选择文件",QDir::homePath(),filter);
+    if(filePaths.isEmpty())
+    {
+        LOG() << "用户已关闭文件对话框！";
+        return;
+    }
+
+    // 3.读取文件内容
+    QByteArray content = readFiletoQByteArray(filePaths);
+
+    // 4.获取文件名
+    QFileInfo fileinfo(filePaths);
+    const QString& fileName = fileinfo.fileName();
+
+    // 5.发送网络请求
+    dataCenter->sendFileMessageAsync(dataCenter->getCurrentChatSessionId(),fileName,content);
 }
 
 

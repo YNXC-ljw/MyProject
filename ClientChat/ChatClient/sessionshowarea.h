@@ -48,7 +48,7 @@ public:
 
     // 添加工厂函数
     static QWidget* makeTextMessageItem(bool isLeft,const QString& text);
-    static QWidget* makeFileMessageItem();
+    static QWidget* makeFileMessageItem(bool isLeft, const Message& message);
     static QWidget* makeImageMessageItem(bool isLeft,const QString& fileId,const QByteArray& content);
     static QWidget* makeSpeechMessageItem();
 
@@ -58,17 +58,28 @@ private:
 };
 
 ////////////////////////////////////////////////////
-/// 创建类表示“文本消息”正文部分
+/// 创建类表示“文本消息”和“文件消息”正文部分
 ////////////////////////////////////////////////////
 class MessageContentLabel : public QWidget{
     Q_OBJECT
 public:
-    MessageContentLabel(const QString& text,bool isLeft);
+    MessageContentLabel(const QString& text,bool isLeft,model::MessageType messageType,const QString& fileId,
+                const QByteArray& content);
 
     void paintEvent(QPaintEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void updateUI(const QString& fileId,const QByteArray& content);
+    void saveCurrentFile(const QByteArray& content);
 private:
     QLabel* label;
     bool isLeft;
+
+    model::MessageType messageType;
+    QString fileId;
+    QByteArray content;
+    QString fileName;
+
+    bool getSingleFileDone = false; // 标记文件是否加载完毕
 };
 ////////////////////////////////////////////////////
 /// 创建类表示“图片消息”正文部分
