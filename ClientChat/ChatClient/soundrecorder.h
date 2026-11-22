@@ -5,6 +5,8 @@
 #include <QStandardPaths>
 #include <QFile>
 #include <QAudioSource>
+#include <QAudioSink>
+#include <QMediaDevices>
 
 class SoundRecorder : public QObject
 {
@@ -13,7 +15,6 @@ public:
     const QString RECORD_PATH = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "sound/tmpRecord.pcm";
     const QString PLAY_PATH = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "sound/tmpPlay.pcm";
 public:
-    ~SoundRecorder();
     static SoundRecorder* getInstance();
 
 ////////////////////////////////////////
@@ -26,7 +27,7 @@ public:
 ////////////////////////////////////////
 /// 播放
 ////////////////////////////////////////
-    void startPlay();
+    void startPlay(const QByteArray& content);
     void stopPlay();
 private:
     static SoundRecorder* instance;
@@ -34,6 +35,11 @@ private:
 
     QFile soundFile; // 录制成型的音频文件
     QAudioSource* audioSource;
+
+    QAudioDevice outputDevice;
+    QMediaDevices* outputDevices;
+    QFile inputFile;
+    QAudioSink* audioSink;
 signals:
     void soundRecordDone(const QString& path);
     void soundPlayDone();

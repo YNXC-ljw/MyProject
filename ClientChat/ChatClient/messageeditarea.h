@@ -21,6 +21,9 @@ public:
 public slots:
     void onClickSendImageBtn();
     void onClickSendFileBtn();
+    void onPressSendSpeechBtn();
+    void onReleaseSendSpeechBtn();
+    void sendSpeech(const QString& filePath);
 private:
     QPushButton* sendImageBtn;
     QPushButton* sendFileBtn;
@@ -29,6 +32,7 @@ private:
     QPlainTextEdit* textEdit;
     QPushButton* sendTextBtn;
 
+    QLabel* tipLabel;
 signals:
 };
 

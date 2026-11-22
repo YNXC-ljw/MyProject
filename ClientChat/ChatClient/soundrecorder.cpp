@@ -35,14 +35,25 @@ void SoundRecorder::stopRecord()
     emit this->soundRecordDone(RECORD_PATH);
 }
 
-void SoundRecorder::startPlay()
+void SoundRecorder::startPlay(const QByteArray& content)
 {
+    if (content.isEmpty()) {
+        return;
+    }
+    // 1. 把数据写入到临时文件
+    model::writeFileFromQByteArray(PLAY_PATH, content);
+
+    // 2. 播放语音
+    inputFile.setFileName(PLAY_PATH);
+    inputFile.open(QIODevice::ReadOnly);
+    audioSink->start(&inputFile);
 
 }
 
 void SoundRecorder::stopPlay()
 {
-
+    audioSink->stop();
+    inputFile.close();
 }
 
 SoundRecorder::SoundRecorder(QObject *parent)
@@ -81,6 +92,35 @@ SoundRecorder::SoundRecorder(QObject *parent)
             }
         }
     });
+
+    // 6. 初始化播放模块
+    outputDevices = new QMediaDevices(this);
+    outputDevice = outputDevices->defaultAudioOutput();
+    QAudioFormat outputFormat;
+    outputFormat.setSampleRate(16000);
+    outputFormat.setChannelCount(1);
+    outputFormat.setSampleFormat(QAudioFormat::Int16);
+    if (!outputDevice.isFormatSupported(outputFormat)) {
+        LOG() << "播放设备，格式不支持";
+        return;
+    }
+    audioSink = new QAudioSink(outputDevice, outputFormat);
+
+    connect(audioSink, &QAudioSink::stateChanged, this, [=](QtAudio::State state) {
+        if (state == QtAudio::IdleState) {
+            LOG() << "IdleState";
+            this->stopPlay();
+            emit this->soundPlayDone();
+        } else if (state == QAudio::ActiveState) {
+            LOG() << "ActiveState";
+        } else if (state == QAudio::StoppedState) {
+            LOG() << "StoppedState";
+            if (audioSink->error() != QtAudio::NoError) {
+                LOG() << audioSink->error();
+            }
+        }
+    });
+
 }
 
 

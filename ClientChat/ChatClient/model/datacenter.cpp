@@ -302,6 +302,11 @@ void DataCenter::sendFileMessageAsync(const QString &chatSessionId, const QStrin
 {
     netClient.sendMessage(loginSessionId,chatSessionId,MessageType::FILE_TYPE,content,fileName);
 }
+
+void DataCenter::sendSpeechMessageAsync(const QString &chatSessionId, const QByteArray &content)
+{
+    netClient.sendMessage(loginSessionId,chatSessionId,MessageType::SPEECH_TYPE,content,"");
+}
 //////////////////////////////////////////////////////
 /// 修改昵称
 //////////////////////////////////////////////////////

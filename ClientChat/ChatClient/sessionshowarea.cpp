@@ -235,10 +235,10 @@ QWidget *MessageItem::makeImageMessageItem(bool isLeft,const QString& fileId,con
     return messageImageLabel;
 }
 
-QWidget *MessageItem::makeSpeechMessageItem()
+QWidget *MessageItem::makeSpeechMessageItem(bool isLeft,const Message& message)
 {
-    return nullptr;
-
+    MessageContentLabel* messageContentLabel = new MessageContentLabel("[语音]",isLeft,message.messageType,message.fileId,message.content);
+    return messageContentLabel;
 }
 
 ////////////////////////////////////////////////////
@@ -365,7 +365,12 @@ void MessageContentLabel::mousePressEvent(QMouseEvent *event)
                 return;
             }
             saveCurrentFile(this->content);
-        }else{
+
+        } else if(this->messageType == SPEECH_TYPE){
+            // 直接播放语音(播放时显示"播放中",播放结束显示"播放完毕")
+
+        }
+        else{
             // 其他消息,不作处理
         }
     }

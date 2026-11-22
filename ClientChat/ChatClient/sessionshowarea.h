@@ -50,7 +50,7 @@ public:
     static QWidget* makeTextMessageItem(bool isLeft,const QString& text);
     static QWidget* makeFileMessageItem(bool isLeft, const Message& message);
     static QWidget* makeImageMessageItem(bool isLeft,const QString& fileId,const QByteArray& content);
-    static QWidget* makeSpeechMessageItem();
+    static QWidget* makeSpeechMessageItem(bool isLeft,const Message& message);
 
 private:
     // 此处的 isLeft 表示该Item是否属于"左侧消息"

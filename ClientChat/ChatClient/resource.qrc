@@ -23,5 +23,6 @@
         <file>resource/image/groupAvatar.jpg</file>
         <file>resource/image/defaultImage.png</file>
         <file>resource/file/test.txt</file>
+        <file>resource/image/speech_active.png</file>
     </qresource>
 </RCC>

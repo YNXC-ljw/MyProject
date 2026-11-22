@@ -111,6 +111,7 @@ public:
     void sendTextMessageAsync(const QString &chatSessionId,const QString& message);
     void sendImageMessageAsync(const QByteArray& fileContent,const QString& chatSessionId);
     void sendFileMessageAsync(const QString& chatSessionId, const QString& fileName, const QByteArray& content);
+    void sendSpeechMessageAsync(const QString& chatSessionId,const QByteArray& content);
 
     // 通过网络请求修改用户昵称
     void changeNickNameAsync(const QString& nickname);
