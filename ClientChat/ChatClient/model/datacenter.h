@@ -168,6 +168,8 @@ public:
     void phoneLoginAsync(const QString& phone,const QString& verifyCode);
     void phoneRegisterAsync(const QString& phone,const QString& verifyCode);
 
+    // 语音转文字
+    void speechConvertToTextAsync(const QString& fileId, const QByteArray& content);
 
     // 获取单个文件
     void getSingleFileAsync(const QString& fileId);
@@ -225,6 +227,7 @@ signals:
     void phoneLoginDone(bool ok,const QString& reason);
     void phoneRegisterDone(bool ok,const QString& reason);
     void getSingleFileDone(const QString& fileId,const QByteArray& fileContent);
+    void speechConvertToTextDone(const QString& fileId,const QString& text);
 };
 
 } // end namespace

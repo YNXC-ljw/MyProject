@@ -4,11 +4,11 @@
 #include "sessionshowarea.h"
 #include "mainwidget.h"
 #include "soundrecorder.h"
+#include "toast.h"
 
 #include <QVBoxLayout>
 #include <QScrollBar>
 #include <QHBoxLayout>
-#include <QMessageBox>
 #include <QFileDialog>
 
 using namespace model;
@@ -21,7 +21,7 @@ MessageEditArea::MessageEditArea(QWidget *parent)
     this->setFixedHeight(200);
     this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     this->setStyleSheet("MessageEditArea {border-radius: 10px; border: 1px solid rgb(227, 227, 227);}");
-    
+
     // 2.创建垂直方向布局管理器
     QVBoxLayout* vlayout = new QVBoxLayout();
     vlayout->setSpacing(0);
@@ -200,7 +200,7 @@ void MessageEditArea::sendTextMessage()
         LOG() << "当前未选中任何会话，不会发送任何消息！";
         // 上述日志，只是在开发阶段能看到，程序发布出去了，此时就无法看到了。
         // 因此需要让普通用户，也能看到 "提示"
-        QMessageBox::information(this,"提示：","当前未选中会话，不发送任何消息！");
+        Toast::showMessage("当前未选中会话, 不发送任何消息!");
         return;
     }
 
@@ -254,6 +254,7 @@ void MessageEditArea::addReceiveMessage(const Message &message)
 
     // 4.提示一个收到新消息
 
+    Toast::showMessage("收到新消息!");
 }
 
 void MessageEditArea::onClickSendImageBtn()
@@ -263,6 +264,7 @@ void MessageEditArea::onClickSendImageBtn()
     if(dataCenter->getCurrentChatSessionId().isEmpty())
     {
         LOG() << "当前未选中会话！";
+        Toast::showMessage("您尚未选择任何会话, 不能发送图片!");
         return;
     }
 
@@ -289,6 +291,7 @@ void MessageEditArea::onClickSendFileBtn()
     if(dataCenter->getCurrentChatSessionId().isEmpty())
     {
         LOG() << "当前未选中会话！";
+        Toast::showMessage("您尚未选择任何会话, 不能发送文件!");
         return;
     }
 

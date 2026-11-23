@@ -91,6 +91,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         verifycodewidget.h verifycodewidget.cpp
         resource/file/test.txt
         soundrecorder.h soundrecorder.cpp
+        toast.h toast.cpp
     )
 
 # Define target properties for Android with Qt 6 as:

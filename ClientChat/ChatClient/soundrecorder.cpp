@@ -3,6 +3,7 @@
 
 #include <QMediaDevices>
 #include <QDir>
+#include "toast.h"
 
 using namespace model;
 
@@ -38,6 +39,7 @@ void SoundRecorder::stopRecord()
 void SoundRecorder::startPlay(const QByteArray& content)
 {
     if (content.isEmpty()) {
+        Toast::showMessage("数据加载中, 请稍后播放");
         return;
     }
     // 1. 把数据写入到临时文件

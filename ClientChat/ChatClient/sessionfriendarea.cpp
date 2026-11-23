@@ -22,10 +22,10 @@ sessionFriendArea::sessionFriendArea(QWidget *parent)
     this->setWidgetResizable(true);
     // 设置滚动条样式
     this->verticalScrollBar()->setStyleSheet("QScrollBar:vertical{width:7px;background:transparent;}"
-        "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{background:none;}"
-        "QScrollBar::sub-line:vertical,QScrollBar::add-line:vertical{height:0px;background:none;}"
-        "QScrollBar::handle:vertical{background-color:rgb(130,130,130);border-radius:5px;min-height:22px;}"
-        "QScrollBar::handle:vertical:hover{background-color:rgb(90,90,90);}");
+                                             "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{background:none;}"
+                                             "QScrollBar::sub-line:vertical,QScrollBar::add-line:vertical{height:0px;background:none;}"
+                                             "QScrollBar::handle:vertical{background-color:rgb(130,130,130);border-radius:5px;min-height:22px;}"
+                                             "QScrollBar::handle:vertical:hover{background-color:rgb(90,90,90);}");
     this->horizontalScrollBar()->setStyleSheet("QScrollBar:horizontal { height: 0px; };"); // 水平滚动条不显示，设为0
 
     // 2.创建widget，设置到滚动区内
@@ -117,14 +117,14 @@ SessionFriendItem::SessionFriendItem(QWidget *owner, const QIcon &avatar, const 
 {
     this->setFixedHeight(70);
     this->setStyleSheet("QWidget { background-color: rgb(238,238,240)}");
-    
+
     // 创建网格布局管理器
     QGridLayout* layout = new QGridLayout();
     layout->setContentsMargins(10,0,0,0);
     layout->setHorizontalSpacing(10);
     layout->setVerticalSpacing(0);
     this->setLayout(layout);
-    
+
     // 创建头像
     QPushButton* avatarBtn = new QPushButton();
     avatarBtn->setFixedSize(50, 50);

@@ -1,5 +1,6 @@
 #include "selfinfowidget.h"
 #include "model/datacenter.h"
+#include "toast.h"
 
 #include<QGridLayout>
 #include <QFileDialog>
@@ -345,6 +346,7 @@ void SelfInfoWidget::clickPhoneSubmitBtn()
     if(verifyCodeId.isEmpty())
     {
         LOG() << "服务器尚未返回验证码，请稍候重试！";
+        Toast::showMessage("服务器尚未返回响应, 稍后重试!");
         return;
     }
     // 如果当前已经拿到 verifyCodeId，就可以清空 DataCenter 中存储的值，确保下次点击提交按钮的时候，上述逻辑仍然有效
@@ -353,7 +355,7 @@ void SelfInfoWidget::clickPhoneSubmitBtn()
     // 2. 获取到用户输入的验证码
     const QString& verifyCode = verifyCodeEdit->text();
     if (verifyCode.isEmpty()) {
-        // Toast::showMessage("验证码不能为空！");
+        Toast::showMessage("验证码不能为空!");
         return;
     }
     verifyCodeEdit->setText("");
@@ -398,7 +400,8 @@ void SelfInfoWidget::clickVerifyCodeBtn()
     // 2.通过网络给服务器发送请求
     DataCenter* dataCenter = DataCenter::getInstance();
     connect(dataCenter,&DataCenter::getVerifyCodeDone,this,[=](){
-       // 不需要做任何处理，只需要提示一下验证码已经发送
+        // 不需要做任何处理，只需要提示一下验证码已经发送
+        Toast::showMessage("短信验证码已经发送");
 
     });
     dataCenter->getVerifyCodeAsync(phone);

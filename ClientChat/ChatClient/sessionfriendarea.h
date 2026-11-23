@@ -81,6 +81,8 @@ public:
 private:
     // 当前会话ID
     QString chatSessionId;
+    // 最后一条消息的文本预览
+    QString text;
 };
 
 /// /////////////////////////////////////

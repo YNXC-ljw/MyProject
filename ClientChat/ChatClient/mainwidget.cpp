@@ -1,5 +1,6 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
+#include "toast.h"
 
 #include "sessionfriendarea.h"
 #include "debug.h"
@@ -235,11 +236,11 @@ void MainWidget::initSignalSlot()
     //////////////////////////////////////////
     connect(extraBtn,&QPushButton::clicked,this,[=](){
 
-// #if GROUP_SESSION_DETAIL_WIDGET
-//         bool isSingleChat = false;
-// #else
-//         bool isSingleChat = true;
-// #endif
+        // #if GROUP_SESSION_DETAIL_WIDGET
+        //         bool isSingleChat = false;
+        // #else
+        //         bool isSingleChat = true;
+        // #endif
 
         // 获取当前会话详细信息，如果为""则说明是群聊，否则是单聊
         chatSessionInfo* chatSessionInfo = dataCenter->findSessionById(dataCenter->getCurrentChatSessionId());
@@ -341,7 +342,7 @@ void MainWidget::initSignalSlot()
     /// 处理添加好友申请(由于添加好友可在多处发生，所以统一在主窗口处理信号)
     //////////////////////////////////////////
     connect(dataCenter,&DataCenter::addFriendApplyDone,this,[=](){
-
+        Toast::showMessage("好友申请已发送");
     });
 
     //////////////////////////////////////////
@@ -349,6 +350,7 @@ void MainWidget::initSignalSlot()
     //////////////////////////////////////////
     connect(dataCenter,&DataCenter::receiveFriendApplyDone,this,[=](){
         this->updateApplyList();
+        Toast::showMessage("收到新的好友申请");
     });
 
     //////////////////////////////////////////
@@ -358,10 +360,12 @@ void MainWidget::initSignalSlot()
     connect(dataCenter,&DataCenter::acceptFriendApplyDone,this,[=](){
         this->updateApplyList();
         this->updateFriendList();
+        Toast::showMessage("好友已经添加完成");
     });
     // 拒绝
     connect(dataCenter,&DataCenter::rejectFriendApplyDone,this,[=](){
         this->updateApplyList();
+        Toast::showMessage("好友申请已经拒绝");
     });
     // Websocket 推送到对端
     connect(dataCenter,&DataCenter::acceptFriendProcessDone,this,[=](const QString& nickName,bool agree){
@@ -369,9 +373,10 @@ void MainWidget::initSignalSlot()
         {
             // 同意
             this->updateFriendList();
+            Toast::showMessage(nickName + " 已经同意了你的好友申请");
         }else{
             // 不同意
-
+            Toast::showMessage(nickName + " 已经拒绝了你的好友申请");
         }
     });
 
@@ -380,6 +385,7 @@ void MainWidget::initSignalSlot()
     //////////////////////////////////////////
     connect(dataCenter,&DataCenter::createGroupSessionDone,this,[=](){
         LOG() << "群聊创建成功!";
+        Toast::showMessage("创建群聊会话请求已经发送!");
     });
 
     //////////////////////////////////////////
@@ -387,6 +393,7 @@ void MainWidget::initSignalSlot()
     //////////////////////////////////////////
     connect(dataCenter,&DataCenter::receiveCreateSessionDone,this,[=](){
         this->updateChatSessionList();
+        Toast::showMessage("您被拉入到新的群聊中!");
     });
 }
 

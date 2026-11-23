@@ -1277,6 +1277,43 @@ void NetClient::getSingleFile(const QString &loginSessionId, const QString &file
 
 }
 
+void NetClient::speechConvertToText(const QString &loginSessionId, const QString &fileId, const QByteArray &content)
+{
+    // 1.构造请求
+    bite_im::SpeechRecognitionReq req;
+    req.setRequestId(makeRequestId());
+    req.setSessionId(loginSessionId);
+    req.setSpeechContent(content);
+    QByteArray body = req.serialize(&serializer);
+    LOG() << "[语音转文字] 发送请求 requestId = " << req.requestId() << ", loginSessionId = " << req.sessionId();
+
+    // 2.发送请求并接收响应
+    QNetworkReply* httpResp = this->sendHttpRequest("/service/speech/recognition",body);
+
+    // 3.处理响应
+    connect(httpResp,&QNetworkReply::finished,this,[=](){
+        // a) 解析响应
+        bool ok = false;
+        QString reason;
+        auto pbResp = this->handleHttpResponse<bite_im::SpeechRecognitionRsp>(httpResp, &ok, &reason);
+
+        // b) 判定响应结果
+        if (!ok) {
+            LOG() << "[语音转文字] 响应错误! reason=" << reason;
+            return;
+        }
+
+        // c) 把结果写入到 DataCenter 中. 此处不打算通过 DataCenter 表示这里的语音识别结果. 直接通过 信号 通知结果即可.
+
+        // d) 发送信号，通知调用者
+        emit dataCenter->speechConvertToTextDone(fileId, pbResp->recognitionResult());
+
+        // e) 打印日志
+        LOG() << "[语音转文字] 响应完成 requestId=" << pbResp->requestId();
+
+    });
+}
+
 
 
 } // end namespace

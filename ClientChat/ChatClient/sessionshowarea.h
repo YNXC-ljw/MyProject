@@ -68,8 +68,11 @@ public:
 
     void paintEvent(QPaintEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void contextMenuEvent(QContextMenuEvent* event) override;
     void updateUI(const QString& fileId,const QByteArray& content);
     void saveCurrentFile(const QByteArray& content);
+    void playDone();
+    void speechConvertToTextDone(const QString& fileId, const QString& text);
 private:
     QLabel* label;
     bool isLeft;

@@ -11,4 +11,7 @@
 // 服务器测试代码
 #define TEST_NETWORK 0
 
+// 是否部署
+#define DEPOLY 1
+
 #endif // DEBUG_H

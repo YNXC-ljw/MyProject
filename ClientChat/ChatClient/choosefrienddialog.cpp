@@ -8,6 +8,7 @@
 
 #include "debug.h"
 #include "model/datacenter.h"
+#include "toast.h"
 using namespace model;
 
 /////////////////////////////////////////////
@@ -124,7 +125,7 @@ ChooseFriendDialog::ChooseFriendDialog(QWidget* parent,const QString& userId) :Q
 
 }
 
-    void ChooseFriendDialog::initLeft(QHBoxLayout *layout)
+void ChooseFriendDialog::initLeft(QHBoxLayout *layout)
 {
     // 1. 创建滚动区域
     QScrollArea* scrollArea = new QScrollArea();
@@ -296,6 +297,7 @@ void ChooseFriendDialog::onClickOkBtn()
     if(userIdList.count() < 3)
     {
         LOG() << "群聊成员不足3人，无法创建群聊！";
+        Toast::showMessage("群聊中的成员不足三个, 无法创建群聊");
         return;
     }
 

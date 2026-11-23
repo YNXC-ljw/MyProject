@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include "model/data.h"
 #include "model/datacenter.h"
+#include "toast.h"
 
 using namespace model;
 
@@ -150,6 +151,7 @@ void PhoneLoginWidget::onClickSendVerifyCodeBtn()
 void PhoneLoginWidget::getVerifyCodeDone()
 {
     LOG() << "验证码已经发送！";
+    Toast::showMessage("验证码已经发送");
 }
 
 void PhoneLoginWidget::onClickSubmitBtn()
@@ -160,6 +162,7 @@ void PhoneLoginWidget::onClickSubmitBtn()
     if(phone.isEmpty() || verifyCode.isEmpty())
     {
         LOG() << "手机号/验证码不能为空！";
+        Toast::showMessage("电话或者验证码不应该为空");
         return;
     }
 
@@ -182,6 +185,7 @@ void PhoneLoginWidget::phoneLoginDone(bool ok, const QString &reason)
     if(!ok)
     {
         LOG() << "登录失败! reason: " << reason;
+        Toast::showMessage("登录失败! " + reason);
         return;
     }
     // 进入主窗口
@@ -197,9 +201,12 @@ void PhoneLoginWidget::phoneRegisterDone(bool ok, const QString &reason)
     if(!ok)
     {
         LOG() << "注册失败！reason = " << reason;
+        Toast::showMessage("注册失败! " + reason);
         return;
     }
     // 注册成功
+
+    Toast::showMessage("注册成功!");
 
     // 跳转到登录页面
     switchMode();

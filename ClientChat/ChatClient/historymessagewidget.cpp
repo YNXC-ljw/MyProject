@@ -1,3 +1,4 @@
+#include "soundrecorder.h"
 #include "historymessagewidget.h"
 
 #include <QGridLayout>
@@ -5,9 +6,11 @@
 #include <QLabel>
 #include <QDateTimeEdit>
 #include <QScrollArea>
+#include <QFileDialog>
 #include <QScrollBar>
 #include "model/datacenter.h"
 #include "debug.h"
+#include "toast.h"
 
 using namespace model;
 
@@ -58,10 +61,14 @@ HistoryItem *HistoryItem::makeHistoryItem(const Message &message)
         contentWidget = label;
     }else if(message.messageType == SPEECH_TYPE){
         // 语音消息
+        contentWidget = new SpeechLabel(message.fileId);
     }else if(message.messageType == IMAGE_TYPE){
         // 图片消息
+        ImageButton* imageButton = new ImageButton(message.fileId,message.content);
+        contentWidget = imageButton;
     }else if(message.messageType == FILE_TYPE){
         // 文件消息
+        contentWidget = new FileLabel(message.fileId,message.fileName);
     }else{
         LOG() << "错误的消息类型!messageType = " << message.messageType;
     }
@@ -241,6 +248,7 @@ void HistoryMessageWidget::onClickSearchBtn()
         auto endTime = endTimeEdit->dateTime();
         if(beginTime >= endTime)
         {
+            Toast::showMessage("时间错误! 开始时间大于结束时间!");
             return;
         }
         dataCenter->searchMessageListByTimeAsync(beginTime,endTime);
@@ -291,6 +299,141 @@ void HistoryMessageWidget::initScrollArea(QGridLayout* layout)
     // 4.将滚动区域设置到网格布局管理器中
     layout->addWidget(scrollArea,2,0,1,9);
 }
+
+/////////////////////////////////////////////////////////////////
+/// 展示图片历史消息
+/////////////////////////////////////////////////////////////////
+ImageButton::ImageButton(const QString &fileId, const QByteArray &content)
+    :fileId(fileId)
+{
+    this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    this->setStyleSheet("QPushButton { border: none; }");
+
+    if (!content.isEmpty()) {
+        // 直接显示到界面上
+        this->updateUI(fileId, content);
+    } else {
+        // 通过网络来获取
+        DataCenter* dataCenter = DataCenter::getInstance();
+        connect(dataCenter, &DataCenter::getSingleFileDone, this, &ImageButton::updateUI);
+        dataCenter->getSingleFileAsync(fileId);
+    }
+
+}
+
+// 绘制界面
+void ImageButton::updateUI(const QString &fileId, const QByteArray &content)
+{
+    // 1.先判定此fileId和要点击显示的fileId是否一致
+    if(fileId != this->fileId)
+    {
+        return;
+    }
+
+    // 2.对图片进行缩放
+    QImage image;
+    image.loadFromData(content);
+    int width = image.width();
+    int height = image.height();
+    if(image.width() >= 300)
+    {
+        // 缩放
+        width = 300;
+        height = ((double)image.height() / image.width()) * width;
+    }
+    this->resize(width,height);
+    this->setIconSize(QSize(width, height));
+    QPixmap pixmap = QPixmap::fromImage(image);
+    this->setIcon(QIcon(pixmap));
+}
+////////////////////////////////////////////////////////////////
+/// 展示文件历史消息
+////////////////////////////////////////////////////////////////
+FileLabel::FileLabel(const QString &fileId,const QString &fileName)
+    :fileId(fileId),fileName(fileName)
+{
+    this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    this->setText("[文件]" + fileName);
+    this->setWordWrap(true); // 文件名他太长自动换行
+    this->adjustSize(); // 自动调整尺寸
+    this->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+    DataCenter* dataCenter = DataCenter::getInstance();
+    connect(dataCenter,&DataCenter::getSingleFileDone,this,&FileLabel::updateUI);
+    dataCenter->getSingleFileAsync(fileId);
+}
+
+void FileLabel::updateUI(const QString &fileId, const QByteArray &content)
+{
+    if(fileId != this->fileId)
+    {
+        return;
+    }
+
+    this->content = content;
+    this->loadDone = true;
+
+
+}
+
+void FileLabel::mousePressEvent(QMouseEvent *event)
+{
+    (void) event;
+    if (!this->loadDone) {
+        // 说明数据还没准备好.
+        Toast::showMessage("文件内容加载中, 请稍后尝试!");
+        return;
+    }
+
+    // 弹出一个对话框，让用户来选择当前要保存的位置
+    QString filePath = QFileDialog::getSaveFileName(this, "另存为", QDir::homePath(), "*");
+    if (filePath.isEmpty()) {
+        // 用户取消了保存
+        LOG() << "用户取消了保存";
+        return;
+    }
+
+    writeFileFromQByteArray(filePath, content);
+
+}
+////////////////////////////////////////////////////////////////
+/// 展示语音历史消息
+////////////////////////////////////////////////////////////////
+SpeechLabel::SpeechLabel(const QString &fileId)
+    :fileId(fileId)
+{
+    this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    this->setText("[语音]");
+    this->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+    DataCenter* dataCenter = DataCenter::getInstance();
+    connect(dataCenter, &DataCenter::getSingleFileDone, this, &SpeechLabel::updateUI);
+    dataCenter->getSingleFileAsync(fileId);
+
+}
+
+void SpeechLabel::updateUI(const QString &fileId, const QByteArray &content)
+{
+    if (fileId != this->fileId) {
+        return;
+    }
+    this->content = content;
+    this->loadDone = true;
+}
+
+void SpeechLabel::mousePressEvent(QMouseEvent *event)
+{
+    (void) event;
+    if (!this->loadDone) {
+        Toast::showMessage("文件内容加载中, 稍后重试");
+        return;
+    }
+    SoundRecorder* soundRecorder = SoundRecorder::getInstance();
+    soundRecorder->startPlay(this->content);
+
+}
+
+
 
 
 

@@ -140,6 +140,9 @@ public:
 
     // 获取单个文件
     void getSingleFile(const QString& loginSessionId,const QString& fileId);
+
+    // 语音转文字
+    void speechConvertToText(const QString& loginSessionId, const QString& fileId, const QByteArray& content);
 private:
     model::DataCenter* dataCenter;
     // HTTP 客户端

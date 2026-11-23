@@ -582,6 +582,11 @@ void DataCenter::phoneRegisterAsync(const QString &phone, const QString &verifyC
     netClient.phoneRegister(phone,this->currentVerifyCodeId,verifyCode);
 }
 
+void DataCenter::speechConvertToTextAsync(const QString& fileId, const QByteArray &content)
+{
+    netClient.speechConvertToText(loginSessionId, fileId, content);
+}
+
 void DataCenter::getSingleFileAsync(const QString &fileId)
 {
     netClient.getSingleFile(loginSessionId,fileId);

@@ -3,6 +3,8 @@
 #include "userinfowidget.h"
 #include "mainwidget.h"
 #include "model/datacenter.h"
+#include "soundrecorder.h"
+#include "toast.h"
 #include <QScrollBar>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -11,6 +13,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QTimer>
+#include <QMenu>
 #include <QFileDialog>
 
 using namespace model;
@@ -178,7 +181,7 @@ MessageItem *MessageItem::makeMessageItem(bool isLeft, const Message &message)
         contentWidget = makeImageMessageItem(isLeft,message.fileId,message.content);
         break;
     case SPEECH_TYPE:
-        contentWidget = makeSpeechMessageItem();
+        contentWidget = makeSpeechMessageItem(isLeft,message);
         break;
     default:
         LOG() << "错误的消息类型！MessageType = " << message.messageType;
@@ -245,7 +248,7 @@ QWidget *MessageItem::makeSpeechMessageItem(bool isLeft,const Message& message)
 /// 创建类表示“文本消息”和“文件消息”正文部分
 ////////////////////////////////////////////////////
 MessageContentLabel::MessageContentLabel(const QString &text, bool isLeft,model::MessageType messageType,const QString& fileId,
-                    const QByteArray& content)
+                                         const QByteArray& content)
     :isLeft(isLeft),messageType(messageType),fileId(fileId),content(content)
 {
     // 设置SizePolicy
@@ -274,6 +277,9 @@ MessageContentLabel::MessageContentLabel(const QString &text, bool isLeft,model:
         DataCenter* dataCenter = DataCenter::getInstance();
         connect(dataCenter,&DataCenter::getSingleFileDone,this,&MessageContentLabel::updateUI);
         dataCenter->getSingleFileAsync(this->fileId);
+    }else{
+        // content不为空，说明这个消息应该是我们自己发出去的，是现成的，此时应该将标志位设为true
+        this->getSingleFileDone = true;
     }
 }
 
@@ -362,18 +368,52 @@ void MessageContentLabel::mousePressEvent(QMouseEvent *event)
             if(!getSingleFileDone)
             {
                 LOG() << "文件未加载完毕！";
+                Toast::showMessage("数据尚未加载成功, 请稍后重试");
                 return;
             }
             saveCurrentFile(this->content);
 
         } else if(this->messageType == SPEECH_TYPE){
             // 直接播放语音(播放时显示"播放中",播放结束显示"播放完毕")
-
+            if(!getSingleFileDone)
+            {
+                LOG() << "文件未加载完毕！";
+                Toast::showMessage("数据尚未加载成功, 请稍后重试");
+                return;
+            }
+            SoundRecorder* soundRecoder = SoundRecorder::getInstance();
+            this->label->setText("播放中");
+            connect(soundRecoder,&SoundRecorder::soundPlayDone,this,&MessageContentLabel::playDone,Qt::UniqueConnection);
+            soundRecoder->startPlay(this->content);
         }
         else{
             // 其他消息,不作处理
         }
     }
+}
+
+void MessageContentLabel::contextMenuEvent(QContextMenuEvent *event)
+{
+    (void) event;
+    if(this->messageType != SPEECH_TYPE)
+    {
+        LOG() << "非语音消息暂时不支持右键菜单!";
+        return;
+    }
+
+    QMenu* menu = new QMenu(this);
+    menu->setStyleSheet("QMenu { background-color: rgb(247,247,247); }QMenu::item:selected {background-color: rgb(0, 195, 117);color: white;}");
+    QAction* action = new QAction("语音转文字");
+    menu->addAction(action);
+    connect(action,&QAction::triggered,this,[=](){
+        // 发送网络请求，语音转文字
+        DataCenter* dataCenter = DataCenter::getInstance();
+        connect(dataCenter,&DataCenter::speechConvertToTextDone,this,&MessageContentLabel::speechConvertToTextDone,Qt::UniqueConnection);
+        dataCenter->speechConvertToTextAsync(this->fileId, this->content);
+    });
+
+    menu->exec(event->globalPos());
+    delete menu;
 }
 
 void MessageContentLabel::updateUI(const QString &fileId, const QByteArray &content)
@@ -399,6 +439,27 @@ void MessageContentLabel::saveCurrentFile(const QByteArray &content)
         return;
     }
     writeFileFromQByteArray(filePaths,content);
+}
+
+void MessageContentLabel::playDone()
+{
+    if(this->label->text() == "播放中")
+    {
+        this->label->setText("[语音]");
+    }
+}
+
+void MessageContentLabel::speechConvertToTextDone(const QString &fileId, const QString &text)
+{
+    if (this->fileId != fileId) {
+        // 直接跳过，此时的结果不是针对这一条语音消息的结果.
+        return;
+    }
+
+    // 修改界面内容
+    this->label->setText("[语音转文字] " + text);
+    this->update();
+
 }
 ////////////////////////////////////////////////////
 /// 创建类表示“图片消息”正文部分

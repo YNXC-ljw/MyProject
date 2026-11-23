@@ -9,6 +9,7 @@
 #include "model/data.h"
 #include "model/datacenter.h"
 #include "mainwidget.h"
+#include "toast.h"
 
 using namespace model;
 
@@ -111,7 +112,6 @@ LoginWidget::LoginWidget(QWidget *parent)
         this->close();
     });
     connect(submitBtn,&QPushButton::clicked,this,&LoginWidget::onClickSubmitBtn);
-
 }
 
 void LoginWidget::switchMode()
@@ -143,6 +143,7 @@ void LoginWidget::onClickSubmitBtn()
     if(username.isEmpty() || password.isEmpty() || verifycode.isEmpty())
     {
         LOG() << "用户名/密码/验证码不能为空！";
+        Toast::showMessage("用户名/密码/验证码不能为空!");
         return;
     }
 
@@ -151,6 +152,7 @@ void LoginWidget::onClickSubmitBtn()
     {
         verifyCodeWidget->refrushVerifyCode();
         LOG() << "验证码不正确，请重新输入！";
+        Toast::showMessage("验证码不正确!");
         return;
     }
 
@@ -173,7 +175,7 @@ void LoginWidget::userLoginDone(bool ok,const QString& reason)
     // 1.判定是否登录成功
     if(!ok)
     {
-
+        Toast::showMessage("登录失败! " + reason);
         return;
     }
 
@@ -188,9 +190,11 @@ void LoginWidget::userRegisterDone(bool ok, const QString &reason)
 {
     if(!ok)
     {
-
+        Toast::showMessage("注册失败! " + reason);
         return;
     }
+
+    Toast::showMessage("注册成功!");
 
     // 切换到登录界面
     switchMode();
