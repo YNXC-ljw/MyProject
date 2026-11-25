@@ -1,4 +1,6 @@
 #include "netclient.h"
+#include <algorithm>
+#include <QNetworkProxy>
 #include <QNetworkReply>
 #include<QUuid>
 #include "../model/data.h"
@@ -10,10 +12,11 @@ namespace network{
 NetClient::NetClient(model::DataCenter *dataCenter)
     :dataCenter(dataCenter)
 {
+    httpClient.setProxy(QNetworkProxy::NoProxy);
+    webSocketClient.setProxy(QNetworkProxy::NoProxy);
     // 程序启动即调用
     // initWebSocket();
 }
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// WebSocket 客户端
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -185,11 +188,20 @@ void NetClient::handleWsSessionCreate(const model::chatSessionInfo &chatSessionI
         LOG() << "客户端没有加载会话列表";
         return;
     }
-    // 新的会话元素添加到会话列表头部
-    chatSessionList->push_front(chatSessionInfo);
+    // HTTP 响应可能已经先加入同一个会话，这里去重以避免重复展示。
+    const bool exists = std::any_of(
+        chatSessionList->cbegin(),
+        chatSessionList->cend(),
+        [&](const model::chatSessionInfo& session) {
+            return session.chatSessionId == chatSessionInfo.chatSessionId;
+        });
+    if (!exists) {
+        chatSessionList->push_front(chatSessionInfo);
+    }
     // 发送信号通知界面更新
     emit dataCenter->receiveCreateSessionDone();
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// HTTP 客户端
@@ -464,12 +476,6 @@ void NetClient::sendMessage(const QString &loginSessionId, const QString &chatSe
     if(messageType == MessageType::TEXT_TYPE)
     {
         messageContent.setMessageType(bite_im::MessageTypeGadget::MessageType::STRING);
-
-        bite_im::StringMessageInfo stringMessageInfo;
-        stringMessageInfo.setContent(message);
-        messageContent.setStringMessage(stringMessageInfo);
-    }else if(messageType == MessageType::IMAGE_TYPE){
-        messageContent.setMessageType(bite_im::MessageTypeGadget::MessageType::IMAGE);
 
         bite_im::StringMessageInfo stringMessageInfo;
         stringMessageInfo.setContent(message);
@@ -833,11 +839,30 @@ void NetClient::acceptFriendApply(const QString &loginSessionId, const QString &
         UserInfo applyUser = dataCenter->removeFromApplyList(userId);
         QList<UserInfo>* friendList = dataCenter->getFriendList();
         friendList->push_front(applyUser);
+        // d) 同意后服务端会创建单聊会话，这里根据响应立即补齐会话数据。
+        //    即使 WebSocket 通知稍晚或漏收，同意方也能看到会话。
+        QList<chatSessionInfo>* chatSessionList = dataCenter->getChatSessionList();
+        if (chatSessionList != nullptr && !pbResp->newSessionId().isEmpty()) {
+            const bool exists = std::any_of(
+                chatSessionList->cbegin(),
+                chatSessionList->cend(),
+                [&](const chatSessionInfo& session) {
+                    return session.chatSessionId == pbResp->newSessionId();
+                });
+            if (!exists) {
+                chatSessionInfo chatSession;
+                chatSession.chatSessionId = pbResp->newSessionId();
+                chatSession.chatSessionName = applyUser.nickName;
+                chatSession.avatar = applyUser.avatar;
+                chatSession.userId = applyUser.userId;
+                chatSessionList->push_front(chatSession);
+            }
+        }
 
-        // d) 发送信号通知更新界面
+        // e) 发送信号通知更新界面
         emit dataCenter->acceptFriendApplyDone();
 
-        // e) 打印日志
+        // f) 打印日志
         LOG() << "[同意好友申请] 响应完成 requestId = " << pbResp->requestId();
     });
 

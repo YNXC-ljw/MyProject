@@ -21,9 +21,10 @@ class NetClient : public QObject
     Q_OBJECT
 
 private:
-    // 定义重要常量,ip 都定义为本地换回 ip，端口号约定为8000和8001(一个进程可以绑定多个端口号)
-    const QString HTTP_URL = "http://127.0.0.1:8080";
-    const QString WEBSOCKET_URL = "ws://127.0.0.1:8001/ws";
+    // 定义重要常量,ip 都定义为本地环回 ip，端口号约定为8000和8001(一个进程可以绑定多个端口号)
+    // (现绑定真实服务器地址)
+    const QString HTTP_URL = "http://192.168.157.128:9010";
+    const QString WEBSOCKET_URL = "ws://192.168.157.128:9011/ws";
 
 public:
     NetClient(model::DataCenter* dataCenter);

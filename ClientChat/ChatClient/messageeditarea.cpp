@@ -10,6 +10,8 @@
 #include <QScrollBar>
 #include <QHBoxLayout>
 #include <QFileDialog>
+#include <QImageReader>
+#include <QBuffer>
 
 using namespace model;
 
@@ -257,6 +259,48 @@ void MessageEditArea::addReceiveMessage(const Message &message)
     Toast::showMessage("收到新消息!");
 }
 
+QByteArray MessageEditArea::compressImage(const QString &filepaths)
+{
+    // 先将图片压缩再传否则图片太大加载卡顿
+    QImageReader reader(filepaths);
+    reader.setAutoTransform(true); // 纠正手机照片方向
+
+    const QSize& originalSize = reader.size();
+    if(!originalSize.isValid())
+    {
+        Toast::showMessage("无法识别图片尺寸！");
+        return QByteArray();
+    }
+    QSize targetSize = originalSize;
+    const QSize maxSize(1280,720);
+
+    if(originalSize.width() > maxSize.width() || originalSize.height() > maxSize.height())
+    {
+        targetSize = originalSize.scaled(maxSize,Qt::KeepAspectRatio); // 把图按比例缩小
+        reader.setScaledSize(targetSize);
+    }
+    QImage image = reader.read();
+    if (image.isNull())
+    {
+        Toast::showMessage(QString("图片读取失败：%1").arg(reader.errorString()));
+        return QByteArray();
+    }
+
+    // 转成 QByteArray（压缩编码，不是原始像素！）
+    QByteArray fileContent;
+    QBuffer buffer(&fileContent);
+    buffer.open(QIODevice::WriteOnly);
+
+    const QByteArray format = image.hasAlphaChannel() ? "PNG" : "JPEG";
+    if (!image.save(&buffer, format.constData(), 80))
+    {
+        Toast::showMessage("图片编码失败！");
+        return QByteArray();
+    }
+    buffer.close();
+    return fileContent;
+}
+
 void MessageEditArea::onClickSendImageBtn()
 {
     DataCenter* dataCenter = DataCenter::getInstance();
@@ -270,15 +314,17 @@ void MessageEditArea::onClickSendImageBtn()
 
     // 2.打开文件对话框选择文件
     QString filter = "Image Files (*.jpg *.png *.jpeg)";
-    QString filePaths = QFileDialog::getOpenFileName(this,"选择图片",QDir::homePath(),filter);
-    if(filePaths.isEmpty())
+    QString filepaths = QFileDialog::getOpenFileName(this,"选择图片",QDir::homePath(),filter);
+    if(filepaths.isEmpty())
     {
         LOG() << "用户已关闭文件对话框！";
         return;
     }
+////////////////////////////////////问题解决/////////////////////////////////////////
 
-    // 3.读取图片内容
-    QByteArray fileContent = readFiletoQByteArray(filePaths);
+    const QByteArray& fileContent = compressImage(filepaths);
+
+///////////////////////////////////////////////////////////////////////////////////
 
     // 4.发送网络请求
     dataCenter->sendImageMessageAsync(fileContent,dataCenter->getCurrentChatSessionId());

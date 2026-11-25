@@ -171,10 +171,10 @@ public:
 
         // 设置消息类型
         auto type = messageInfo.message().messageType();
-        if(type == bite_im::MessageTypeGadget::MessageType::STRING){
+        if(type == bite_im::MessageTypeGadget::MessageType::STRING && messageInfo.message().hasStringMessage()){
             this->messageType = TEXT_TYPE;
             this->content = messageInfo.message().stringMessage().content().toUtf8();
-        }else if(type == bite_im::MessageTypeGadget::MessageType::IMAGE){
+        }else if(type == bite_im::MessageTypeGadget::MessageType::IMAGE && messageInfo.message().hasImageMessage()){
             this->messageType = IMAGE_TYPE;
             if(messageInfo.message().imageMessage().hasImageContent())
             {
@@ -184,7 +184,7 @@ public:
             {
                 this->fileId = messageInfo.message().imageMessage().fileId();
             }
-        }else if(type == bite_im::MessageTypeGadget::MessageType::FILE){
+        }else if(type == bite_im::MessageTypeGadget::MessageType::FILE && messageInfo.message().hasFileMessage()){
             this->messageType = FILE_TYPE;
             if(messageInfo.message().fileMessage().hasFileContents())
             {
@@ -195,7 +195,7 @@ public:
                 this->fileId = messageInfo.message().fileMessage().fileId();
             }
             this->fileName = messageInfo.message().fileMessage().fileName();
-        }else if(type == bite_im::MessageTypeGadget::MessageType::SPEECH){
+        }else if(type == bite_im::MessageTypeGadget::MessageType::SPEECH && messageInfo.message().hasSpeechMessage()){
             this->messageType = SPEECH_TYPE;
             if(messageInfo.message().speechMessage().hasFileContents())
             {

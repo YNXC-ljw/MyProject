@@ -360,6 +360,7 @@ void MainWidget::initSignalSlot()
     connect(dataCenter,&DataCenter::acceptFriendApplyDone,this,[=](){
         this->updateApplyList();
         this->updateFriendList();
+        this->updateChatSessionList();
         Toast::showMessage("好友已经添加完成");
     });
     // 拒绝

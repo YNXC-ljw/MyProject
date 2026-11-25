@@ -18,6 +18,9 @@ public:
 
     void addReceiveMessage(const model::Message& message);
 
+    // 压缩图片
+    QByteArray compressImage(const QString& filepaths);
+
 public slots:
     void onClickSendImageBtn();
     void onClickSendFileBtn();
