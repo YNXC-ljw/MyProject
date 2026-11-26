@@ -23,5 +23,6 @@
         <file>resource/image/speech.png</file>
         <file>resource/image/submit.png</file>
         <file>resource/image/uncheck.png</file>
+        <file>resource/file/test.txt</file>
     </qresource>
 </RCC>

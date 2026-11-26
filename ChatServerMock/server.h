@@ -97,6 +97,44 @@ public:
     QHttpServerResponse getChatSessionList(const QHttpServerRequest& req);
     // 获取好友申请列表
     QHttpServerResponse getApplyList(const QHttpServerRequest& req);
+    // 获取最近消息
+    QHttpServerResponse getRecentMessageList(const QHttpServerRequest& req);
+    // 发送消息
+    QHttpServerResponse sendMessage(const QHttpServerRequest& req);
+    // 修改用户昵称
+    QHttpServerResponse setNickName(const QHttpServerRequest& req);
+    // 修改用户签名
+    QHttpServerResponse setDescription(const QHttpServerRequest& req);
+    // 获取短信验证码
+    QHttpServerResponse getVerifyCode(const QHttpServerRequest& req);
+    // 修改电话号码
+    QHttpServerResponse changePhone(const QHttpServerRequest& req);
+    // 修改用户头像
+    QHttpServerResponse changeAvatar(const QHttpServerRequest& req);
+    // 删除好友
+    QHttpServerResponse deleteFriend(const QHttpServerRequest& req);
+    // 添加好友
+    QHttpServerResponse addFriendApply(const QHttpServerRequest& req);
+    // 同意添加好友
+    QHttpServerResponse acceptFriendApply(const QHttpServerRequest& req);
+    // 创建群聊会话
+    QHttpServerResponse createGroupSession(const QHttpServerRequest& req);
+    // 会话成员列表
+    QHttpServerResponse groupSessionMemberList(const QHttpServerRequest& req);
+    // 获取搜索结果
+    QHttpServerResponse searchFriendResult(const QHttpServerRequest& req);
+    // 搜索历史消息
+    QHttpServerResponse searchHistoryMessage(const QHttpServerRequest& req);
+    QHttpServerResponse searchHistoryMessageByTime(const QHttpServerRequest& req);
+    // 用户名登录/注册
+    QHttpServerResponse usernameLogin(const QHttpServerRequest& req);
+    QHttpServerResponse userRegister(const QHttpServerRequest& req);
+    QHttpServerResponse phoneLogin(const QHttpServerRequest& req);
+    QHttpServerResponse phoneRegister(const QHttpServerRequest& req);
+    // 获取单个文件
+    QHttpServerResponse getSingleFile(const QHttpServerRequest& req);
+    // 语音转文字
+    QHttpServerResponse speechConvert(const QHttpServerRequest& req);
 private:
     static HttpServer* instance;
     HttpServer() {};
@@ -117,6 +155,16 @@ public:
 
     // 针对webSocket服务器进行初始化操作
     bool init();
+signals:
+    void sendTextResp();
+    void deleteFriendResp();
+    void addFriendApply();
+    void acceptFriendApply(bool agree);
+    void rejectFriendApply(bool agree);
+    void sendCreateSession();
+    void sendImageMessage();
+    void sendFileMessage();
+    void sendSpeechMessage();
 private:
     static WebSocketServer* instance;
     WebSocketServer() : webSocketServer("websocket server",QWebSocketServer::NonSecureMode){};
@@ -124,6 +172,8 @@ private:
     QWebSocketServer webSocketServer;
     // 序列化器
     QProtobufSerializer serializer;
+
+    int messageIndex = 0;
 };
 
 #endif // SERVER_H
