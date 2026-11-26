@@ -271,8 +271,8 @@ MessageContentLabel::MessageContentLabel(const QString &text, bool isLeft,model:
         return;
     }
 
-    // 到此就是文件消息，如果content为空，则需要通过fileId从网络中获取
-    if(this->content.isEmpty())
+    // 到此就是文件消息，如果content为空(这里还需要补充:fileId也要不为空才去服务器拿)，则需要通过fileId从网络中获取
+    if(this->content.isEmpty() && !this->fileId.isEmpty())
     {
         DataCenter* dataCenter = DataCenter::getInstance();
         connect(dataCenter,&DataCenter::getSingleFileDone,this,&MessageContentLabel::updateUI);
@@ -473,6 +473,8 @@ MessageImageLabel::MessageImageLabel(const QString &fileId, const QByteArray &co
     imageBtn = new QPushButton(this);
     imageBtn->setStyleSheet("QPushButton { border: none; }");
 
+    defaultImage = readFiletoQByteArray(":/resource/image/defaultImage.png");
+
     // 图片消息分为两种情况
     // 情况一：自己发送的图片，不带fileId，可以直接构造图片消息体
     // 情况二：从服务器拿的图片消息(最近消息列表)，带fileId，在没有需要显示图片文件的时候消息列表只存fileId
@@ -483,6 +485,7 @@ MessageImageLabel::MessageImageLabel(const QString &fileId, const QByteArray &co
         DataCenter* dataCenter = DataCenter::getInstance();
         connect(dataCenter,&DataCenter::getSingleFileDone,this,&MessageImageLabel::updateUI);
         dataCenter->getSingleFileAsync(fileId);
+
     }
 }
 
@@ -508,21 +511,28 @@ void MessageImageLabel::paintEvent(QPaintEvent *event)
     // 1.先拿到该元素的父元素，先看父元素的宽度是多少(图片显示的最大宽度应该和文本消息一样，为父元素的60%)
     QObject* object = this->parent();
     QWidget* parent = dynamic_cast<QWidget*>(object);
-    int width = parent->width() * 0.6;
+    const int parentWidth = parent->width();
+
+    // 图片内容和父控件宽度都没变，说明已经渲染过，直接复用
+    if (parentWidth > 0 &&
+        imageBtn->property("contentSize").toInt() == content.size() &&
+        imageBtn->property("loadedWidth").toInt() == parentWidth) {
+        return;
+    }
+    int width = parentWidth * 0.6;
 
     // 2.将content内容转成图片
     QImage image;
     if(content.isEmpty()) // 触发重绘事件时可能网络请求还没结束，所以可能为空
     {
         // 加载一个“默认图片”
-        QByteArray defaultImage = readFiletoQByteArray(":/resource/image/defaultImage.png");
         image.loadFromData(defaultImage);
     }else{
         // 不为空
         image.loadFromData(content);
     }
 
-    // 3.针对图片进行缩放
+    // 3.针对(按钮)进行缩放
     int height = 0;
     if(image.width() > width)
     {
@@ -534,7 +544,6 @@ void MessageImageLabel::paintEvent(QPaintEvent *event)
         width = image.width();
         height = image.height();
     }
-
     // QImage不能直接转成QIcon，需要QPixmap作为中间变量
     QPixmap pixmap = QPixmap::fromImage(image);
     imageBtn->setFixedSize(width,height);
@@ -553,6 +562,8 @@ void MessageImageLabel::paintEvent(QPaintEvent *event)
         int leftPos = this->width() - width - 10;
         imageBtn->setGeometry(leftPos, 0, width, height);
     }
+    imageBtn->setProperty("contentSize", content.size());
+    imageBtn->setProperty("loadedWidth", parentWidth);
 }
 
 

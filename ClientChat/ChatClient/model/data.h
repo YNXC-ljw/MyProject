@@ -20,9 +20,9 @@
 
 namespace model
 {
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 /// 工具函数，后续很多模块可能用到
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 
 static inline QString getFileName(const QString& path) {
     QFileInfo fileInfo(path);
@@ -88,9 +88,9 @@ static inline QByteArray readFiletoQByteArray(const QString& path)
     file.close();
     return content;
 }
-//////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 /// 用户信息
-//////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 
 class UserInfo
 {
@@ -114,9 +114,9 @@ public:
         }
   }
 };
-//////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 /// 消息信息
-//////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 enum MessageType
 {
     TEXT_TYPE,          // 文本消息
@@ -128,14 +128,14 @@ enum MessageType
 class Message
 {
 public:
-    QString messageId = "";                  // 消息编号
+    QString messageId = "";                 // 消息编号
     QString chatSessionId = "";             // 消息所属会话的编号
     QString time = "";                      // 消息时间，通过格式化时间的方式来表示，形如 08-06 19:00:01
     MessageType messageType = TEXT_TYPE;    // 消息类型
-    UserInfo sender;            // 消息发送者
-    QByteArray content;         // 消息内容(QT表示二进制文本必须使用QByteArray,字符才能用QString)
-    QString fileId = "";             // 文件的身份标识，为图片、文件、语音时生效；为普通文本时为""
-    QString fileName = "";           // 文件名称，为文件时生效，其余为空
+    UserInfo sender;                        // 消息发送者
+    QByteArray content;                     // 消息内容(QT表示二进制文本必须使用QByteArray,字符才能用QString)
+    QString fileId = "";                    // 文件的身份标识，为图片、文件、语音时生效；为普通文本时为""
+    QString fileName = "";                  // 文件名称，为文件时生效，其余为空
 
     // extraInfo 只是当消息为文件消息时，作为文件名补充
     static Message makeMessage(MessageType messageType,const QString& chatSessionId,const UserInfo& sender,

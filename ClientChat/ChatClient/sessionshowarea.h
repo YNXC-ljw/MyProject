@@ -99,6 +99,7 @@ private:
 
     QString fileId; // 该图片在服务器上对应的文件 id
     QByteArray content; // 图片的二进制消息
+    QByteArray defaultImage; // 设置一张默认图片
     bool isLeft;
 };
 

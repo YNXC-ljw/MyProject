@@ -65,7 +65,6 @@ private:
 
     // 好友会话展示区
     sessionFriendArea* sessionFriArea;
-
     // 搜索框
     QLineEdit* searchLine;
     // 添加好友按钮
@@ -75,7 +74,6 @@ private:
     QPushButton* extraBtn;
     // 会话标题
     QLabel* sessionTitleLabel;
-
     //消息展示区
     SessionShowArea* sessionShowArea;
     //消息编辑区

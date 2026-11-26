@@ -47,7 +47,11 @@ void SoundRecorder::startPlay(const QByteArray& content)
 
     // 2. 播放语音
     inputFile.setFileName(PLAY_PATH);
-    inputFile.open(QIODevice::ReadOnly);
+    if(!inputFile.open(QIODevice::ReadOnly))
+    {
+        Toast::showMessage("语音文件打开失败");
+        return;
+    }
     audioSink->start(&inputFile);
 
 }
